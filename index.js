@@ -1,6 +1,7 @@
 const express = require('express'),
   app = express(),
-  mongoose = require('mongoose');
+  mongoose = require('mongoose'),
+  Post = require('./models/post');
 
 const indexRoutes = require('./routes/index.js'),
   postsRoutes = require('./routes/posts');
@@ -15,4 +16,4 @@ app.set('view engine', 'ejs');
   
 app.listen(3000, () => {
     console.log('Booru server started at port 3000');
-})
+});
