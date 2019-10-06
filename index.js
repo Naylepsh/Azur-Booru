@@ -2,11 +2,11 @@ const express = require('express'),
   app = express();
 
 const indexRoutes = require('./routes/index.js'),
-  imageListRoutes = require('./routes/image_list');
+  imageListRoutes = require('./routes/posts');
 
 // APP CONFIG
 app.use(indexRoutes);
-app.use('/image_list', imageListRoutes);
+app.use('/posts', imageListRoutes);
 app.set('view engine', 'ejs');
   
 app.listen(3000, () => {
