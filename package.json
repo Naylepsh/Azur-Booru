@@ -1,0 +1,14 @@
+{
+  "name": "booru_clone",
+  "version": "1.0.0",
+  "description": "My attempt at making a -booru clone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Naylepsh",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
