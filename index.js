@@ -7,7 +7,7 @@ const indexRoutes = require('./routes/index.js'),
 
 // APP CONFIG
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect('mongodb://localhost/yelp_camp', { useNewUrlParser: true, useFindAndModify: false });
+mongoose.connect('mongodb://localhost/booru', { useNewUrlParser: true, useFindAndModify: false });
 
 app.use(indexRoutes);
 app.use('/posts', postsRoutes);
