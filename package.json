@@ -9,8 +9,11 @@
   "author": "Naylepsh",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "crypto": "^1.0.1",
     "ejs": "^2.7.1",
     "express": "^4.17.1",
-    "mongoose": "^5.7.3"
+    "mongoose": "^5.7.3",
+    "path": "^0.12.7"
   }
 }
