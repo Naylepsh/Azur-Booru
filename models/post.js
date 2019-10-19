@@ -1,10 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
 
-const postSchema = new mongoose.Schema({
-  file: String,
+const PostSchema = new mongoose.Schema({
+  file: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Image'
+  },
   source: String,
   title: String,
   tags: [String]
 });
 
-module.exports = mongoose.model('Post', postSchema);
+module.exports = mongoose.model('Post', PostSchema);
