@@ -1,17 +1,14 @@
 const crypto = require('crypto'),
-    path = require('path');
-
+  path = require('path');
 
 module.exports = {
-    generateRandomFilename(file){
-        return new Promise( (resolve, reject) => {
-            crypto.randomBytes(16, (err, buf) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(buf.toString('hex') + path.extname(file.originalname));
-            });
-        });
+  generateRandomFilename(file){
+    try {
+      const name = crypto.randomBytes(16).toString('hex') + path.extname(file.originalname);
+      return name;
+    } catch (err) {
+      console.log(err);
+      return;
     }
+  }
 }
-

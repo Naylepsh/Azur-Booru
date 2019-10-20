@@ -2,4 +2,21 @@
 
 <h1>Upload image form</h1>
 
+<form action="/posts" method="POST" enctype="multipart/form-data">
+    <label>File:
+        <input type="file" accept="image/*" name="image">
+    </label>
+    <label>Source:
+        <input type="text" name="source">
+    </label>
+    <label>Title:
+        <input type="text" name="title">
+    </label>
+    <label>Tags:
+        <textarea name="tags"></textarea>
+    </label>
+    
+    <button>Submit</button>
+</form>
+
 <% include ../partials/footer.ejs %>

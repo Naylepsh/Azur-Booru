@@ -1,15 +1,18 @@
 const express = require('express'),
   app = express(),
   mongoose = require('mongoose'),
-  Post = require('./models/post');
+  bodyParser = require('body-parser');
+  // Post = require('./models/post');
 
 const indexRoutes = require('./routes/index.js'),
   postsRoutes = require('./routes/posts');
 
-// APP CONFIG
+// Mongo Config
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect('mongodb://localhost/booru', { useNewUrlParser: true, useFindAndModify: false });
 
+// App Config
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(indexRoutes);
 app.use('/posts', postsRoutes);
 app.set('view engine', 'ejs');

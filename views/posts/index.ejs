@@ -1,5 +1,12 @@
 <% include ../partials/header.ejs %>
 
 <h1>Image List Here</h1>
+<% for (const image of images) { %>
+    <% if (image) { %>
+        <img src="<%= image %>">
+        <p>asdasdsa</p>
+    <% } %>
+<% } %>
+
 
 <% include ../partials/footer.ejs %>
