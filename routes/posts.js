@@ -4,7 +4,7 @@ const express = require('express'),
   Storage = require('../utils').Storage,
   Image = require('../models/image');
 
-const IMAGES_PER_PAGE = 20;
+const IMAGES_PER_PAGE = 2;
 
 router.get('/', async (req, res) => {
   try {
@@ -13,11 +13,12 @@ router.get('/', async (req, res) => {
 
     // set the page info
     const n = Math.floor(count / IMAGES_PER_PAGE);
-    const current_page = 1;
+    const page = req.query.page ? req.query.page : 1;
 
     // get n-th 30 images
     const binaryImages = await Image
     .find({})
+    .skip((page - 1)*IMAGES_PER_PAGE)
     .limit(IMAGES_PER_PAGE);
     const images = binaryImages.map( image => {
       const base64Flag = 'data:' + image.contentType + ';base64,';
@@ -29,7 +30,7 @@ router.get('/', async (req, res) => {
       images: images, 
       page_info: {
         n: n, 
-        current_page: current_page
+        page: page
       }});
 
   } catch(err) {
