@@ -1,9 +1,9 @@
 <% include ../partials/header.ejs %>
 
 <h1>Image List Here</h1>
-<% for (const image of images) { %>
-    <% if (image) { %>
-        <a href='/posts/<%= image._id %>'><img src="<%= image.data %>"></a>
+<% for (const post of posts) { %>
+    <% if (post && post.image) { %>
+        <a href='/posts/<%= post._id %>'><img src="<%= post.image.data %>"></a>
     <% } %>
 <% } %>
 

@@ -1,7 +1,7 @@
-const mongoose = require('mongoose'),
+const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema({
-  file: {
+  image: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Image'
   },
