@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     const count = await Image.countDocuments({});
 
     // set the page info
-    const n = Math.floor(count / IMAGES_PER_PAGE);
+    const max_page = Math.ceil(count / IMAGES_PER_PAGE);
     const page = req.query.page ? req.query.page : 1;
 
     // get n-th 30 images
@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
     res.render('posts/index', {
       images: images, 
       page_info: {
-        n: n, 
+        max_page: max_page, 
         page: page
       }});
 
