@@ -70,8 +70,11 @@ router.post('/', Storage.single('image'), async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const image = await Image.findById(req.params.id);
-    res.render('posts/show', {image: image});
+    const post = await Post
+    .findById(req.params.id)
+    .populate('image');
+
+    res.render('posts/show', {post: post});
   } catch(err) {
     console.log(err);
     res.redirect('/');
