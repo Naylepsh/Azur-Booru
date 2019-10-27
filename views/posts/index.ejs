@@ -3,7 +3,7 @@
 <h1>Image List Here</h1>
 <% for (const image of images) { %>
     <% if (image) { %>
-        <img src="<%= image %>">
+        <a href='/posts/<%= image._id %>'><img src="<%= image.data %>"></a>
     <% } %>
 <% } %>
 

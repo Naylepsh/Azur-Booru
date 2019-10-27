@@ -1,10 +1,11 @@
 const express = require('express'),
   router = express(),
   fs = require('fs'),
-  Storage = require('../utils').Storage,
+  StorageUtils = require('../utils').Storage,
+  Storage = StorageUtils.initStorage(),
   Image = require('../models/image');
 
-const IMAGES_PER_PAGE = 2;
+const IMAGES_PER_PAGE = 20;
 
 router.get('/', async (req, res) => {
   try {
@@ -20,10 +21,11 @@ router.get('/', async (req, res) => {
     .find({})
     .skip((page - 1)*IMAGES_PER_PAGE)
     .limit(IMAGES_PER_PAGE);
+    // const images = binaryImages.map( StorageUtils.binImgToStrImg );
     const images = binaryImages.map( image => {
-      const base64Flag = 'data:' + image.contentType + ';base64,';
-      const imageString = image.data.toString('base64');
-      return base64Flag + imageString;
+      return {
+        _id: image._id,
+        data: StorageUtils.binImgToStrImg(image)}
     });
 
     res.render('posts/index', {
@@ -45,13 +47,25 @@ router.get('/new', (req, res) => {
 router.post('/', Storage.single('image'), async (req, res) => {
   try {
     const image = await Image.create({
-    data: fs.readFileSync(req.file.path),
-    contentType: req.file.mimetype});
+      data: fs.readFileSync(req.file.path),
+      contentType: req.file.mimetype});
     fs.unlinkSync(req.file.path);
     res.redirect('/posts');
   } catch (err){
     console.log(err);
     res.redirect('/get');
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const binImage = await Image.findById(req.params.id);
+    console.log(binImage);
+    const image = StorageUtils.binImgToStrImg(binImage);
+    res.render('posts/show', {image: image});
+  } catch(err) {
+    console.log(err);
+    res.redirect('/');
   }
 });
 
