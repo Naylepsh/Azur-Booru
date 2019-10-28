@@ -1,18 +1,23 @@
 <% include ../partials/header.ejs %>
 
 <h1>Image List Here</h1>
+<form action="/posts" method="GET">
+    <label for="search"></label>
+    <input id="search" type="text" name="tags">
+    <button>O</button>
+</form>
 <% for (const post of posts) { %>
     <% if (post && post.image) { %>
-        <a href='/posts/<%= post._id %>'><img src="<%= post.image.data %>"></a>
+        <a href="/posts/<%= post._id %>"><img src="<%= post.image.data %>"></a>
     <% } %>
 <% } %>
 
 <% for (let i = Math.max(1, page_info.page - 5); i < page_info.page; i++) { %>
-    <a href='/posts?page=<%= i %>'><%= i %></a>
+    <a href="/posts?page=<%= i %>""><%= i %></a>
 <% } %>
-<a href='posts?page=<%= page_info.page %>'><%= page_info.page %></a>
+<a href="posts?page=<%= page_info.page %>"><%= page_info.page %></a>
 <% for (let i = page_info.page + 1; i <= Math.min(page_info.max_page, page_info.page + 5); i++) { %>
-    <a href='/posts?page=<%= i %>'><%= i %></a>
+    <a href="/posts?page=<%= i %>"><%= i %></a>
 <% } %>
 
 <% include ../partials/footer.ejs %>
