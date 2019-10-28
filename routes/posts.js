@@ -23,8 +23,10 @@ async function createImage(file){
 
 router.get('/', async (req, res) => {
   try {
+    const tagsQuery = req.query.tags === undefined ? {} : {tags: { '$all' : req.query.tags }};
+
     // get the number of records
-    const count = await Image.countDocuments({});
+    const count = await Post.countDocuments(tagsQuery);
 
     // set the page info
     const max_page = Math.ceil(count / IMAGES_PER_PAGE);
@@ -32,7 +34,7 @@ router.get('/', async (req, res) => {
 
     // get n-th 30 images
     let posts = await Post
-    .find({})
+    .find(tagsQuery)
     .skip((page - 1)*IMAGES_PER_PAGE)
     .limit(IMAGES_PER_PAGE)
     .populate('image');
@@ -59,7 +61,8 @@ router.post('/', Storage.single('image'), async (req, res) => {
     const post = await Post.create({
       image: image._id,
       source: req.body.source,
-      title: req.body.title
+      title: req.body.title,
+      tags: req.body.tags.split(' ').filter( tag => tag.length > 0)
     });
     res.redirect('/posts');
   } catch(err) {
@@ -73,7 +76,7 @@ router.get('/:id', async (req, res) => {
     const post = await Post
     .findById(req.params.id)
     .populate('image');
-
+    
     res.render('posts/show', {post: post});
   } catch(err) {
     console.log(err);
