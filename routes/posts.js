@@ -21,9 +21,13 @@ async function createImage(file){
   return image;
 }
 
+function formatTagsQuery(tags){
+  return {tags: { '$all' : tags.split(' ').filter( tag => tag.length > 0) }};
+}
+
 router.get('/', async (req, res) => {
   try {
-    const tagsQuery = req.query.tags === undefined ? {} : {tags: { '$all' : req.query.tags.split(' ').filter( tag => tag.length > 0) }};
+    const tagsQuery = req.query.tags === undefined ? {} : formatTagsQuery(req.query.tags);
 
     // get the number of records
     const count = await Post.countDocuments(tagsQuery);

@@ -1,11 +1,9 @@
 <% include ../partials/header.ejs %>
 
 <h1>Image List Here</h1>
-<form action="/posts" method="GET">
-    <label for="search"></label>
-    <input id="search" type="text" name="tags">
-    <button>O</button>
-</form>
+
+<% include ../partials/search-bar.ejs %>
+
 <% for (const post of posts) { %>
     <% if (post && post.image) { %>
         <a href="/posts/<%= post._id %>"><img src="<%= post.image.data %>"></a>

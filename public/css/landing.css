@@ -1,0 +1,21 @@
+h1 {
+  font-size: 4rem;
+}
+
+a {
+  color: #006FFA;
+}
+
+#links {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#links > a {
+  margin: 0px 5px;
+}
+
+.container {
+  margin-top: 100px;
+}
+
