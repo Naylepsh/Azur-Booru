@@ -31,20 +31,12 @@
             <% } %>
         </section>
     </div>
+    <section class="pagination">
+        <% for (let i = Math.max(1, page_info.page - 5); i <= Math.min(page_info.max_page, page_info.page + 5); i++) { %>
+            <a href="/posts?page=<%= i %>""><%= i %></a>
+        <% } %>
+    </section>
     
 </div>
-
-<div class="container">
-
-    <% for (let i = Math.max(1, page_info.page - 5); i < page_info.page; i++) { %>
-        <a href="/posts?page=<%= i %>""><%= i %></a>
-    <% } %>
-    <a href="posts?page=<%= page_info.page %>"><%= page_info.page %></a>
-    <% for (let i = page_info.page + 1; i <= Math.min(page_info.max_page, page_info.page + 5); i++) { %>
-        <a href="/posts?page=<%= i %>"><%= i %></a>
-    <% } %>
-</div>
-
-
 
 <% include ../partials/footer.ejs %>

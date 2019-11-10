@@ -28,13 +28,13 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-around;
+  /* justify-content: space-around; */
 }
 
 .thumbnail-preview {
   width: 150px;
   height: 150px;
-  padding: 0px 5px;
+  padding: 0px 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,4 +44,10 @@
   max-width: 150px; 
   max-height: 150px;
   object-fit: contain;
+}
+
+.pagination > a {
+  padding: 8px 12px;
+  color: #006FFA;
+  border: 1px solid lightgray;
 }

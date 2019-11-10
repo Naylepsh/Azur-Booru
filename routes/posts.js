@@ -48,7 +48,6 @@ router.get('/', async (req, res) => {
       const occurences = await Post.countDocuments({tags: tag});
       tags.push({name: tag, occurences: occurences});
     }
-    console.log(tags);
 
     res.render('posts/index', {
       posts: posts,
