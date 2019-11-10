@@ -21,13 +21,11 @@ async function createImage(file){
   return image;
 }
 
-function formatTagsQuery(tags){
-  return {tags: { '$all' : tags.split(' ').filter( tag => tag.length > 0) }};
-}
-
 router.get('/', async (req, res) => {
   try {
-    const tagsQuery = req.query.tags === undefined ? {} : formatTagsQuery(req.query.tags);
+    const tagsQuery = req.query.tags === undefined ? 
+      {} : 
+      {tags: { '$all' : req.query.tags.split(' ').filter( tag => tag.length > 0) }};
 
     // get the number of records
     const count = await Post.countDocuments(tagsQuery);
@@ -43,8 +41,12 @@ router.get('/', async (req, res) => {
     .limit(IMAGES_PER_PAGE)
     .populate('image');
 
+    // get all tags of those images
+    const tags = new Set([].concat.apply([], posts.map( post => post.tags)));
+
     res.render('posts/index', {
-      posts: posts, 
+      posts: posts,
+      tags: tags, 
       page_info: {
         max_page: max_page, 
         page: page

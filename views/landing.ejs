@@ -6,21 +6,21 @@
     <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/landing.css">
-    <title>-Booru</title>
+    <title>Azur-booru</title>
 </head>
 
 <body>
-  <section class="container">
+  <section class="container" id="main">
     <h1 id="header">
       <a href="/posts">Azur-booru</a>
     </h1>
     <div id="links">
-      <a href="#"><strong>Posts</strong></a>
+      <a href="/posts"><strong>Posts</strong></a>
       <a href="#">Comments</a>
       <a href="#">Tags</a>
       <a href="#">My Account</a>
     </div>
-    <div id="searchbar">
+    <div class="container">
       <% include ./partials/search-bar.ejs %>
     </div>
   </section>

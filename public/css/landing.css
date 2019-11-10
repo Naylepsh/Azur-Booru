@@ -15,7 +15,11 @@ a {
   margin: 0px 5px;
 }
 
-.container {
+#main {
   margin-top: 100px;
+}
+
+.search-bar > #search {
+  width: 40%;
 }
 
