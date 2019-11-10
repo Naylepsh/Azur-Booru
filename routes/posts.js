@@ -42,7 +42,13 @@ router.get('/', async (req, res) => {
     .populate('image');
 
     // get all tags of those images
-    const tags = new Set([].concat.apply([], posts.map( post => post.tags)));
+    const tagNames = new Set([].concat.apply([], posts.map( post => post.tags)));
+    let tags = [];
+    for (const tag of tagNames) {
+      const occurences = await Post.countDocuments({tags: tag});
+      tags.push({name: tag, occurences: occurences});
+    }
+    console.log(tags);
 
     res.render('posts/index', {
       posts: posts,

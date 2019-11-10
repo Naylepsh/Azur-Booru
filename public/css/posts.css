@@ -18,6 +18,10 @@
   line-height: 1.25rem;
 }
 
+.tags > ul > li > span {
+  color: gray;
+}
+
 .thumbnails {
   width: 100%;
   margin-top: 10px;

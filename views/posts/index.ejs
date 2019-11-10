@@ -16,7 +16,7 @@
             <ul>
                 <% if (tags) { %>
                     <% for (const tag of tags) { %>
-                        <li><a href="/posts?tags=<%= tag %>"><%= tag %></a></li>
+                        <li><a href="/posts?tags=<%= tag.name %>"><%= tag.name %></a> <span><%= tag.occurences %></span></li>
                     <% } %>
                 <% } %>
             </ul>
