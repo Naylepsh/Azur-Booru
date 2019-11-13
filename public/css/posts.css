@@ -2,24 +2,9 @@
   width: 100%;
 }
 
-.search-bar > #search {
-  width: calc(100% - 100px);
-}
-
 #content {
   display: flex;
   flex-direction: row;
-}
-
-.tags {
-  border-right: 1px solid lightgray;
-  width: 150px;
-  text-align: left;
-  line-height: 1.25rem;
-}
-
-.tags > ul > li > span {
-  color: gray;
 }
 
 .thumbnails {
@@ -43,11 +28,8 @@
 .thumbnail-preview > a > img {
   max-width: 150px; 
   max-height: 150px;
-  object-fit: contain;
 }
 
-.pagination > a {
-  padding: 8px 12px;
-  color: #006FFA;
-  border: 1px solid lightgray;
+img {
+  object-fit: contain;
 }

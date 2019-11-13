@@ -13,12 +13,22 @@ function binImgToStrImg(data, contentType){
   return base64Flag + imageString;
 }
 
-async function createImage(file){
+async function createImage(file) {
   const image = await Image.create({
     contentType: file.mimetype,
     data: binImgToStrImg(fs.readFileSync(file.path), file.mimetype)});
   fs.unlinkSync(file.path);
   return image;
+}
+
+async function getTagList(tagNames) {
+  /* takes set ot tag names and returns a list of tags and their number of occurences in database */
+  let tags = [];
+  for (const tag of tagNames) {
+    const occurences = await Post.countDocuments({tags: tag});
+    tags.push({name: tag, occurences: occurences});
+  }
+  return tags;
 }
 
 router.get('/', async (req, res) => {
@@ -43,11 +53,7 @@ router.get('/', async (req, res) => {
 
     // get all tags of those images
     const tagNames = new Set([].concat.apply([], posts.map( post => post.tags)));
-    let tags = [];
-    for (const tag of tagNames) {
-      const occurences = await Post.countDocuments({tags: tag});
-      tags.push({name: tag, occurences: occurences});
-    }
+    const tags = await getTagList(tagNames);
 
     res.render('posts/index', {
       posts: posts,
@@ -88,7 +94,8 @@ router.get('/:id', async (req, res) => {
     .findById(req.params.id)
     .populate('image');
     
-    res.render('posts/show', {post: post});
+    const tags = await getTagList(post.tags);
+    res.render('posts/show', {post: post, tags: tags});
   } catch(err) {
     console.log(err);
     res.redirect('/');

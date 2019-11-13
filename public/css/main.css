@@ -46,3 +46,24 @@ ul {
   margin: 0px 5px;
 }
 
+.search-bar > #search {
+  width: calc(100% - 100px);
+}
+
+
+.pagination > a {
+  padding: 8px 12px;
+  color: #006FFA;
+  border: 1px solid lightgray;
+}
+
+.tags {
+  border-right: 1px solid lightgray;
+  width: 150px;
+  text-align: left;
+  line-height: 1.25rem;
+}
+
+.tags > ul > li > span {
+  color: gray;
+}

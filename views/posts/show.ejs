@@ -1,13 +1,34 @@
-<% include ../partials/header.ejs %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet"> 
+  <link rel="stylesheet" href="/css/main.css" type="text/css">
+  <link rel="stylesheet" href="/css/posts.css" type="text/css">
+  <title><%= post._id %></title>
+</head>
 
-<img src='<%= post.image.data %>'>
-<p>Source: <%= post.source %></p>
-<p>Title: <%= post.title %></p>
-<p>Tags:</p>
-<ul>
-  <% for (const tag of post.tags) { %>
-    <li><a href='/posts?tags=<%= tag %>'><%= tag %></a></li>
-  <% } %>
-</ul>
-
+<body>
+  <div class="container">
+      <% include ../partials/search-bar.ejs %>
+      <div id="content">
+          <section class="tags">
+              <ul>
+                  <% if (tags && tags.length > 0) { %>
+                      <% for (const tag of tags) { %>
+                          <li><a href="/posts?tags=<%= tag.name %>"><%= tag.name %></a> <span><%= tag.occurences %></span></li>
+                      <% } %>
+                  <% } %>
+              </ul>
+          </section>
+          <section class="image">
+              <img src='<%= post.image.data %>'>
+          </section>
+      </div>
+    
+    <p>Source: <%= post.source %></p>
+    <p>Title: <%= post.title %></p>
+  </div>
+  
 <% include ../partials/footer.ejs %>
