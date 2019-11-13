@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema({
-  image: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Image'
-  },
+  imageLink: String, 
   source: String,
   title: String,
   tags: [String]

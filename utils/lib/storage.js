@@ -3,7 +3,7 @@ const multer = require('multer'),
 
 module.exports = multer({ storage: multer.diskStorage({
   destination: (req, res, cb) => {
-    cb(null, './uploads/');
+    cb(null, './public/uploads');
   },
   filename: (req, file, cb) => {
     cb(null, nameGen.generateRandomFilename(file));

@@ -24,9 +24,9 @@
             </section>
             <section class="thumbnails">
                 <% for (const post of posts) { %>
-                    <% if (post && post.image) { %>
+                    <% if (post && post.imageLink) { %>
                         <div class="thumbnail-preview">
-                            <a href="/posts/<%= post._id %>"><img src="<%= post.image.data %>"></a>
+                            <a href="/posts/<%= post._id %>"><img src="<%= post.imageLink %>"></a>
                         </div>
                     <% } %>
                 <% } %>

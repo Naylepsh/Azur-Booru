@@ -2,24 +2,9 @@ const express = require('express'),
   router = express(),
   fs = require('fs'),
   Storage = require('../utils').Storage,
-  Image = require('../models/image'),
   Post = require('../models/post');
 
 const IMAGES_PER_PAGE = 20;
-
-function binImgToStrImg(data, contentType){
-  const base64Flag = 'data:' + contentType + ';base64,';
-  const imageString = data.toString('base64');
-  return base64Flag + imageString;
-}
-
-async function createImage(file) {
-  const image = await Image.create({
-    contentType: file.mimetype,
-    data: binImgToStrImg(fs.readFileSync(file.path), file.mimetype)});
-  fs.unlinkSync(file.path);
-  return image;
-}
 
 async function getTagList(tagNames) {
   /* takes set ot tag names and returns a list of tags and their number of occurences in database */
@@ -48,8 +33,7 @@ router.get('/', async (req, res) => {
     let posts = await Post
     .find(tagsQuery)
     .skip((page - 1)*IMAGES_PER_PAGE)
-    .limit(IMAGES_PER_PAGE)
-    .populate('image');
+    .limit(IMAGES_PER_PAGE);
 
     // get all tags of those images
     const tagNames = new Set([].concat.apply([], posts.map( post => post.tags)));
@@ -74,9 +58,8 @@ router.get('/new', (req, res) => {
 
 router.post('/', Storage.single('image'), async (req, res) => {
   try {
-    const image = await createImage(req.file);
     const post = await Post.create({
-      image: image._id,
+      imageLink: `/uploads/${req.file.filename}`,
       source: req.body.source,
       title: req.body.title,
       tags: req.body.tags.split(' ').filter( tag => tag.length > 0)
@@ -91,8 +74,7 @@ router.post('/', Storage.single('image'), async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const post = await Post
-    .findById(req.params.id)
-    .populate('image');
+    .findById(req.params.id);
     
     const tags = await getTagList(post.tags);
     res.render('posts/show', {post: post, tags: tags});
