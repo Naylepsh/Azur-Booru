@@ -32,6 +32,7 @@ router.get('/', async (req, res) => {
     // get n-th 30 images
     let posts = await Post
     .find(tagsQuery)
+    .sort({ _id: -1 })
     .skip((page - 1)*IMAGES_PER_PAGE)
     .limit(IMAGES_PER_PAGE);
 
