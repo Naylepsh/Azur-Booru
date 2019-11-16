@@ -5,6 +5,8 @@
 #content {
   display: flex;
   flex-direction: row;
+  margin-top: 20px;
+  text-align: left;
 }
 
 .thumbnails {
@@ -32,4 +34,37 @@
 
 img {
   object-fit: contain;
+}
+
+.tags {
+  width: 200px;
+  text-align: left;
+  line-height: 1.25rem;
+}
+
+.tags > ul > li > span {
+  color: gray;
+}
+
+.post-info {
+  width: 200px;
+  border-right: 1px solid lightgray;
+  overflow-wrap: break-word;
+}
+
+.post-image {
+  margin-left: 20px;
+}
+
+.post-info > div {
+  margin: 25px 0px;
+}
+
+.post-info > .tags {
+  margin: 5px 0px;
+}
+
+
+.post-info > div > h4 {
+  margin-bottom: 10px;
 }

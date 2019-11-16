@@ -11,6 +11,7 @@ body {
 
 a {
   text-decoration: none;
+  color: #006FFA;
 }
 
 ul {
@@ -57,13 +58,4 @@ ul {
   border: 1px solid lightgray;
 }
 
-.tags {
-  border-right: 1px solid lightgray;
-  width: 150px;
-  text-align: left;
-  line-height: 1.25rem;
-}
 
-.tags > ul > li > span {
-  color: gray;
-}

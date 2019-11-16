@@ -2,10 +2,6 @@ h1 {
   font-size: 4rem;
 }
 
-a {
-  color: #006FFA;
-}
-
 #links {
   text-align: center;
   margin-bottom: 10px;
@@ -18,8 +14,3 @@ a {
 #main {
   margin-top: 100px;
 }
-
-/* .search-bar > #search {
-  width: 40%;
-} */
-

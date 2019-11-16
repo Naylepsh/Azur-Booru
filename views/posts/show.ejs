@@ -11,24 +11,33 @@
 
 <body>
   <div class="container">
-      <% include ../partials/search-bar.ejs %>
-      <div id="content">
-          <section class="tags">
-              <ul>
-                  <% if (tags && tags.length > 0) { %>
-                      <% for (const tag of tags) { %>
-                          <li><a href="/posts?tags=<%= tag.name %>"><%= tag.name %></a> <span><%= tag.occurences %></span></li>
-                      <% } %>
-                  <% } %>
-              </ul>
-          </section>
-          <section class="image">
-              <img src='<%= post.imageLink %>'>
-          </section>
-      </div>
-    
-    <p>Source: <%= post.source %></p>
-    <p>Title: <%= post.title %></p>
+    <% include ../partials/search-bar.ejs %>
+    <div id="content">
+      <section class="post-info">
+        <div class="tags">
+          <h4>Tags</h4>
+          <ul>
+            <% if (tags && tags.length > 0) { %>
+              <% for (const tag of tags) { %>
+                <li><a href="/posts?tags=<%= tag.name %>"><%= tag.name %></a> <span><%= tag.occurences %></span></li>
+              <% } %>
+            <% } %>
+          </ul>
+        </div>
+        <div>
+          <h4>Statistics</h4>
+          <p>Id: <%= post._id %></p>
+          <p>Source: <%= post.source %></p>
+          <p>Title: <%= post.title %></p>
+        </div>
+        <div>
+          <h4>Options</h4>
+        </div>
+      </section>
+      <section class="post-image">
+        <img src='<%= post.imageLink %>'>
+      </section>
+    </div>
   </div>
   
 <% include ../partials/footer.ejs %>

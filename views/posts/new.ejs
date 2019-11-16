@@ -1,22 +1,38 @@
-<% include ../partials/header.ejs %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet"> 
+  <link rel="stylesheet" href="/css/main.css" type="text/css">
+  <link rel="stylesheet" href="/css/new-post.css" type="text/css">
+  <title>Upload | Azur-booru</title>
+</head>
+<body>
+  <div class="container">
+    <form action="/posts" method="POST" enctype="multipart/form-data">
+      <div>
+        <label for="image">Image</label>
+        <input type="file" accept="image/*" name="image" id="image">
+      </div>
+      <div>
+        <label for="source">Source</label>
+        <input type="text" name="source" id="source">
+      </div>
+      <div>
+        <label for="tags">Tags</label>
+        <textarea name="tags" id="tags"></textarea>
+      </div>
+      <div>
+          <label for="rating">Rating</label>
+          <input type="radio" name="rating" value="explicit">Explicit
+          <input type="radio" name="rating" value="questionable">Questionable
+          <input type="radio" name="rating" value="safe">Safe
+        </div>
+      <button>Upload</button>
+    </form>
+  </div>
 
-<h1>Upload image form</h1>
 
-<form action="/posts" method="POST" enctype="multipart/form-data">
-    <label>File:
-        <input type="file" accept="image/*" name="image">
-    </label>
-    <label>Source:
-        <input type="text" name="source">
-    </label>
-    <label>Title:
-        <input type="text" name="title">
-    </label>
-    <label>Tags:
-        <textarea name="tags"></textarea>
-    </label>
-    
-    <button>Submit</button>
-</form>
 
 <% include ../partials/footer.ejs %>
