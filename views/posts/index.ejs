@@ -35,7 +35,11 @@
     <section class="pagination">
       <span class="pages">
         <% for (let i = Math.max(1, page_info.page - 5); i <= Math.min(page_info.max_page, page_info.page + 5); i++) { %>
-          <a href="/posts?page=<%= i %>""><%= i %></a>
+          <% if (i == page_info.page) { %>
+            <a id="active-page" href="/posts?page=<%= i %>""><%= i %></a>
+          <% } else { %>
+            <a href="/posts?page=<%= i %>""><%= i %></a>
+          <% } %>
         <% } %>
       </span>
     </section>   

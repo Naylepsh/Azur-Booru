@@ -11,7 +11,7 @@ body {
 
 a {
   text-decoration: none;
-  color: #006FFA;
+  color: #194b96;
 }
 
 ul {
@@ -37,10 +37,10 @@ ul {
 }
 
 .search-bar > button {
-  background-color: #006FFA;
+  background-color: #194b96;
   color: #FFF;
   font-weight: bold;
-  border-color: #006FFA;
+  border-color: #194b96;
   border-style: solid;
   border-radius: 12%;
   width: 100px;
@@ -71,4 +71,8 @@ ul {
   height: 3px;
   background-color: black;
   display: inline-block;
+}
+
+#active-page {
+  background-color: #194b96;
 }
