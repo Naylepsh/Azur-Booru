@@ -51,11 +51,24 @@ ul {
   width: calc(100% - 100px);
 }
 
-
-.pagination > a {
-  padding: 8px 12px;
-  color: #006FFA;
-  border: 1px solid lightgray;
+.pagination {
+  display: flex;
+  justify-content: center;
 }
 
 
+.pagination > .pages > a {
+  position: relative;
+  top: -8px;
+  padding: 8px 12px;
+  margin: 10px 10px;
+  color: white;
+  border-radius: 50%;
+  background-color: black;
+}
+
+.pages {
+  height: 3px;
+  background-color: black;
+  display: inline-block;
+}

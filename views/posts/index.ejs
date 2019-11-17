@@ -1,42 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet"> 
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/posts.css">
-    <title>Image List</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet"> 
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/posts.css">
+  <title>Image List</title>
 </head>
 
 <body>
-    <div class="container">
-        <% include ../partials/search-bar.ejs %>
-        <div id="content">
-            <section class="tags">
-                <ul>
-                    <% if (tags) { %>
-                        <% for (const tag of tags) { %>
-                            <li><a href="/posts?tags=<%= tag.name %>"><%= tag.name %></a> <span><%= tag.occurences %></span></li>
-                        <% } %>
-                    <% } %>
-                </ul>
-            </section>
-            <section class="thumbnails">
-                <% for (const post of posts) { %>
-                    <% if (post && post.imageLink) { %>
-                        <div class="thumbnail-preview">
-                            <a href="/posts/<%= post._id %>"><img src="<%= post.imageLink %>"></a>
-                        </div>
-                    <% } %>
-                <% } %>
-            </section>
-        </div>
-        <section class="pagination">
-            <% for (let i = Math.max(1, page_info.page - 5); i <= Math.min(page_info.max_page, page_info.page + 5); i++) { %>
-                <a href="/posts?page=<%= i %>""><%= i %></a>
+  <div class="container">
+    <% include ../partials/search-bar.ejs %>
+    <div id="content">
+      <section class="tags">
+        <ul>
+          <% if (tags) { %>
+            <% for (const tag of tags) { %>
+              <li><a href="/posts?tags=<%= tag.name %>"><%= tag.name %></a> <span><%= tag.occurences %></span></li>
             <% } %>
-        </section>    
+          <% } %>
+        </ul>
+      </section>
+      <section class="thumbnails">
+        <% for (const post of posts) { %>
+          <% if (post && post.imageLink) { %>
+            <div class="thumbnail-preview">
+              <a href="/posts/<%= post._id %>"><img src="<%= post.imageLink %>"></a>
+            </div>
+          <% } %>
+        <% } %>
+      </section>
     </div>
+    <section class="pagination">
+      <span class="pages">
+      <% for (let i = Math.max(1, page_info.page - 5); i <= Math.min(page_info.max_page, page_info.page + 5); i++) { %>
+        <a href="/posts?page=<%= i %>""><%= i %></a>
+      <% } %>
+    </span>
+    </section>   
+  </div>
 
 <% include ../partials/footer.ejs %>
