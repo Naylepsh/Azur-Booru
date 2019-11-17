@@ -34,10 +34,10 @@
     </div>
     <section class="pagination">
       <span class="pages">
-      <% for (let i = Math.max(1, page_info.page - 5); i <= Math.min(page_info.max_page, page_info.page + 5); i++) { %>
-        <a href="/posts?page=<%= i %>""><%= i %></a>
-      <% } %>
-    </span>
+        <% for (let i = Math.max(1, page_info.page - 5); i <= Math.min(page_info.max_page, page_info.page + 5); i++) { %>
+          <a href="/posts?page=<%= i %>""><%= i %></a>
+        <% } %>
+      </span>
     </section>   
   </div>
 
