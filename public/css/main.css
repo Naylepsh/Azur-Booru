@@ -11,7 +11,7 @@ body {
 
 a {
   text-decoration: none;
-  color: #194b96;
+  color: black;
 }
 
 ul {
@@ -26,6 +26,17 @@ ul {
   display: flex;
   flex-direction: column;
 }
+
+.nav-bar {
+  display: flex;
+  justify-content: space-around;
+  font-size: 18px;
+}
+
+/* .masthead {
+  background: url("/assets/cover-pic.jpg") no-repeat 40% 15%;
+  padding-bottom: 300px;
+} */
 
 .search-bar {
   display: flex;

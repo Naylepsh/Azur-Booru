@@ -1,16 +1,46 @@
-h1 {
-  font-size: 4rem;
+body {
+  background: url("/assets/cover-pic.jpg") no-repeat center/cover;
+  height: 100vh;
+  width: 100%;
 }
 
-#links {
-  text-align: center;
-  margin-bottom: 10px;
+.landing-nav-bar {
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-#links > a {
-  margin: 0px 5px;
+.landing-nav-bar > * {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-#main {
-  margin-top: 100px;
+.landing-nav-bar > * > a {
+  color: white;
+  font-size: 24px;
+  margin: 0px 16px;
+}
+
+.container {
+  margin-top: 20%;
+}
+
+
+.container > h1 > a {
+  font-size: 54px;
+  text-shadow: -1px 0 rgba(0,0,0,0.5), 0 1px rgba(0,0,0,0.5), 1px 0 rgba(0,0,0,0.5), 0 -1px rgba(0,0,0,0.5);
+  color: white;
+}
+
+hr {
+  width: 200px;
+  margin: 15px auto;
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(255,255, 255, 0.25), rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.25));
+}
+
+.search-bar {
+  margin-top: 15px;
 }
