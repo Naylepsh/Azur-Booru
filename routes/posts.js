@@ -18,32 +18,35 @@ async function getTagList(tagNames) {
 
 router.get('/', async (req, res) => {
   try {
-    const tagsQuery = req.query.tags === undefined ? 
+    const tags = req.query.tags === undefined ? 
       {} : 
       {tags: { '$all' : req.query.tags.split(' ').filter( tag => tag.length > 0) }};
+    const tagsQuery = req.query.tags === undefined ?
+      undefined :
+      `tags=${req.query.tags.replace(/ /g, '+')}`;
 
     // get the number of records
-    const count = await Post.countDocuments(tagsQuery);
+    const count = await Post.countDocuments(tags);
 
     // set the page info
     const last_page = Math.ceil(count / IMAGES_PER_PAGE);
-    const current_page = req.query.page ? req.query.page : 1;
+    const current_page = req.query.page ? parseInt(req.query.page) : 1;
 
     // get n-th 30 images
     let posts = await Post
-    .find(tagsQuery)
+    .find(tags)
     .sort({ _id: -1 })
     .skip((current_page - 1)*IMAGES_PER_PAGE)
     .limit(IMAGES_PER_PAGE);
 
     // get all tags of those images
     const tagNames = new Set([].concat.apply([], posts.map( post => post.tags)));
-    const tags = await getTagList(tagNames);
+    const tagList = await getTagList(tagNames);
 
     res.render('posts/index', {
       posts: posts,
-      tags: tags,
-      tagsLink: req.query.tags.replace(/ /g, '+'), 
+      tags: tagList,
+      tagsQuery: tagsQuery, 
       page_info: {
         last_page: last_page, 
         current_page: current_page

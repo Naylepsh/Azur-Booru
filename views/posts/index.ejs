@@ -37,15 +37,15 @@
     </div>
     <section class="pagination">
       <span class="pages">
-        <a href="/posts?tags=<%= tagsLink %>"><<</a>
+        <a href="/posts?<%= tagsQuery %>"><<</a>
         <% for (let i = Math.max(1, page_info.current_page - 5); i <= Math.min(page_info.last_page, page_info.current_page + 5); i++) { %>
           <% if (i == page_info.current_page) { %>
-            <a id="active-page" href="/posts?page=<%= i %>&tags=<%= tagsLink %>"><%= i %></a>
+            <a id="active-page" href="/posts?page=<%= i %>&<%= tagsQuery %>"><%= i %></a>
           <% } else { %>
-            <a href="/posts?page=<%= i %>&tags=<%= tagsLink %>"><%= i %></a>
+            <a href="/posts?page=<%= i %>&<%= tagsQuery %>"><%= i %></a>
           <% } %>
         <% } %>
-        <a href="/posts?page=<%= page_info.last_page %>&tags=<%= tagsLink %>">>></a>
+        <a href="/posts?page=<%= page_info.last_page %>&<%= tagsQuery %>">>></a>
       </span>
     </section>   
   </div>
