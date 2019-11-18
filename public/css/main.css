@@ -70,18 +70,20 @@ ul {
 
 .pagination > .pages > a {
   position: relative;
-  top: -8px;
-  padding: 8px 12px;
+  top: -28px;
+  padding: 8px 8px;
   margin: 10px 10px;
   color: white;
   border-radius: 50%;
   background-color: black;
+  line-height: 24px;
+  width: 24px;
+  display: inline-block;
 }
 
 .pages {
   height: 3px;
   background-color: black;
-  display: inline-block;
 }
 
 #active-page {

@@ -26,14 +26,14 @@ router.get('/', async (req, res) => {
     const count = await Post.countDocuments(tagsQuery);
 
     // set the page info
-    const max_page = Math.ceil(count / IMAGES_PER_PAGE);
-    const page = req.query.page ? req.query.page : 1;
+    const last_page = Math.ceil(count / IMAGES_PER_PAGE);
+    const current_page = req.query.page ? req.query.page : 1;
 
     // get n-th 30 images
     let posts = await Post
     .find(tagsQuery)
     .sort({ _id: -1 })
-    .skip((page - 1)*IMAGES_PER_PAGE)
+    .skip((current_page - 1)*IMAGES_PER_PAGE)
     .limit(IMAGES_PER_PAGE);
 
     // get all tags of those images
@@ -42,10 +42,11 @@ router.get('/', async (req, res) => {
 
     res.render('posts/index', {
       posts: posts,
-      tags: tags, 
+      tags: tags,
+      tagsLink: req.query.tags.replace(/ /g, '+'), 
       page_info: {
-        max_page: max_page, 
-        page: page
+        last_page: last_page, 
+        current_page: current_page
       }});
 
   } catch(err) {
