@@ -48,10 +48,10 @@ ul {
 }
 
 .search-bar > button {
-  background-color: #194b96;
+  background-color: #0062d0;
   color: #FFF;
   font-weight: bold;
-  border-color: #194b96;
+  border-color: #0062d0;
   border-style: solid;
   border-radius: 12%;
   width: 100px;
@@ -86,6 +86,10 @@ ul {
   background-color: black;
 }
 
+.pages > a:hover {
+  background-color: #005abf;
+}
+
 #active-page {
-  background-color: #194b96;
+  background-color: #0062d0;
 }
