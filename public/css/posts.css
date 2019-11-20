@@ -10,7 +10,7 @@ body {
 }
 
 #content {
-  margin: 20px 0px;
+  margin: 25px 0px;
   display: grid;
   grid-template-columns: 200px 1000px;
 }
@@ -21,7 +21,7 @@ body {
   display: grid;
   grid-template-columns: 200px 200px 200px 200px 200px;
   grid-column-gap: 10px;
-  grid-row-gap: 10px;
+  grid-row-gap: 15px;
   align-content: flex-start;
 }
 
@@ -76,10 +76,6 @@ img {
 .tag > span {
   color: gray;
 }
-/* hr {
-  width: 80%;
-  margin: 0 auto;
-} */
 
 .post-info {
   width: 200px;
