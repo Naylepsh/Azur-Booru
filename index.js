@@ -8,6 +8,8 @@ const express = require('express'),
 const indexRoutes = require('./routes/index.js'),
   postsRoutes = require('./routes/posts');
 
+const PORT = 3000;
+
 // Mongo Config
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect('mongodb://localhost/booru', { useNewUrlParser: true, useFindAndModify: false });
@@ -22,6 +24,6 @@ app.use(express.static(__dirname + '/public'));
 // Populating DB
 seedDB();
   
-app.listen(3000, () => {
-    console.log('Booru server started at port 3000');
+app.listen(PORT, () => {
+    console.log(`Booru server started at port ${PORT}`);
 });
