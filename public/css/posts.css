@@ -13,29 +13,18 @@ body {
   display: flex;
   flex-direction: row;
   margin: 25px 0px;
-  text-align: left;
 }
 
 .thumbnails {
   width: 100%;
   margin-left: 10px;
   grid-template-columns: 200px 200px 200px 200px 200px;
+  grid-column-gap: 10px;
   display: grid;
 }
 
 .thumbnail-preview {
-  /* width: 200px;
-  height: 200px; */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 5px 5px;
-  background-color: rgba(237, 237, 237, 1);
-}
-
-.thumbnail-preview > a > img {
-  /* max-width: 200px;  */
-  max-height: 200px;
+  /* do nothing atm */
 }
 
 img {
@@ -46,7 +35,6 @@ img {
   width: 20%;
   text-align: left;
   line-height: 1.25rem;
-  /* border-right: 1px solid lightgray; */
 }
 
 .tags > ul {
