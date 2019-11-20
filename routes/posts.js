@@ -5,6 +5,7 @@ const express = require('express'),
   Post = require('../models/post');
 
 const IMAGES_PER_PAGE = 20;
+const TAGS_PER_PAGE = 15;
 
 async function getTagList(tagNames) {
   /* takes set ot tag names and returns a list of tags and their number of occurences in database */
@@ -23,41 +24,49 @@ async function makeThumbnail(pathToFile, pathToThumbnail) {
   await thumbnail.writeAsync(pathToThumbnail);
 }
 
+function getTagsDBQuery(tagQuery) {
+  if (tagQuery) {
+    return {tags: { '$all' : tagQuery.replace(/\s/g, ' ').split(' ').filter( tag => tag.length > 0) }};
+  }
+  return {};
+}
+
+function getPageInfo(numberOfRecords, query) {
+  return {
+    currentPage: query.page ? parseInt(query.page) : 1,
+    lastPage: Math.ceil(numberOfRecords / IMAGES_PER_PAGE)
+  }
+}
+
+function getElemsFromDB(model, query, toSkip, toLimit) {
+  return model.find(query).sort({ _id: -1 }).skip(toSkip).limit(toLimit);
+}
+
+async function getTags(posts, n) {
+  const tagNames = new Set([].concat.apply([], posts.map( post => post.tags)));
+  let tags = await getTagList(tagNames);
+  tags.sort( (t1,t2) => (t1.occurences > t2.occurences) ? 1 : -1);
+  tags = tags.slice(0, n);
+  tags.sort( (t1, t2) => (t1.name > t2.name) ? 1 : -1);
+  return tags;
+}
+
+
 router.get('/', async (req, res) => {
   try {
-    const tags = req.query.tags === undefined ? 
-      {} : 
-      {tags: { '$all' : req.query.tags.split(' ').filter( tag => tag.length > 0) }};
-    const tagsQuery = req.query.tags === undefined ?
-      undefined :
-      `tags=${req.query.tags.replace(/ /g, '+')}`;
+    const tagsDBQuery = getTagsDBQuery(req.query.tags);
+    const count = await Post.countDocuments(tagsDBQuery);
+    const pageInfo = getPageInfo(count, req.query);
 
-    // get the number of records
-    const count = await Post.countDocuments(tags);
-
-    // set the page info
-    const last_page = Math.ceil(count / IMAGES_PER_PAGE);
-    const current_page = req.query.page ? parseInt(req.query.page) : 1;
-
-    // get n-th 30 images
-    let posts = await Post
-    .find(tags)
-    .sort({ _id: -1 })
-    .skip((current_page - 1)*IMAGES_PER_PAGE)
-    .limit(IMAGES_PER_PAGE);
-
-    // get all tags of those images
-    const tagNames = new Set([].concat.apply([], posts.map( post => post.tags)));
-    const tagList = await getTagList(tagNames);
+    const posts = await getElemsFromDB(Post, tagsDBQuery, (pageInfo.currentPage - 1)*IMAGES_PER_PAGE, IMAGES_PER_PAGE);
+    const tags = await getTags(posts, TAGS_PER_PAGE);
 
     res.render('posts/index', {
-      posts: posts,
-      tags: tagList,
-      tagsQuery: tagsQuery, 
-      page_info: {
-        last_page: last_page, 
-        current_page: current_page
-      }});
+      posts,
+      tags,
+      pageInfo,
+      tagsQuery: req.query.tags, 
+    });
 
   } catch(err) {
     console.log(err);

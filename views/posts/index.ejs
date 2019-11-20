@@ -40,14 +40,14 @@
     <section class="pagination">
       <span class="pages">
         <a href="/posts?<%= ['page=1', tagsQuery].join('&') %>"><<</a>
-        <% for (let i = Math.max(1, page_info.current_page - 5); i <= Math.min(page_info.last_page, page_info.current_page + 5); i++) { %>
-          <% if (i == page_info.current_page) { %>
+        <% for (let i = Math.max(1, pageInfo.currentPage - 5); i <= Math.min(pageInfo.lastPage, pageInfo.currentPage + 5); i++) { %>
+          <% if (i == pageInfo.currentPage) { %>
             <a id="active-page" href="/posts?['page='+i, tagsQuery].join('&') %>"><%= i %></a>
           <% } else { %>
             <a href="/posts?<%= ['page='+i, tagsQuery].join('&') %>"><%= i %></a>
           <% } %>
         <% } %>
-        <a href="/posts?<%= ['page='+page_info.last_page, tagsQuery].join('&') %>">>></a>
+        <a href="/posts?<%= ['page='+pageInfo.lastPage, tagsQuery].join('&') %>">>></a>
       </span>
     </section>   
   </div>
