@@ -19,10 +19,8 @@ body {
 .thumbnails {
   width: 100%;
   margin-left: 10px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
+  grid-template-columns: 200px 200px 200px 200px 200px;
+  display: grid;
 }
 
 .thumbnail-preview {

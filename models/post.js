@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema({
-  imageLink: String, 
+  imageLink: String,
+  thumbnailLink: String,
   source: String,
   title: String,
   tags: [String]

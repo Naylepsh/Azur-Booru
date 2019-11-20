@@ -1,6 +1,6 @@
 const express = require('express'),
   router = express(),
-  fs = require('fs'),
+  jimp = require('jimp'),
   Storage = require('../utils').Storage,
   Post = require('../models/post');
 
@@ -14,6 +14,13 @@ async function getTagList(tagNames) {
     tags.push({name: tag, occurences: occurences});
   }
   return tags;
+}
+
+async function makeThumbnail(pathToFile, pathToThumbnail) {
+  const image = await jimp.read(pathToFile);
+  let thumbnail = image.clone();
+  thumbnail.cover(200, 200);
+  await thumbnail.writeAsync(pathToThumbnail);
 }
 
 router.get('/', async (req, res) => {
@@ -63,12 +70,15 @@ router.get('/new', (req, res) => {
 
 router.post('/', Storage.single('image'), async (req, res) => {
   try {
+    await makeThumbnail(`./public/uploads/${req.file.filename}`, `./public/thumbnails/thumbnail_${req.file.filename}`);
     const post = await Post.create({
       imageLink: `/uploads/${req.file.filename}`,
+      thumbnailLink: `/thumbnails/thumbnail_${req.file.filename}`,
       source: req.body.source,
       title: req.body.title,
       tags: req.body.tags.split(' ').filter( tag => tag.length > 0)
     });
+    console.log(post);
     res.redirect('/posts');
   } catch(err) {
     console.log(err);

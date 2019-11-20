@@ -31,7 +31,7 @@
         <% for (const post of posts) { %>
           <% if (post && post.imageLink) { %>
             <div class="thumbnail-preview">
-              <a href="/posts/<%= post._id %>"><img src="<%= post.imageLink %>"></a>
+              <a href="/posts/<%= post._id %>"><img src="<%= post.thumbnailLink%>"></a>
             </div>
           <% } %>
         <% } %>
