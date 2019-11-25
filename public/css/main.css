@@ -47,6 +47,10 @@ ul {
   margin: 0px 16px;
 }
 
+#brand {
+  font-size: 28px;
+}
+
 /* .masthead {
   background: url("/assets/cover-pic.jpg") no-repeat 40% 15%;
   padding-bottom: 300px;

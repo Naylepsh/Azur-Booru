@@ -10,34 +10,33 @@
 </head>
 
 <body>
+  <% include ../partials/nav-bar.ejs %>
   <div class="container">
     <% include ../partials/search-bar.ejs %>
     <div id="content">
-      <section class="post-info">
-        <div class="tags">
-          <h4>Tags</h4>
+      <div class="sidebar">
+        <% include ../partials/tag-list.ejs %>
+        <section class="sidebar-section-generic">
+          <div class="sidebar-section-name">
+            <h3>Statistics</h3>
+          </div>
           <ul>
-            <% if (tags && tags.length > 0) { %>
-              <% for (const tag of tags) { %>
-                <li><a href="/posts?tags=<%= tag.name %>"><%= tag.name %></a> <span><%= tag.occurences %></span></li>
-              <% } %>
-            <% } %>
+            <div><li class="sidebar-section-generic-content"><span>Id:</span><span><%= post._id %></span></li></div>
+            <div><li class="sidebar-section-generic-content"><span>Source:</span><span><%= post.source %></span></li></div>
+            <div><li class="sidebar-section-generic-content"><span>Title:</span><span><%= post.title %></span></li></div>
           </ul>
-        </div>
-        <div>
-          <h4>Statistics</h4>
-          <p>Id: <%= post._id %></p>
-          <p>Source: <%= post.source %></p>
-          <p>Title: <%= post.title %></p>
-        </div>
-        <div>
-          <h4>Options</h4>
-        </div>
-      </section>
+        </section>
+        <section>
+          <div class="sidebar-section-name">
+            <h3>Options</h3>
+          </div>
+        </section>
+      </div>
       <section class="post-image">
         <img src='<%= post.imageLink %>'>
       </section>
     </div>
   </div>
-  
+
+  <script src="/js/tags.js"></script>
 <% include ../partials/footer.ejs %>

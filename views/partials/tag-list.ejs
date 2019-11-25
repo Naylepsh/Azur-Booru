@@ -1,0 +1,14 @@
+<section class="tags">
+  <div class="sidebar-section-name">
+    <h3>tags</h3>
+  </div>
+  <ul>
+    <% if (tags) { %>
+      <% for (const tag of tags) { %>
+        <div>
+        <li class="tag"><a href="/posts?tags=<%= tag.name %>"><%= tag.name %></a> <span><%= tag.occurences %></span></li>
+        </div>
+      <% } %>
+    <% } %>
+  </ul>
+</section>

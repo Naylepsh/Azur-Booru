@@ -14,17 +14,9 @@
   <div class="container">
     <% include ../partials/search-bar.ejs %>
     <div id="content">
-      <section class="tags">
-        <ul>
-          <% if (tags) { %>
-            <% for (const tag of tags) { %>
-              <div>
-              <li class="tag"><a href="/posts?tags=<%= tag.name %>"><%= tag.name %></a> <span><%= tag.occurences %></span></li>
-              </div>
-            <% } %>
-          <% } %>
-        </ul>
-      </section>
+      <div class="sidebar">
+        <% include ../partials/tag-list.ejs %>
+      </div>
       <section class="thumbnails">
         <% for (const post of posts) { %>
           <% if (post && post.imageLink) { %>

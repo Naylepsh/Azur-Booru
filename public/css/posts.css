@@ -33,16 +33,27 @@ img {
   height: auto;
 }
 
-.tags {
+.sidebar {
   text-align: left;
   line-height: 1.25rem;
+  width: 200px;
+  overflow-wrap: break-word;
 }
 
-.tags > ul {
+.sidebar > section:first-of-type {
+  margin: 0;
+}
+
+.sidebar > section:last-of-type {
+  margin: 0;
+}
+
+.sidebar > section {
   border: 2px solid black;
+  margin: 10px 0;
 }
 
-.tags > ul > div:after {
+.sidebar > section > ul > div:after {
   content: "";
   display: block;
   margin: 0 auto;
@@ -50,15 +61,28 @@ img {
   border-bottom: 1px solid black;
 }
 
-.tags > ul > div:last-child:after {
+.sidebar > section > ul > div:last-child:after {
   border: none;
+}
+
+.sidebar-section-generic-content {
+  padding: 10px 10px;
+  margin: 5px 5px;
+}
+
+.sidebar-section-name {
+  color: white;
+  background-color: #0062d0;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 15px 15px;
 }
 
 .tag {
   display: flex;
   justify-content: space-between;
-  padding: 15px 15px;
-  margin: 3px 3px;
+  padding: 10px 10px;
+  margin: 5px 5px;
 }
 
 .tag:hover {
@@ -75,6 +99,7 @@ img {
 
 .tag > a {
   text-transform: uppercase;
+  color: #0062d0;
 }
 
 .tag > span {
@@ -93,25 +118,10 @@ img {
   color: rgba(255, 255, 255, 0.8);
 }
 
-.post-info {
-  width: 200px;
-  border-right: 1px solid lightgray;
-  overflow-wrap: break-word;
-}
 
 .post-image {
   margin-left: 20px;
 }
 
-.post-info > div {
-  margin: 25px 0px;
-}
-
-.post-info > .tags {
-  margin: 5px 0px;
-}
 
 
-.post-info > div > h4 {
-  margin-bottom: 10px;
-}
