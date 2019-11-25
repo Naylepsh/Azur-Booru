@@ -77,6 +77,18 @@ img {
   color: gray;
 }
 
+.active-tag {
+  background-color: #0062d0;
+}
+
+.active-tag > a {
+  color: white;
+}
+
+.active-tag > span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .post-info {
   width: 200px;
   border-right: 1px solid lightgray;

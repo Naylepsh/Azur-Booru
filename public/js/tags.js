@@ -1,16 +1,32 @@
 /* scripts for handling tag-related events */
 
 let searchBar = document.getElementById('search');
+let tagElements = document.getElementsByClassName('tag');
+const tagNames = getTagNames(tagElements);
+for (let tagElement of tagElements) {
+  tagElement.addEventListener('click', () => toggleSearchTag(tagElement));
+}
 toggleQueryTagsOnSearchBar();
 
 function toggleQueryTagsOnSearchBar() {
-  let tags = getQueryVariable('tags');
-  if (tags) {
-    tags = tags.replace(/[%20, +]/g, ' ').split(' ').filter( tag => tag.length > 0);
-    for (const tag of tags) {
-      toggleSearchTag(tag);
+  let tagQueries = getQueryVariable('tags');
+  if (tagQueries) {
+    tagQueries = tagQueries.replace(/[%20, +]/g, ' ').split(' ').filter( tag => tag.length > 0);
+    for (const tag of tagQueries) {
+      const i = tagNames.indexOf(tag);
+      if (i > -1) {
+        toggleSearchTag(tagElements[i]);
+      }
     }
   }
+}
+
+function getTagNames(tagElems) {
+  names = [];
+  for (const tag of tagElems) {
+    names.push(tag.childNodes[0].innerHTML);
+  }
+  return names;
 }
 
 function getQueryVariable(variable)
@@ -26,7 +42,8 @@ function getQueryVariable(variable)
   return;
 }
 
-function toggleSearchTag(tagName) {
+function toggleSearchTag(tagElement) {
+  let tagName = tagElement.childNodes[0].innerHTML;
   let toggledTags = searchBar.value.split(' ').filter( tag => tag.length > 0);
   const i = toggledTags.indexOf(tagName);
   if (i > -1) {
@@ -34,11 +51,6 @@ function toggleSearchTag(tagName) {
   } else {
     toggledTags.push(tagName);
   }
+  tagElement.classList.toggle('active-tag');
   searchBar.value = toggledTags.join(' ');
-}
-
-let tags = document.getElementsByClassName('tag');
-for (let tag of tags) {
-  tag.addEventListener('click', () => toggleSearchTag(tag.childNodes[0].innerHTML));
-  // add .active class to clicked tags
 }
