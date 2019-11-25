@@ -5,28 +5,32 @@ body {
   height: 100vh;
 }
 
-#search-bar {
-  width: 100%;
+.nav-bar {
+  background: rgba(0,0,0,0.9);
+}
+
+.search-bar {
+  margin-top: 25px;
 }
 
 #content {
   margin: 25px 0px;
   display: grid;
-  grid-template-columns: 200px 1000px;
+  grid-template-columns: 200px calc(100% - 200px);
 }
 
 .thumbnails {
   width: 100%;
-  margin-left: 10px;
+  margin-left: 2%;
   display: grid;
-  grid-template-columns: 200px 200px 200px 200px 200px;
-  grid-column-gap: 10px;
-  grid-row-gap: 15px;
-  align-content: flex-start;
+  grid-template-columns: 18% 18% 18% 18% 18%;
+  grid-column-gap: 2%;
+  align-content: space-between;
 }
 
 img {
-  object-fit: contain;
+  max-width: 100%;
+  height: auto;
 }
 
 .tags {
