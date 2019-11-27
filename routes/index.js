@@ -1,5 +1,5 @@
-const express = require('express'),
-  router = express();
+const express = require('express');
+const router = express();
 
 router.get('/', (req, res) => {
   res.render('landing');

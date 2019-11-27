@@ -1,12 +1,11 @@
-const express = require('express'),
-  app = express(),
-  mongoose = require('mongoose'),
-  bodyParser = require('body-parser'),
-  seedDB = require('./utils/lib/seeds');
-  // Post = require('./models/post');
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const seedDB = require('./utils/lib/seeds');
 
-const indexRoutes = require('./routes/index.js'),
-  postsRoutes = require('./routes/posts');
+const indexRoutes = require('./routes/index.js');
+const postsRoutes = require('./routes/posts');
 
 const PORT = 3000;
 

@@ -1,8 +1,8 @@
-const express = require('express'),
-  router = express(),
-  jimp = require('jimp'),
-  Storage = require('../utils').Storage,
-  Post = require('../models/post');
+const express = require('express');
+const router = express();
+const jimp = require('jimp');
+const Storage = require('../utils').Storage;
+const Post = require('../models/post');
 
 const IMAGES_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
