@@ -2,7 +2,7 @@
 
 const sections = document.querySelectorAll('.sidebar > section');
 
-function hideSidebarSubcontent() {
+function collapseSidebarSubcontent() {
   for (const section of sections) {
     toggleSectionVisiblity(section);
   }
@@ -20,5 +20,5 @@ function makeSectionsClickable() {
   }
 }
 
-hideSidebarSubcontent();
+collapseSidebarSubcontent();
 makeSectionsClickable();
