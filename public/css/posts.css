@@ -68,6 +68,8 @@ img {
 .sidebar-section-generic-content {
   padding: 10px 10px;
   margin: 5px 5px;
+  text-transform: uppercase;
+  color: #194b96;
 }
 
 .sidebar-section-name {

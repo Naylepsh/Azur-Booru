@@ -112,3 +112,7 @@ ul {
 #active-page {
   background-color: #0062d0;
 }
+
+.disabled {
+  display: none;
+}

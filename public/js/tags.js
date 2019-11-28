@@ -1,4 +1,4 @@
-/* scripts for handling tag-related events */
+/* scripts for handling tags related operations */
 
 let searchBar = document.getElementById('search');
 let tagElements = document.getElementsByClassName('tag');

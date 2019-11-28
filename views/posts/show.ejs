@@ -26,10 +26,13 @@
             <div><li class="sidebar-section-generic-content"><span>Title:</span><span><%= post.title %></span></li></div>
           </ul>
         </section>
-        <section>
+        <section class="sidebar-section-generic">
           <div class="sidebar-section-name">
-            <h3>Options</h3>
+            <h3>Options</h3> 
           </div>
+          <ul>
+            <div><li class="sidebar-section-generic-content">Edit</li></div>
+          </ul>
         </section>
       </div>
       <section class="post-image">
@@ -39,4 +42,5 @@
   </div>
 
   <script src="/js/tags.js"></script>
+  <script src="/js/sidebar.js"></script>
 <% include ../partials/footer.ejs %>
