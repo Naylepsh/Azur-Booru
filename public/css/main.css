@@ -28,33 +28,43 @@ ul {
 }
 
 .nav-bar {
-  padding: 5px 0;
-  font-size: 18px;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.nav-bar > * {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-.nav-bar > * > a {
-  color: white;
+  position: relative;
+  padding: 15px 0;
   font-size: 24px;
+  background: rgba(0,0,0,0.5);
+  height: 30px;
+}
+
+.nav-bar a {
+  color: white;
   margin: 0px 16px;
 }
 
-#brand {
-  font-size: 28px;
+.pure-menu {
+  position: absolute;
+  top: 15px;
+  right: 0;
 }
 
-/* .masthead {
-  background: url("/assets/cover-pic.jpg") no-repeat 40% 15%;
-  padding-bottom: 300px;
-} */
+#mobile-menu-toggler {
+  display: none;
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 60px;
+  background: rgba(0,0,0,0.5);
+  width: 100%;
+}
+
+.mobile-menu > ul > li {
+  padding: 10px 0;
+}
+
+#brand {
+  color: white;
+  float: left;
+}
 
 .search-bar {
   display: flex;
@@ -86,7 +96,6 @@ ul {
   justify-content: center;
 }
 
-
 .pagination > .pages > a {
   position: relative;
   top: -28px;
@@ -115,4 +124,18 @@ ul {
 
 .disabled {
   display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .desktop-menu {
+    display: none;
+  }
+
+  .pure-menu > a {
+    display: none;
+  }
+
+  #mobile-menu-toggler {
+    display: block;
+  }
 }

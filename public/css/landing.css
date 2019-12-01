@@ -30,3 +30,27 @@ hr {
 .search-bar {
   margin-top: 15px;
 }
+
+@media only screen and (max-width: 768px) {
+  .container {
+    padding: 100px 0;
+  }
+
+  .container * {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-bar > #search {
+    width: 190px;
+  }
+  .search-bar > button {
+    width: 200px;
+    border-radius: 10%;
+  }
+}
