@@ -48,6 +48,7 @@ ul {
 
 #mobile-menu-toggler {
   display: none;
+  cursor: pointer;
 }
 
 .mobile-menu {
