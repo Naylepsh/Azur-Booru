@@ -25,7 +25,8 @@ body {
   display: grid;
   grid-template-columns: 18% 18% 18% 18% 18%;
   grid-column-gap: 2%;
-  align-content: space-between;
+  grid-row-gap: 10px;
+  align-content: flex-start;
 }
 
 img {

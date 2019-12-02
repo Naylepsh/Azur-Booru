@@ -33,16 +33,17 @@
         <a href="/posts?<%= ['page=1', 'tags='+tagsQuery].join('&') %>"><<</a>
         <% for (let i = Math.max(1, pageInfo.currentPage - 5); i <= Math.min(pageInfo.lastPage, pageInfo.currentPage + 5); i++) { %>
           <% if (i == pageInfo.currentPage) { %>
-            <a id="active-page" href="/posts?['page='+i, 'tags='+tagsQuery].join('&') %>"><%= i %></a>
+            <a id="active-page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
           <% } else { %>
-            <a href="/posts?<%= ['page='+i, 'tags='+tagsQuery].join('&') %>"><%= i %></a>
+            <a href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
           <% } %>
         <% } %>
-        <a href="/posts?<%= ['page='+pageInfo.lastPage, 'tags='+tagsQuery].join('&') %>">>></a>
+        <a href="/posts?page=<%= pageInfo.lastPage %><%= tagsQuery ? '&tags='+tagsQuery : ''%>">>></a>
       </span>
     </section>   
   </div>
 
   <script src="/js/tags.js"></script>
+  <script src="/js/sidebar.js"></script>
   <script src="/js/nav-bar.js"></script>
 <% include ../partials/footer.ejs %>
