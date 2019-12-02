@@ -1,5 +1,5 @@
-const multer = require('multer'),
-  nameGen = require('./name-gen');
+const multer = require('multer');
+const nameGen = require('./name-gen');
 
 module.exports = multer({ storage: multer.diskStorage({
   destination: (req, res, cb) => {

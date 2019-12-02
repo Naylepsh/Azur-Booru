@@ -1,5 +1,5 @@
-const crypto = require('crypto'),
-  path = require('path');
+const crypto = require('crypto');
+const path = require('path');
 
 module.exports = {
   generateRandomFilename(file){
