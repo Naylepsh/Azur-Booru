@@ -3,8 +3,8 @@
 const mobileMenu = document.getElementsByClassName('mobile-menu')[0];
 const navBar = document.querySelector('nav');
 
-function toggleMobileMenu(data) {
-  mobileMenu.classList.toggle('disabled');
+function toggleMobileMenu(_) {
+  mobileMenu.classList.toggle('enabled-menu-element');
   navBar.classList.toggle('extending-element');
 }
 
