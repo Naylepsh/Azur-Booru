@@ -20,7 +20,9 @@ async function getTagList(tagNames) {
 async function makeThumbnail(pathToFile, pathToThumbnail) {
   const image = await jimp.read(pathToFile);
   let thumbnail = image.clone();
-  thumbnail.cover(200, 200);
+  const xSize = 200;
+  const ySize = 200;
+  thumbnail.cover(xSize, ySize);
   await thumbnail.writeAsync(pathToThumbnail);
 }
 
@@ -87,7 +89,6 @@ router.post('/', Storage.single('image'), async (req, res) => {
       title: req.body.title,
       tags: req.body.tags.split(' ').filter( tag => tag.length > 0)
     });
-    console.log(post);
     res.redirect('/posts');
   } catch(err) {
     console.log(err);
