@@ -62,7 +62,7 @@ ul {
 }
 
 #brand {
-  color: rgb(129, 3, 3);
+  color: white;
   float: left;
 }
 
@@ -81,7 +81,6 @@ ul {
   font-weight: bold;
   border-color: #0062d0;
   border-style: solid;
-  border-radius: 12%;
   width: 100px;
   margin: 0px 5px;
 }
