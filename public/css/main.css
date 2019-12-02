@@ -32,7 +32,6 @@ ul {
   padding: 15px 0;
   font-size: 24px;
   background: rgba(0,0,0,0.5);
-  height: 30px;
 }
 
 .nav-bar a {
@@ -53,7 +52,7 @@ ul {
 
 .mobile-menu {
   position: absolute;
-  top: 60px;
+  top: 59px;
   background: rgba(0,0,0,0.5);
   width: 100%;
 }
