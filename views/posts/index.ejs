@@ -14,10 +14,10 @@
   <% include ../partials/nav-bar.ejs %>
   <div class="container">
     <% include ../partials/search-bar.ejs %>
+    <aside class="sidebar">
+      <% include ../partials/tag-list.ejs %>
+    </aside>
     <div id="content">
-      <div class="sidebar">
-        <% include ../partials/tag-list.ejs %>
-      </div>
       <section class="thumbnails">
         <% for (const post of posts) { %>
           <% if (post && post.imageLink) { %>
@@ -27,20 +27,20 @@
           <% } %>
         <% } %>
       </section>
-    </div>
-    <section class="pagination">
-      <span class="pages">
-        <a href="/posts?<%= ['page=1', 'tags='+tagsQuery].join('&') %>"><<</a>
-        <% for (let i = Math.max(1, pageInfo.currentPage - 5); i <= Math.min(pageInfo.lastPage, pageInfo.currentPage + 5); i++) { %>
-          <% if (i == pageInfo.currentPage) { %>
-            <a id="active-page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
-          <% } else { %>
-            <a href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
+      <section class="pagination">
+        <span class="pages">
+          <a href="/posts?<%= ['page=1', 'tags='+tagsQuery].join('&') %>"><<</a>
+          <% for (let i = Math.max(1, pageInfo.currentPage - 5); i <= Math.min(pageInfo.lastPage, pageInfo.currentPage + 5); i++) { %>
+            <% if (i == pageInfo.currentPage) { %>
+              <a id="active-page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
+            <% } else { %>
+              <a href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
+            <% } %>
           <% } %>
-        <% } %>
-        <a href="/posts?page=<%= pageInfo.lastPage %><%= tagsQuery ? '&tags='+tagsQuery : ''%>">>></a>
-      </span>
-    </section>   
+          <a href="/posts?page=<%= pageInfo.lastPage %><%= tagsQuery ? '&tags='+tagsQuery : ''%>">>></a>
+        </span>
+      </section>
+    </div>
   </div>
 
   <script src="/js/tags.js"></script>

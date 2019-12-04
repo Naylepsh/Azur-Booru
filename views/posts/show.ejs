@@ -14,28 +14,28 @@
   <% include ../partials/nav-bar.ejs %>
   <div class="container">
     <% include ../partials/search-bar.ejs %>
+    <aside class="sidebar">
+      <% include ../partials/tag-list.ejs %>
+      <section class="sidebar-section-generic">
+        <div class="sidebar-section-name">
+          <h3>Statistics</h3>
+        </div>
+        <ul>
+          <div><li class="sidebar-section-generic-content"><span>Id:</span><span><%= post._id %></span></li></div>
+          <div><li class="sidebar-section-generic-content"><span>Source:</span><span><%= post.source %></span></li></div>
+          <div><li class="sidebar-section-generic-content"><span>Title:</span><span><%= post.title %></span></li></div>
+        </ul>
+      </section>
+      <section class="sidebar-section-generic">
+        <div class="sidebar-section-name">
+          <h3>Options</h3> 
+        </div>
+        <ul>
+          <div><li class="sidebar-section-generic-content">Edit</li></div>
+        </ul>
+      </section>
+    </aside>
     <div id="content">
-      <div class="sidebar">
-        <% include ../partials/tag-list.ejs %>
-        <section class="sidebar-section-generic">
-          <div class="sidebar-section-name">
-            <h3>Statistics</h3>
-          </div>
-          <ul>
-            <div><li class="sidebar-section-generic-content"><span>Id:</span><span><%= post._id %></span></li></div>
-            <div><li class="sidebar-section-generic-content"><span>Source:</span><span><%= post.source %></span></li></div>
-            <div><li class="sidebar-section-generic-content"><span>Title:</span><span><%= post.title %></span></li></div>
-          </ul>
-        </section>
-        <section class="sidebar-section-generic">
-          <div class="sidebar-section-name">
-            <h3>Options</h3> 
-          </div>
-          <ul>
-            <div><li class="sidebar-section-generic-content">Edit</li></div>
-          </ul>
-        </section>
-      </div>
       <section class="post-image">
         <img src='<%= post.imageLink %>'>
       </section>

@@ -23,8 +23,6 @@ ul {
   margin-left: 10%;
   margin-right: 10%;
   text-align: center;
-  display: flex;
-  flex-direction: column;
 }
 
 .nav-bar {
@@ -81,7 +79,7 @@ ul {
   border-color: #0062d0;
   border-style: solid;
   width: 100px;
-  margin: 0px 5px;
+  margin-left: 5px;
 }
 
 .search-bar > #search {
@@ -89,7 +87,7 @@ ul {
 }
 
 .pagination {
-  margin-top: 20px;
+  margin-top: 50px;
   display: flex;
   justify-content: center;
 }

@@ -18,17 +18,16 @@ body {
 }
 
 #content {
-  margin: 25px 0px;
-  display: grid;
-  grid-template-columns: 200px calc(100% - 200px);
+  margin-top: 25px;
+  margin-bottom: 25px;
+  margin-left: 200px;
 }
 
 .thumbnails {
-  width: 100%;
   margin-left: 2%;
   display: grid;
   grid-template-columns: 18% 18% 18% 18% 18%;
-  grid-column-gap: 2%;
+  grid-column-gap: 2.5%;
   grid-row-gap: 10px;
   align-content: flex-start;
 }
@@ -39,9 +38,11 @@ img {
 }
 
 .sidebar {
+  float: left;
+  width: 200px;
+  margin-top: 25px;
   text-align: left;
   line-height: 1.25rem;
-  width: 200px;
   overflow-wrap: break-word;
 }
 
@@ -170,13 +171,15 @@ img {
 
   .search-bar > button {
     width: 100%;
+    margin-left: 0;
   }
 
   #content {
-    grid-template-columns: 100%;
+    margin-left: 0;
   }
 
   .sidebar {
+    float: none;
     width: 100%;
     margin-bottom: 25px;
   }
