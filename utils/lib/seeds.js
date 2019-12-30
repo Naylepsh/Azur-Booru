@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const Post = require('../../models/post');
 
 const seeds = [
@@ -20,7 +19,7 @@ const seeds = [
   }
 ]
 
-function getRandomInt(max) {
+function randomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
@@ -28,7 +27,7 @@ async function seedDB() {
   await Post.deleteMany({});
 
   for (let i = 0; i < 200; i++) {
-    await Post.create(seeds[getRandomInt(seeds.length)]);
+    await Post.create(seeds[randomInt(seeds.length)]);
   }
 }
 
