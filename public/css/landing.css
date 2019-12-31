@@ -53,6 +53,6 @@ body {
   }
   .search-bar > button {
     width: 200px;
-    border-radius: 10%;
+    margin-left: 0;
   }
 }
