@@ -1,25 +1,42 @@
-<nav class="nav-bar">
+<nav class="animenu" role="navigation" aria-label="Menu">
+  <button class="animenu__btn">
+    <span class="animenu__btn__bar"></span>
+    <span class="animenu__btn__bar"></span>
+    <span class="animenu__btn__bar"></span>
+  </button>
+
+  <ul class="animenu__nav">
+    <li><a href="#">Home</a></li>
+    <li>
+      <a href="#" class="animenu__nav__hasDropdown" aria-haspopup="true">Archive</a>
+      <ul class="animenu__nav__dropdown" aria-label="submenu" role="menu">
+        <li><a href="#" role="menuitem">Sub Item 1</a></li>
+        <li><a href="#" role="menuitem">Sub Item 2</a></li>
+        <li><a href="#" role="menuitem">Sub Item 3</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#" class="animenu__nav__hasDropdown" aria-haspopup="true">Categories</a>
+      <ul class="animenu__nav__dropdown" aria-label="submenu" role="menu">
+        <li><a href="#" role="menuitem">Sub Item 1</a></li>
+        <li><a href="#" role="menuitem">Sub Item 2</a></li>
+        <li><a href="#" role="menuitem">Sub Item 3</a></li>
+      </ul>
+    </li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- <nav class="nav-bar">
   <a href="/" id="brand"><strong>AzurBooru</strong></a>
-  <div class="desktop-menu">
+  <div class="nav-bar-content">
     <a href="/posts">Posts</a>
     <a href="#">Comments</a>
     <a href="#">Tags</a>
+    <a href="#">My Account</a>
   </div>
   <div class="pure-menu">
-    <a href="#">My Account</a>
     <a id="mobile-menu-toggler"><i class="fas fa-bars"></i></a>    
   </div>
-  <div class="mobile-menu disabled">
-    <ul>
-      <li>
-        <a href="/posts">Posts</a>
-      </li>
-      <li>
-        <a href="#">Comments</a>
-      </li>
-      <li>
-        <a href="#">Tags</a>
-      </li>
-    </ul>
-  </div>
-</nav>
+</nav> -->

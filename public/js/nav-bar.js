@@ -1,12 +1,11 @@
 /* scripts for handling navbar related operations */
 
-const mobileMenu = document.getElementsByClassName('mobile-menu')[0];
-const navBar = document.querySelector('nav');
-
-function toggleMobileMenu(_) {
-  mobileMenu.classList.toggle('enabled-menu-element');
-  navBar.classList.toggle('extending-element');
-}
-
-const toggler = document.getElementById('mobile-menu-toggler');
-toggler.addEventListener('click', toggleMobileMenu);
+/* from: https://www.cssscript.com/responsive-dropdown-animenu/ */
+(() => {
+  let $ = el => document.querySelector(el);
+  
+  $(".animenu__btn").addEventListener("click", function(){
+    this.classList.toggle("animenu__btn--active")
+    $(".animenu__nav").classList.toggle("animenu__nav--active")
+  });
+})()

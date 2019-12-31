@@ -37,15 +37,14 @@ ul {
   margin: 0px 16px;
 }
 
-.pure-menu {
-  position: absolute;
-  top: 15px;
-  right: 0;
+.collapse {
+  display: none;
 }
 
 #mobile-menu-toggler {
   display: none;
   cursor: pointer;
+  float: right;
 }
 
 .mobile-menu {
@@ -118,32 +117,9 @@ ul {
   background-color: #0062d0;
 }
 
-.disabled {
-  display: none;
-}
-
-.enabled-menu-element {
-  display: none;
-}
-
 @media only screen and (max-width: 768px) {
-  .desktop-menu {
-    display: none;
-  }
-
-  .pure-menu > a {
-    display: none;
-  }
 
   #mobile-menu-toggler {
-    display: block;
-  }
-
-  .mobile-menu {
-    display: none;
-  }
-
-  .enabled-menu-element {
     display: block;
   }
 }
