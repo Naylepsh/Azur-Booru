@@ -32,34 +32,15 @@ ul {
   background: rgba(0,0,0,0.5);
 }
 
-.nav-bar a {
-  color: white;
-  margin: 0px 16px;
-}
-
-.collapse {
-  display: none;
-}
-
 #mobile-menu-toggler {
   display: none;
   cursor: pointer;
   float: right;
 }
 
-.mobile-menu {
-  position: absolute;
-  top: 59px;
-  width: 100%;
-}
-
-.mobile-menu > ul > li {
-  padding: 10px 0;
-}
-
 #brand {
   color: white;
-  float: left;
+  /* float: left; */
 }
 
 .search-bar {

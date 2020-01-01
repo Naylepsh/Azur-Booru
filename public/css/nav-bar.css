@@ -5,52 +5,16 @@
 .animenu__btn{
 	display:none;
 	cursor:pointer;
-	background-color:#111;
+	background-color:rgb(0,0,0);
 	border:0;
 	padding:10px;
 	height:40px;
-	width:40px
-}
-
-.animenu__btn__bar{
-	display:block;
-	width:20px;
-	height:2px;
-	background-color:#fff;
-	transition:0.15s cubic-bezier(0.75, -0.55, 0.25, 1.55)
-}
-
-.animenu__btn__bar+.animenu__btn__bar{
-	margin-top:4px
-}
-
-.animenu__btn--active .animenu__btn__bar{
-	margin:0;
-	position:absolute
-}
-
-.animenu__btn--active .animenu__btn__bar:nth-child(1){
-	-webkit-transform:rotate(45deg);
-	transform:rotate(45deg)
-}
-
-.animenu__btn--active .animenu__btn__bar:nth-child(2){
-	opacity:0
-}
-
-.animenu__btn--active .animenu__btn__bar:nth-child(3){
-	-webkit-transform:rotate(-45deg);
-	transform:rotate(-45deg)
+	width:40px;
+	border-bottom: 1px solid #515151;
 }
 
 .animenu{
 	display:block
-}
-
-.animenu ul{
-	padding:0;
-	list-style:none;
-	font:0 -apple-system, BlinkMacSystemFont,    "Segoe UI",           "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
 }
 
 .animenu li,.animenu a{
@@ -64,12 +28,12 @@
 }
 
 .animenu__nav{
-	background-color:#111
+	background-color:rgb(0,0,0);
 }
 
 .animenu__nav>li{
 	position:relative;
-	border-right:1px solid #444
+	border-right:1px solid rgb(68, 68, 68);
 }
 
 .animenu__nav>li>a{
@@ -117,7 +81,7 @@
 	opacity:0;
 	visibility:hidden;
 	margin:20px 0 0 0;
-	background-color:#373737;
+	background-color:rgb(55, 55, 55);
 	transition:margin .15s, opacity .15s
 }
 
@@ -145,33 +109,30 @@
 .animenu__nav__dropdown a{
 	padding:10px;
 	width:100%;
-	border-color:#373737
+	border-color:rgb(55, 55, 55);
 }
 
 .animenu__nav__dropdown a:hover{
-	background-color:#0186ba;
-	border-color:#0186ba;
+	background-color:#0062d0;
+	border-color:#0062d0;
 	color:#fff
 }
 
 .animenu__nav__dropdown a:focus-within{
-	background-color:#0186ba;
-	border-color:#0186ba;
+	background-color:#0062d0;
+	border-color:#0062d0;
 	color:#fff
 }
 
 @media screen and (max-width: 767px){
 
 	.animenu__btn{
-		display:inline-block
+		display:inline-block;
+		width: 100%;
 	}
 
 	.animenu__nav,.animenu__nav__dropdown{
 		display:none
-	}
-
-	.animenu__nav{
-		margin:10px 0
 	}
 
 	.animenu__nav>li{
@@ -184,18 +145,6 @@
 		border:0
 	}
 
-	.animenu__nav>li:first-child>a:after{
-		content:'';
-		position:absolute;
-		height:0;
-		width:0;
-		left:1em;
-		top:-6px;
-		border:6px solid transparent;
-		border-top:0;
-		border-bottom-color:inherit
-	}
-
 	.animenu__nav>li>a{
 		width:100%;
 		padding:10px;
@@ -204,8 +153,8 @@
 	}
 
 	.animenu__nav a:hover{
-		background-color:#0186ba;
-		border-color:#0186ba;
+		background-color:#0062d0;
+		border-color:#0062d0;
 		color:#fff
 	}
 
