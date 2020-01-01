@@ -283,3 +283,20 @@ ul {
 .animenu__nav--active .animenu__nav__dropdown{
 	display:block
 }
+
+
+@media only screen and (max-width: 576px) {
+  .search-bar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-bar > #search {
+    width: 100%;
+  }
+
+  .search-bar > button {
+    width: 100%;
+    margin-left: 0;
+	}
+}
