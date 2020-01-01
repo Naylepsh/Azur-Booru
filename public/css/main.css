@@ -83,6 +83,10 @@ ul {
   background-color: #0062d0;
 }
 
+.disabled {
+	display: none;
+}
+
 #animenu__brand{
 	color: white;
 	font-weight: 700;

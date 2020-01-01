@@ -16,7 +16,7 @@ function toggleSectionVisiblity(section) {
 
 function makeSectionsClickable() {
   for (const section of sections) {
-    const sectionHeader = section.getElementsByClassName('sidebar-section-name')[0];
+    const sectionHeader = section.querySelector('.sidebar-section-name');
     sectionHeader.addEventListener('click', () => toggleSectionVisiblity(section));
   }
 }
