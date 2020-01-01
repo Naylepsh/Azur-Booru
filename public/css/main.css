@@ -5,13 +5,12 @@
 
 body {
   display: flex;
-  font-family: 'Lato', sans-serif;
   flex-direction: column;
+  font-family: 'Lato', sans-serif;
 }
 
 a {
   text-decoration: none;
-  color: black;
 }
 
 ul {
@@ -23,24 +22,6 @@ ul {
   margin-left: 10%;
   margin-right: 10%;
   text-align: center;
-}
-
-.nav-bar {
-  position: relative;
-  padding: 15px 0;
-  font-size: 24px;
-  background: rgba(0,0,0,0.5);
-}
-
-#mobile-menu-toggler {
-  display: none;
-  cursor: pointer;
-  float: right;
-}
-
-#brand {
-  color: white;
-  /* float: left; */
 }
 
 .search-bar {
@@ -96,11 +77,4 @@ ul {
 
 #active-page {
   background-color: #0062d0;
-}
-
-@media only screen and (max-width: 768px) {
-
-  #mobile-menu-toggler {
-    display: block;
-  }
 }
