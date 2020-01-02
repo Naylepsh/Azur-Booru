@@ -35,12 +35,12 @@
             <span class="page-arrow"><</span>
           <% } %>
 
-          <% if (pageInfo.currentPage - 5 > 1) { %>
+          <% if (pageInfo.currentPage - 3 > 1) { %>
             <a class="page non-active-page" href="/posts?page=1<%= tagsQuery ? '&tags='+tagsQuery : ''%>">1</a>
             <span class="skipped-pages">...</span>
           <% } %>
 
-          <% for (let i = Math.max(1, pageInfo.currentPage - 5); i <= Math.min(pageInfo.lastPage, pageInfo.currentPage + 5); i++) { %>
+          <% for (let i = Math.max(1, pageInfo.currentPage - 3); i <= Math.min(pageInfo.lastPage, pageInfo.currentPage + 3); i++) { %>
             <% if (i == pageInfo.currentPage) { %>
               <a id="active-page" class="page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
             <% } else { %>
@@ -48,7 +48,7 @@
             <% } %>
           <% } %>
 
-          <% if (pageInfo.currentPage + 5 < pageInfo.lastPage) { %>
+          <% if (pageInfo.currentPage + 3 < pageInfo.lastPage) { %>
             <span class="skipped-pages">...</span>
             <a class="page non-active-page" 
             href="/posts?page=<%= pageInfo.lastPage %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= pageInfo.lastPage %></a>    
@@ -66,4 +66,5 @@
 
   <script src="/js/tags.js"></script>
   <script src="/js/sidebar.js"></script>
+  <script src="/js/pagination.js"></script>
 <% include ../partials/footer.ejs %>

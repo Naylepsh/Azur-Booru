@@ -107,7 +107,7 @@ a.page-arrow:hover {
 }
 
 
-.disabled {
+.hidden {
 	display: none;
 }
 
@@ -242,11 +242,14 @@ a.page-arrow:hover {
 	color:#fff
 }
 
-@media screen and (max-width: 767px){
+@media screen and (max-width: 768px) {
 
 	.non-active-page, .skipped-pages {
 		display: none;
 	}
+}
+
+@media screen and (max-width: 798px){
 
 	.animenu__btn{
 		display:inline-block;

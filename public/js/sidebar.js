@@ -10,7 +10,7 @@ function collapseSidebarSubcontent() {
 
 function toggleSectionVisiblity(section) {
   for (const elem of section.querySelector('ul').querySelectorAll('div')) {
-    elem.classList.toggle('disabled');
+    elem.classList.toggle('hidden');
   }
 }
 
