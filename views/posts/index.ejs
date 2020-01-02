@@ -29,15 +29,36 @@
       </section>
       <section class="pagination">
         <span class="pages">
-          <a href="/posts?<%= ['page=1', 'tags='+tagsQuery].join('&') %>"><<</a>
+          <% if (pageInfo.currentPage > 1) { %>
+            <a class="page-arrow" href="/posts?page=<%= pageInfo.currentPage - 1 %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><</a>
+          <% } else { %>
+            <span class="page-arrow"><</span>
+          <% } %>
+
+          <% if (pageInfo.currentPage - 5 > 1) { %>
+            <a class="page non-active-page" href="/posts?page=1<%= tagsQuery ? '&tags='+tagsQuery : ''%>">1</a>
+            <span class="skipped-pages">...</span>
+          <% } %>
+
           <% for (let i = Math.max(1, pageInfo.currentPage - 5); i <= Math.min(pageInfo.lastPage, pageInfo.currentPage + 5); i++) { %>
             <% if (i == pageInfo.currentPage) { %>
-              <a id="active-page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
+              <a id="active-page" class="page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
             <% } else { %>
-              <a href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
+              <a class="page non-active-page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
             <% } %>
           <% } %>
-          <a href="/posts?page=<%= pageInfo.lastPage %><%= tagsQuery ? '&tags='+tagsQuery : ''%>">>></a>
+
+          <% if (pageInfo.currentPage + 5 < pageInfo.lastPage) { %>
+            <span class="skipped-pages">...</span>
+            <a class="page non-active-page" 
+            href="/posts?page=<%= pageInfo.lastPage %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= pageInfo.lastPage %></a>    
+          <% } %>
+
+          <% if (pageInfo.currentPage < pageInfo.lastPage) { %>
+            <a class="page-arrow" href="/posts?page=<%= pageInfo.currentPage + 1 %><%= tagsQuery ? '&tags='+tagsQuery : ''%>">></a>
+          <% } else { %>
+            <span class="page-arrow">></span>
+          <% } %>
         </span>
       </section>
     </div>
