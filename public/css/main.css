@@ -33,11 +33,11 @@ ul {
   justify-content: center;
 }
 
-.search-bar > * {
+form > * {
   padding: 5px;
 }
 
-.search-bar > button {
+form > button {
   background-color: #0062d0;
   color: #FFF;
   font-weight: bold;

@@ -3,36 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet"> 
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"> 
   <link rel="stylesheet" href="/css/main.css" type="text/css">
   <link rel="stylesheet" href="/css/new-post.css" type="text/css">
   <title>Upload | Azur-booru</title>
 </head>
 <body>
+  <% include ../partials/nav-bar.ejs %>
   <div class="container">
+    <div class="guidelines">
+      Guidelines -- TBA
+    </div>
     <form action="/posts" method="POST" enctype="multipart/form-data">
-      <div>
+      <div class="form-entry">
         <label for="image">Image</label>
         <input type="file" accept="image/*" name="image" id="image">
       </div>
-      <div>
+      <div class="form-entry">
         <label for="source">Source</label>
         <input type="text" name="source" id="source">
       </div>
-      <div>
+      <div class="form-entry">
         <label for="tags">Tags</label>
         <textarea name="tags" id="tags"></textarea>
       </div>
-      <div>
-          <label for="rating">Rating</label>
-          <input type="radio" name="rating" value="explicit">Explicit
-          <input type="radio" name="rating" value="questionable">Questionable
-          <input type="radio" name="rating" value="safe">Safe
+      <fieldset class="form-entry rating">
+        <legend>Rating</legend>
+        <div>
+          <input id="explicit" type="radio" name="rating" value="explicit">
+          <label for="explicit">Explicit</label>
         </div>
+        <div>
+          <input id="questionable" type="radio" name="rating" value="questionable" checked>
+          <label for="questionable">Questionable</label>
+        </div>
+        <div>
+          <input id="safe" type="radio" name="rating" value="safe">
+          <label for="safe">Safe</label>
+        </div>
+      </fieldset>
       <button>Upload</button>
     </form>
   </div>
-
-
-
 <% include ../partials/footer.ejs %>
