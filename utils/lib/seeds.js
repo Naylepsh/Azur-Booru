@@ -1,3 +1,4 @@
+const db = require('../../config').mongoose;
 const Post = require('../../models/post');
 
 const seeds = [
@@ -24,11 +25,17 @@ function randomInt(max) {
 }
 
 async function seedDB() {
+  console.log('starting seeding process');
   await Post.deleteMany({});
+  console.log('cleared database');
 
-  for (let i = 0; i < 200; i++) {
+  const elemsToAdd = 200;
+  for (let i = 0; i < elemsToAdd; i++) {
     await Post.create(seeds[randomInt(seeds.length)]);
   }
+  console.log(`successfully added ${elemsToAdd} elements to database`);
+  console.log('done');
+  db.disconnect();
 }
 
-module.exports = seedDB;
+seedDB();
