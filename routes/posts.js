@@ -70,4 +70,17 @@ router.get('/:id/edit', async (req, res) => {
   }
 });
 
+router.post('/:id/', async (req, res) => {
+  // TO-DO make image editable (will require changing form back to enctype="multipart/form-data")
+  try {
+    let post = req.body.post;
+    post.tags = post.tags.split(' ').filter( tag => tag.length > 0);
+    await Post.findByIdAndUpdate(req.params.id, post);
+    res.redirect(`/posts/${req.params.id}`);
+  } catch (err) {
+    console.error(err);
+    res.redirect('/posts')
+  }
+});
+
 module.exports = router;

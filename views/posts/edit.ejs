@@ -15,37 +15,37 @@
     <div class="guidelines">
       Guidelines -- TBA
     </div>
-    <form action="/posts/<%= post.id %>" method="POST" enctype="multipart/form-data">
-      <div class="form-entry">
+    <form action="/posts/<%= post.id %>" method="POST">
+      <!-- <div class="form-entry">
         <label for="image">Image</label>
-        <input type="file" accept="image/*" name="image" id="image">
-      </div>
+        <input type="file" accept="image/*" name="post[image]" id="image">
+      </div> -->
       <div class="form-entry">
         <label for="source">Source</label>
-        <input type="text" name="source" id="source" value="<%= post.source %>">
+        <input type="text" name="post[source]" id="source" value="<%= post.source %>">
       </div>
       <div class="form-entry">
         <label for="tags">Tags</label>
-        <textarea name="tags" id="tags"><%= post.tags.join(' ')%></textarea>
+        <textarea name="post[tags]" id="tags"><%= post.tags.join(' ')%></textarea>
       </div>
       <fieldset class="form-entry rating">
         <legend>Rating</legend>
         <div>
-          <input id="explicit" type="radio" name="rating" value="explicit" 
+          <input id="explicit" type="radio" name="post[rating]" value="explicit" 
           <% if(post.rating === 'explicit') { %>
             checked
           <% } %>>
           <label for="explicit">Explicit</label>
         </div>
         <div>
-          <input id="questionable" type="radio" name="rating" value="questionable"
+          <input id="questionable" type="radio" name="post[rating]" value="questionable"
           <% if(post.rating === 'questionable') { %>
             checked
           <% } %>>
           <label for="questionable">Questionable</label>
         </div>
         <div>
-          <input id="safe" type="radio" name="rating" value="safe"
+          <input id="safe" type="radio" name="post[rating]" value="safe"
           <% if(post.rating === 'safe') { %>
             checked
           <% } %>>
