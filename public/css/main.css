@@ -179,17 +179,6 @@ a.page-arrow:hover {
 	color:#fff
 }
 
-.animenu__nav__hasDropdown:before{
-	content:"";
-	position:absolute;
-	border:4px solid transparent;
-	border-bottom:0;
-	border-top-color:currentColor;
-	top:50%;
-	margin-top:-2px;
-	right:10px
-}
-
 .animenu__nav__dropdown{
 	min-width:100%;
 	position:absolute;
