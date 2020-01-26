@@ -16,5 +16,12 @@ module.exports = {
       currentPage: page ? parseInt(page) : 1,
       lastPage: Math.ceil(numberOfRecords / images_per_page)
     }
+  },
+
+  sendError: (res, err, backupCode) => {
+    res.status(err.status || backupCode).json({
+      message: err.message,
+      error: err
+    });
   }
 }

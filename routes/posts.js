@@ -24,7 +24,8 @@ router.get('/', async (req, res) => {
     });
 
   } catch(err) {
-    console.log(err);
+    console.error(err);
+    miscUtils.sendError(req, err, 500);
   }
 });
 
@@ -44,8 +45,8 @@ router.post('/', dbUtils.storage.single('image'), async (req, res) => {
     });
     res.redirect('/posts');
   } catch(err) {
-    console.log(err);
-    res.redirect('/')
+    console.error(err);
+    miscUtils.sendError(req, err, 500);
   }
 });
 
@@ -55,8 +56,8 @@ router.get('/:id', async (req, res) => {
     const tags = await dbUtils.tagsCount(post.tags);
     res.render('posts/show', {post: post, tags: tags});
   } catch(err) {
-    console.log(err);
-    res.redirect('/');
+    console.error(err);
+    miscUtils.sendError(req, err, 404);
   }
 });
 
@@ -66,7 +67,7 @@ router.get('/:id/edit', async (req, res) => {
     res.render('posts/edit', { post });
   } catch(err) {
     console.error(err);
-    res.redirect('/');
+    miscUtils.sendError(req, err, 500);
   }
 });
 
@@ -79,7 +80,7 @@ router.put('/:id', async (req, res) => {
     res.redirect(`/posts/${req.params.id}`);
   } catch (err) {
     console.error(err);
-    res.redirect('/posts')
+    miscUtils.sendError(req, err, 500);
   }
 });
 
@@ -89,7 +90,7 @@ router.delete('/:id', async (req, res) => {
     res.redirect('/posts');
   } catch (err) {
     console.error(err);
-    res.redirect('/posts');
+    miscUtils.sendError(req, err, 500);
   }
 })
 
