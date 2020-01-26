@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"> 
   <link rel="stylesheet" href="/css/main.css" type="text/css">
   <link rel="stylesheet" href="/css/posts.css" type="text/css">
-  <title><%= post._id %></title>
+  <title><%= post.id %></title>
 </head>
 
 <body>
@@ -21,7 +21,7 @@
           <h3>Statistics</h3>
         </div>
         <ul>
-          <div><li class="sidebar-section-generic-content"><span>Id:</span><span><%= post._id %></span></li></div>
+          <div><li class="sidebar-section-generic-content"><span>Id:</span><span><%= post.id %></span></li></div>
           <div><li class="sidebar-section-generic-content"><span>Source:</span><span><%= post.source %></span></li></div>
           <div><li class="sidebar-section-generic-content"><span>Title:</span><span><%= post.title %></span></li></div>
         </ul>
@@ -31,7 +31,7 @@
           <h3>Options</h3> 
         </div>
         <ul>
-          <div><li class="sidebar-section-generic-content">Edit</li></div>
+          <div><li><a href="/posts/<%= post.id %>/edit">Edit</a></li></div>
         </ul>
       </section>
     </aside>
