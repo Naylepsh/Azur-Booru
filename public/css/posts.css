@@ -78,6 +78,11 @@ img {
   color: #194b96;
 }
 
+.sidebar-section-generic-content a, 
+.sidebar-section-generic-content #delete-button {
+  color: #0062d0;
+}
+
 .sidebar-section-name {
   color: white;
   background-color: #0062d0;
@@ -132,6 +137,17 @@ img {
 
 .extending-element {
   margin-bottom: 150px;
+}
+
+#delete-button {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  text-transform: uppercase;
+  font-size: 15px;
+  font-weight: 400;
+  width: auto;
 }
 
 /* large size */

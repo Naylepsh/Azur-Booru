@@ -21,6 +21,10 @@ ul {
   list-style: none;
 }
 
+button {
+	cursor: pointer;
+}
+
 .container {
   width: 80%;
   margin-left: 10%;

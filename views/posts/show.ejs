@@ -18,7 +18,7 @@
       <% include ../partials/tag-list.ejs %>
       <section class="sidebar-section-generic">
         <div class="sidebar-section-name">
-          <h3>Statistics</h3>
+          <h3>Information</h3>
         </div>
         <ul>
           <div><li class="sidebar-section-generic-content"><span>Id:</span><span><%= post.id %></span></li></div>
@@ -31,7 +31,14 @@
           <h3>Options</h3> 
         </div>
         <ul>
-          <div><li><a href="/posts/<%= post.id %>/edit">Edit</a></li></div>
+          <div><li class="sidebar-section-generic-content"><a href="/posts/<%= post.id %>/edit">Edit</a></li></div>
+          <div>
+            <li class="sidebar-section-generic-content">
+              <form action="/posts/<%= post.id %>?_method=DELETE" method="POST">
+                <button id="delete-button">Delete</button>
+              </form>
+            </li>
+          </div>
         </ul>
       </section>
     </aside>

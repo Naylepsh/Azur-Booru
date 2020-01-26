@@ -70,7 +70,7 @@ router.get('/:id/edit', async (req, res) => {
   }
 });
 
-router.post('/:id/', async (req, res) => {
+router.put('/:id/', async (req, res) => {
   // TO-DO make image editable (will require changing form back to enctype="multipart/form-data")
   try {
     let post = req.body.post;
