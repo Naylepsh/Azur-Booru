@@ -51,13 +51,21 @@ router.post('/', dbUtils.storage.single('image'), async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const post = await Post
-    .findById(req.params.id);
-    
+    const post = await Post.findById(req.params.id);
     const tags = await dbUtils.tagsCount(post.tags);
     res.render('posts/show', {post: post, tags: tags});
   } catch(err) {
     console.log(err);
+    res.redirect('/');
+  }
+});
+
+router.get('/:id/edit', async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    res.render('posts/edit', { post });
+  } catch(err) {
+    console.error(err);
     res.redirect('/');
   }
 });
