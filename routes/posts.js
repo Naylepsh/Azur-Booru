@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express();
+const router = express.Router();
 const dbUtils = require('../utils/lib/db');
 const miscUtils =  require('../utils/lib/misc');
 const Post = require('../models/post');
