@@ -29,7 +29,7 @@ tagSchema.statics.addPost = async function(tagId, postId) {
 }
 
 tagSchema.statics.popularTagsOfPosts = async function(posts, tagsLimit) {
-  const tagIds = new Set([].concat.apply([], posts.map( post => post.tags.map(tag => tag._id))));
+  const tagIds = new Set([].concat.apply([], posts.map(post => post.tags.map(tag => tag._id.toString()))));
   if (tagIds) {
     const tags = await Promise.all(Array.from(tagIds).map(id => this.findById(id)));
     let occurences = tags.map( tag => { return {name: tag.name, occurences: tag.posts.length}});
