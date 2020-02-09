@@ -11,11 +11,16 @@ module.exports = {
     await thumbnail.writeAsync(pathToThumbnail);
   },
 
-  pageInfo: (numberOfRecords, page, images_per_page) => {
+  paginationInfo: (numberOfRecords, page, images_per_page) => {
     return {
       currentPage: page ? parseInt(page) : 1,
       lastPage: Math.ceil(numberOfRecords / images_per_page)
     }
+  },
+
+  getWordsFromString: (str) => {
+    if (!str) return [];
+    return str.replace(/\s/g, ' ').split(' ').filter( word => word.length > 0);
   },
 
   sendError: (res, err, backupCode) => {

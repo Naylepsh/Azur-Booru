@@ -12,4 +12,8 @@ const PostSchema = new mongoose.Schema({
   rating: String
 });
 
+PostSchema.statics.paginate = function(query, toSkip, toLimit) {
+  return this.find(query).sort({ _id: -1 }).skip(toSkip).limit(toLimit);
+}
+
 module.exports = mongoose.model('Post', PostSchema);

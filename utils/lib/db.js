@@ -1,7 +1,17 @@
 const multer = require('multer');
-const nameGen = require('./name-gen');
+const crypto = require('crypto');
+const path = require('path');
 const Post = require('../../models/post');
 
+function generateRandomFilename(file) {
+  try {
+    const name = crypto.randomBytes(16).toString('hex') + path.extname(file.originalname);
+    return name;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
 
 module.exports = {
   storage: multer({ storage: multer.diskStorage({
@@ -9,7 +19,7 @@ module.exports = {
       cb(null, './public/uploads');
     },
     filename: (req, file, cb) => {
-      cb(null, nameGen.generateRandomFilename(file));
+      cb(null, generateRandomFilename(file));
     }
   })}),
 
@@ -32,11 +42,6 @@ module.exports = {
       return {tags: { '$all' : tagQuery.replace(/\s/g, ' ').split(' ').filter( tag => tag.length > 0) }};
     }
     return {};
-  },
-
-  parseForTags: (str) => {
-    if (!str) return [];
-    return str.replace(/\s/g, ' ').split(' ').filter( tag => tag.length > 0);
   },
 
   getTags: async (posts, n) => {
