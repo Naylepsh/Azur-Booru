@@ -19,7 +19,6 @@ exports.list = async(req, res, next) => {
 
     const posts = await Post.paginate(query, (pageInfo.currentPage - 1)*POSTS_PER_PAGE, POSTS_PER_PAGE);
     const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);
-    // console.log(tags);
     res.render('posts/index', {
       posts,
       tags,
@@ -31,7 +30,11 @@ exports.list = async(req, res, next) => {
   }
 }
 
-exports.post_create_post = async (req, res, next) => {
+exports.new = (req, res) => {
+  res.render('posts/new');
+}
+
+exports.create = async (req, res) => {
   try {
     miscUtils.makeThumbnail(`./public/uploads/${req.file.filename}`, `./public/thumbnails/thumbnail_${req.file.filename}`);
     const tagNames = miscUtils.getWordsFromString(req.body.tags);
@@ -50,5 +53,19 @@ exports.post_create_post = async (req, res, next) => {
     res.send(post);
   } catch (err) {
     console.error(err);
+  }
+}
+
+exports.show = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate('tags');
+    const tags = await Promise.all(post.tags.map(async tag => {
+      tag = await Tag.findById(tag._id)
+      return {name: tag.name, occurences: tag.posts.length};
+    }));
+    res.render('posts/show', {post: post, tags: tags});
+  } catch(err) {
+    console.error(err);
+    miscUtils.sendError(req, err, 404);
   }
 }

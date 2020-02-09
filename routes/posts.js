@@ -6,75 +6,13 @@ const miscUtils =  require('../utils/lib/misc');
 const Tags = require('../controllers/tagController');
 const Post = require('../controllers/postController');
 
-const IMAGES_PER_PAGE = 20;
-const TAGS_PER_PAGE = 15;
-
 router.get('/', Post.list);
 
-// router.get('/', async (req, res) => {
-//   try {
-//     const tagNames = dbUtils.parseForTags(req.query.tags);
-//     const tags = await Promise.all(tagNames.map(name => Tag.findOne({ name })));
-//     console.log(tags);
-//     res.json(tags);
-//     // const tagsDBQuery = dbUtils.getTagsDBQuery(req.query.tags);
-//     // const count = await Post.countDocuments(tagsDBQuery);
-//     // const pageInfo =  miscUtils.pageInfo(count, req.query.page, IMAGES_PER_PAGE);
+router.get('/new', Post.new);
 
-//     // const posts = await dbUtils.getElemsFromDB(Post, tagsDBQuery, (pageInfo.currentPage - 1)*IMAGES_PER_PAGE, IMAGES_PER_PAGE);
-//     // const tags = await dbUtils.getTags(posts, TAGS_PER_PAGE);
+router.post('/', dbUtils.storage.single('image'), Post.create);
 
-//     // res.render('posts/index', {
-//     //   posts,
-//     //   tags,
-//     //   pageInfo,
-//     //   tagsQuery: req.query.tags, 
-//     // });
-
-//   } catch(err) {
-//     console.error(err);
-//     miscUtils.sendError(req, err, 500);
-//   }
-// });
-
-router.get('/new', (req, res) => {
-  res.render('posts/new');
-});
-
-router.post('/', dbUtils.storage.single('image'), Post.post_create_post);
-
-// router.post('/', dbUtils.storage.single('image'), async (req, res) => {
-//   Post.post_create_post
-//   // try {
-//     // await miscUtils.makeThumbnail(`./public/uploads/${req.file.filename}`, `./public/thumbnails/thumbnail_${req.file.filename}`);
-//     // const tagNames = dbUtils.parseForTags(req.body.tags);
-//     // const tags = await Promise.all(tagNames.map(name => Tags.findOrCreate(name)));
-//     // console.log(tags);
-//     // res.send(tags);
-//     // const post = await Post.create({
-//     //   imageLink: `/uploads/${req.file.filename}`,
-//     //   thumbnailLink: `/thumbnails/thumbnail_${req.file.filename}`,
-//     //   source: req.body.source,
-//     //   title: req.body.title,
-//     //   tags: req.body.tags.split(' ').filter( tag => tag.length > 0)
-//     // });
-//     // res.redirect('/posts');
-//   // } catch(err) {
-//   //   console.error(err);
-//   //   miscUtils.sendError(req, err, 500);
-//   // }
-// });
-
-router.get('/:id', async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    const tags = await dbUtils.tagsCount(post.tags);
-    res.render('posts/show', {post: post, tags: tags});
-  } catch(err) {
-    console.error(err);
-    miscUtils.sendError(req, err, 404);
-  }
-});
+router.get('/:id', Post.show);
 
 router.get('/:id/edit', async (req, res) => {
   try {
