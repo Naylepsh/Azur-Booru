@@ -69,3 +69,14 @@ exports.show = async (req, res) => {
     miscUtils.sendError(req, err, 404);
   }
 }
+
+exports.edit = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate('tags');
+    const tags = post.tags.map(tag => tag.name);
+    res.render('posts/edit', { post, tags });
+  } catch(err) {
+    console.error(err);
+    miscUtils.sendError(req, err, 500);
+  }
+}

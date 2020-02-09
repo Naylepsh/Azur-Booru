@@ -14,15 +14,7 @@ router.post('/', dbUtils.storage.single('image'), Post.create);
 
 router.get('/:id', Post.show);
 
-router.get('/:id/edit', async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    res.render('posts/edit', { post });
-  } catch(err) {
-    console.error(err);
-    miscUtils.sendError(req, err, 500);
-  }
-});
+router.get('/:id/edit', Post.edit);
 
 router.put('/:id', async (req, res) => {
   // TO-DO make image editable (will require changing form back to enctype="multipart/form-data")
