@@ -5,7 +5,10 @@ const PostSchema = new mongoose.Schema({
   thumbnailLink: String,
   source: String,
   title: String,
-  tags: [String],
+  tags: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tag'
+  }],
   rating: String
 });
 
