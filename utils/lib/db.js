@@ -34,6 +34,11 @@ module.exports = {
     return {};
   },
 
+  parseForTags: (str) => {
+    if (!str) return [];
+    return str.replace(/\s/g, ' ').split(' ').filter( tag => tag.length > 0);
+  },
+
   getTags: async (posts, n) => {
     const tagNames = new Set([].concat.apply([], posts.map( post => post.tags)));
     let tags = await module.exports.tagsCount(tagNames);
