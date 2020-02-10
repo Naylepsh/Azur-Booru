@@ -58,7 +58,7 @@ exports.create = async (req, res) => {
 
 exports.show = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id).populate('tags');
+    const post = await Post.findById(req.params.id)
     const tags = await Promise.all(post.tags.map(async tag => {
       tag = await Tag.findById(tag._id)
       return {name: tag.name, occurences: tag.posts.length};
@@ -104,7 +104,7 @@ exports.update = async (req, res) => {
     newPost.tags = newTags.map(tag => tag._id);
     
     // update post
-    for (const key in newPost) {
+    for (const key in oldPost) {
       oldPost[key] = newPost[key];
     }
     oldPost.save();

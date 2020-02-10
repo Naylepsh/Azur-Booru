@@ -3,7 +3,13 @@ const mongoose = require('mongoose');
 const tagSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    validate: {
+      validator: function(value) {
+        return value.length > 0;
+      },
+      message: 'Tag name is too short'
+    }
   },
   posts: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -46,27 +52,6 @@ tagSchema.statics.popularTagsOfPosts = async function(posts, tagsLimit) {
     occurences = occurences.slice(0, tagsLimit);
     occurences.sort( (t1, t2) => (t1.name > t2.name) ? 1 : -1);
     return occurences;
-  }
-}
-/**
- * way to update:
- * x = find post
- * y = new Post(x)
- * <do something>
- * x.foo = y.foo
- * y.save()
- */
-tagSchema.methods.addPost = function(postId) {
-  if (!this.posts.includes(postId)){
-    this.posts.push(postId);
-    this.save();
-  }
-}
-
-tagSchema.methods.removePost = function(postId) {
-  if (this.post.includes(postId)) {
-    this.posts.remove(postId);
-    this.save();
   }
 }
 
