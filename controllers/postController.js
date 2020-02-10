@@ -80,3 +80,39 @@ exports.edit = async (req, res) => {
     miscUtils.sendError(req, err, 500);
   }
 }
+
+exports.update = async (req, res) => {
+  /**
+   * TO-DO:
+   *   make image editable (will require changing form back to enctype="multipart/form-data")
+   *   use transactions
+   *   sanitize newPost params
+   */
+  try {
+    // remove old tags
+    let oldPost = await Post.findById(req.params.id);
+    let oldTags = await Promise.all(oldPost.tags.map(tag => Tag.findById(tag._id)));
+    let oldTagsIds = oldTags.map(tag => tag._id);
+    await Promise.all(oldTagsIds.map( id => Tag.removePost(id, oldPost._id)));
+
+    // add new tags
+    let newPost = req.body.post;
+    const newTags = await Promise.all(
+      miscUtils
+      .getWordsFromString(newPost.tags)
+      .map(tagName => Tag.findOrCreate(tagName)));
+    await Promise.all(newTags.map(tag => Tag.addPost(tag._id, oldPost._id)));
+    newPost.tags = newTags.map(tag => tag._id);
+    
+    // update post
+    for (const key in newPost) {
+      oldPost[key] = newPost[key];
+    }
+    oldPost.save();
+
+    res.redirect(`/posts/${req.params.id}`);
+  } catch (err) {
+    console.error(err);
+    miscUtils.sendError(req, err, 500);
+  }
+}

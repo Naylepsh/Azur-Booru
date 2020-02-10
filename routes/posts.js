@@ -16,18 +16,7 @@ router.get('/:id', Post.show);
 
 router.get('/:id/edit', Post.edit);
 
-router.put('/:id', async (req, res) => {
-  // TO-DO make image editable (will require changing form back to enctype="multipart/form-data")
-  try {
-    let post = req.body.post;
-    post.tags = post.tags.split(' ').filter( tag => tag.length > 0);
-    await Post.findByIdAndUpdate(req.params.id, post);
-    res.redirect(`/posts/${req.params.id}`);
-  } catch (err) {
-    console.error(err);
-    miscUtils.sendError(req, err, 500);
-  }
-});
+router.put('/:id', Post.update);
 
 router.delete('/:id', async (req, res) => {
   try {
