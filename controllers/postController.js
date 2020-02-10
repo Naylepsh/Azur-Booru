@@ -85,7 +85,6 @@ exports.update = async (req, res) => {
   /**
    * TO-DO:
    *   make image editable (will require changing form back to enctype="multipart/form-data")
-   *   sanitize newPost params
    */
   try {
     // remove old tags
