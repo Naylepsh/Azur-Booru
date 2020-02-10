@@ -18,14 +18,16 @@ router.get('/:id/edit', Post.edit);
 
 router.put('/:id', Post.update);
 
-router.delete('/:id', async (req, res) => {
-  try {
-    await Post.findByIdAndRemove(req.params.id);
-    res.redirect('/posts');
-  } catch (err) {
-    console.error(err);
-    miscUtils.sendError(req, err, 500);
-  }
-})
+router.delete('/:id', Post.destroy);
+
+// router.delete('/:id', async (req, res) => {
+//   try {
+//     await Post.findByIdAndRemove(req.params.id);
+//     res.redirect('/posts');
+//   } catch (err) {
+//     console.error(err);
+//     miscUtils.sendError(req, err, 500);
+//   }
+// })
 
 module.exports = router;

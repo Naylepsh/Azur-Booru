@@ -116,3 +116,14 @@ exports.update = async (req, res) => {
     miscUtils.sendError(req, err, 500);
   }
 }
+
+exports.destroy = async (req, res) => {
+  try {
+    const post = await Post.findByIdAndRemove(req.params.id);
+    await Promise.all(post.tags.map(tag => Tag.removePost(tag._id, post._id)));
+    res.redirect('/posts');
+  } catch (err) {
+    console.error(err);
+    miscUtils.sendError(req, err, 500);
+  }
+}
