@@ -1,33 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const dbUtils = require('../utils/lib/db');
-const miscUtils =  require('../utils/lib/misc');
-// const Post = require('../models/post');
-const Tags = require('../controllers/tagController');
+const {storage} = require('../utils/lib/db');
 const Post = require('../controllers/postController');
 
-router.get('/', Post.list);
-
-router.get('/new', Post.new);
-
-router.post('/', dbUtils.storage.single('image'), Post.create);
-
-router.get('/:id', Post.show);
-
-router.get('/:id/edit', Post.edit);
-
-router.put('/:id', Post.update);
-
-router.delete('/:id', Post.destroy);
-
-// router.delete('/:id', async (req, res) => {
-//   try {
-//     await Post.findByIdAndRemove(req.params.id);
-//     res.redirect('/posts');
-//   } catch (err) {
-//     console.error(err);
-//     miscUtils.sendError(req, err, 500);
-//   }
-// })
+router
+.get('/', Post.list)
+.get('/new', Post.new)
+.post('/', storage.single('image'), Post.create)
+.get('/:id', Post.show)
+.get('/:id/edit', Post.edit)
+.put('/:id', Post.update)
+.delete('/:id', Post.destroy);
 
 module.exports = router;
