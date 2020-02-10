@@ -38,21 +38,21 @@ exports.create = async (req, res) => {
   try {
     miscUtils.makeThumbnail(`./public/uploads/${req.file.filename}`, `./public/thumbnails/thumbnail_${req.file.filename}`);
     const tagNames = miscUtils.getWordsFromString(req.body.tags);
-    console.log('tagNames', tagNames);
     const tags = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
     const tagsIds = tags.map(tag => tag._id);
-    console.log('tagsIDs:', tagsIds);
     const post = await Post.create({
       imageLink: `/uploads/${req.file.filename}`,
       thumbnailLink: `/thumbnails/thumbnail_${req.file.filename}`,
       source: req.body.source,
       title: req.body.title,
-      tags: tagsIds
+      tags: tagsIds,
+      rating: req.body.rating
     });
     await Promise.all(tagsIds.map( id => Tag.addPost(id, post._id)));
-    res.send(post);
+    res.redirect('/posts');
   } catch (err) {
     console.error(err);
+    miscUtils.sendError(res, err, 500);
   }
 }
 
@@ -66,7 +66,7 @@ exports.show = async (req, res) => {
     res.render('posts/show', {post: post, tags: tags});
   } catch(err) {
     console.error(err);
-    miscUtils.sendError(req, err, 404);
+    miscUtils.sendError(res, err, 404);
   }
 }
 
@@ -77,7 +77,7 @@ exports.edit = async (req, res) => {
     res.render('posts/edit', { post, tags });
   } catch(err) {
     console.error(err);
-    miscUtils.sendError(req, err, 500);
+    miscUtils.sendError(res, err, 500);
   }
 }
 
@@ -85,7 +85,6 @@ exports.update = async (req, res) => {
   /**
    * TO-DO:
    *   make image editable (will require changing form back to enctype="multipart/form-data")
-   *   use transactions
    *   sanitize newPost params
    */
   try {
@@ -113,7 +112,7 @@ exports.update = async (req, res) => {
     res.redirect(`/posts/${req.params.id}`);
   } catch (err) {
     console.error(err);
-    miscUtils.sendError(req, err, 500);
+    miscUtils.sendError(res, err, 500);
   }
 }
 
@@ -124,6 +123,6 @@ exports.destroy = async (req, res) => {
     res.redirect('/posts');
   } catch (err) {
     console.error(err);
-    miscUtils.sendError(req, err, 500);
+    miscUtils.sendError(res, err, 500);
   }
 }
