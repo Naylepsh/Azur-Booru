@@ -1,6 +1,17 @@
-const mongoose = require('mongoose');
+const env = process.env.NODE_ENV;
 
-mongoose.set('useUnifiedTopology', true);
-mongoose.connect('mongodb://localhost/booru', { useNewUrlParser: true, useFindAndModify: false });
+const dev = {
+  app: {
+    port: 3000
+  },
+  db: {
+    host: 'localhost',
+    name: 'booru'
+  },
+};
 
-exports.mongoose = mongoose;
+const config = {
+  dev,
+};
+
+module.exports = config[env];

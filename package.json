@@ -4,7 +4,7 @@
   "description": "My attempt at making a -booru clone",
   "main": "index.js",
   "scripts": {
-    "start": "set DEBUG=booru_clone:* && set PORT=3000 && nodemon ./bin/www",
+    "start": "set NODE_ENV=dev&& set DEBUG=booru_clone:*&& nodemon ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Naylepsh",

@@ -3,10 +3,18 @@ const app = express();
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const methodOverride = require('method-override');
-const db = require('./config').mongoose;
+const mongoose = require('mongoose');
+const config = require('./config');
 
 const indexRoutes = require('./routes/index.js');
 const postsRoutes = require('./routes/posts');
+
+// DB config
+mongoose.set('useUnifiedTopology', true);
+mongoose.connect(
+  `mongodb://${config.db.host}/${config.db.name}`,
+  { useNewUrlParser: true, useFindAndModify: false }
+);
 
 // App Config
 app.set('view engine', 'ejs');
