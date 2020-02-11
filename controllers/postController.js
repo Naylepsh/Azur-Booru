@@ -5,8 +5,10 @@ const miscUtils = require('../utils/misc');
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
 const POST_BODY_ATTRIBUTES = ['source', 'title', 'tags', 'rating'];
+const IMAGE_PATH = '/uploads/';
+const THUMBNAIL_PATH = '/thumbnails/thumbnail_'
 
-exports.list = async(req, res, next) => {
+exports.list = async(req, res) => {
   try {
     const tagNames = miscUtils.distinctWordsInString(req.query.tags);
     const tagsInQuery = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
@@ -39,14 +41,14 @@ exports.new = (req, res) => {
 exports.create = async (req, res) => {
   try {
     req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
-    miscUtils.makeThumbnail(`./public/uploads/${req.file.filename}`, `./public/thumbnails/thumbnail_${req.file.filename}`);
+    miscUtils.makeThumbnail(`./public${IMAGE_PATH}${req.file.filename}`, `./public/${THUMBNAIL_PATH}${req.file.filename}`);
     const tagNames = miscUtils.distinctWordsInString(req.body.post.tags);
     const tags = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
     const tagsIds = tags.map(tag => tag._id);
 
     const post = await Post.create({
-      imageLink: `/uploads/${req.file.filename}`,
-      thumbnailLink: `/thumbnails/thumbnail_${req.file.filename}`,
+      imageLink: `${IMAGE_PATH}${req.file.filename}`,
+      thumbnailLink: `${THUMBNAIL_PATH}${req.file.filename}`,
       source: req.body.post.source,
       title: req.body.post.title,
       tags: tagsIds,
@@ -55,6 +57,8 @@ exports.create = async (req, res) => {
     await Promise.all(tagsIds.map( id => Tag.addPost(id, post._id)));
     res.redirect('/posts');
   } catch (err) {
+    miscUtils.removeFile(`./public${IMAGE_PATH}${req.file.filename}`);
+    miscUtils.removeFile(`./public${THUMBNAIL_PATH}${req.file.filename}`);
     console.error(err);
     miscUtils.sendError(res, err, 500);
   }
@@ -87,10 +91,6 @@ exports.edit = async (req, res) => {
 }
 
 exports.update = async (req, res) => {
-  /**
-   * TO-DO:
-   *   make image editable (will require changing form back to enctype="multipart/form-data")
-   */
   try {
     req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
     

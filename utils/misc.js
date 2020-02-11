@@ -44,9 +44,9 @@ module.exports = {
    * Leaves only selected attributes of a given object
    */
   pickAttributes: (object, keys) => {
-    console.log(object);
     return keys.reduce((obj, key) => {
-      if (object && object.hasOwnProperty(key)) {
+      // prototype.has.... in case if object is of a null prototype
+      if (object && Object.prototype.hasOwnProperty.call(object, key)) {
          obj[key] = object[key];
       }
       return obj;
