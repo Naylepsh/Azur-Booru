@@ -18,49 +18,55 @@
       <% include ../partials/tag-list.ejs %>
     </aside>
     <div id="content">
-      <section class="thumbnails">
-        <% for (const post of posts) { %>
-          <% if (post && post.imageLink) { %>
-            <div class="thumbnail-preview">
-              <a href="/posts/<%= post._id %>"><img src="<%= post.thumbnailLink%>"></a>
-            </div>
-          <% } %>
-        <% } %>
-      </section>
-      <section class="pagination">
-        <span class="pages">
-          <% if (pageInfo.currentPage > 1) { %>
-            <a class="page-arrow" href="/posts?page=<%= pageInfo.currentPage - 1 %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><</a>
-          <% } else { %>
-            <span class="page-arrow"><</span>
-          <% } %>
-
-          <% if (pageInfo.currentPage - 3 > 1) { %>
-            <a class="page non-active-page" href="/posts?page=1<%= tagsQuery ? '&tags='+tagsQuery : ''%>">1</a>
-            <span class="skipped-pages">...</span>
-          <% } %>
-
-          <% for (let i = Math.max(1, pageInfo.currentPage - 3); i <= Math.min(pageInfo.lastPage, pageInfo.currentPage + 3); i++) { %>
-            <% if (i == pageInfo.currentPage) { %>
-              <a id="active-page" class="page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
-            <% } else { %>
-              <a class="page non-active-page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
+      <% if (posts && posts.length > 0) {%>
+        <section class="thumbnails">
+          <% for (const post of posts) { %>
+            <% if (post && post.imageLink) { %>
+              <div class="thumbnail-preview">
+                <a href="/posts/<%= post._id %>"><img src="<%= post.thumbnailLink%>"></a>
+              </div>
             <% } %>
           <% } %>
+        </section>
+      <% } else {%>
+        <h3>Nobody here but us chickens!</h3>
+      <% } %>
+      <% if (posts && posts.length > 0) {%>
+        <section class="pagination">
+          <span class="pages">
+            <% if (pageInfo.currentPage > 1) { %>
+              <a class="page-arrow" href="/posts?page=<%= pageInfo.currentPage - 1 %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><</a>
+            <% } else { %>
+              <span class="page-arrow"><</span>
+            <% } %>
 
-          <% if (pageInfo.currentPage + 3 < pageInfo.lastPage) { %>
-            <span class="skipped-pages">...</span>
-            <a class="page non-active-page" 
-            href="/posts?page=<%= pageInfo.lastPage %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= pageInfo.lastPage %></a>    
-          <% } %>
+            <% if (pageInfo.currentPage - 3 > 1) { %>
+              <a class="page non-active-page" href="/posts?page=1<%= tagsQuery ? '&tags='+tagsQuery : ''%>">1</a>
+              <span class="skipped-pages">...</span>
+            <% } %>
 
-          <% if (pageInfo.currentPage < pageInfo.lastPage) { %>
-            <a class="page-arrow" href="/posts?page=<%= pageInfo.currentPage + 1 %><%= tagsQuery ? '&tags='+tagsQuery : ''%>">></a>
-          <% } else { %>
-            <span class="page-arrow">></span>
-          <% } %>
-        </span>
-      </section>
+            <% for (let i = Math.max(1, pageInfo.currentPage - 3); i <= Math.min(pageInfo.lastPage, pageInfo.currentPage + 3); i++) { %>
+              <% if (i == pageInfo.currentPage) { %>
+                <a id="active-page" class="page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
+              <% } else { %>
+                <a class="page non-active-page" href="/posts?page=<%= i %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= i %></a>
+              <% } %>
+            <% } %>
+
+            <% if (pageInfo.currentPage + 3 < pageInfo.lastPage) { %>
+              <span class="skipped-pages">...</span>
+              <a class="page non-active-page" 
+              href="/posts?page=<%= pageInfo.lastPage %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><%= pageInfo.lastPage %></a>    
+            <% } %>
+
+            <% if (pageInfo.currentPage < pageInfo.lastPage) { %>
+              <a class="page-arrow" href="/posts?page=<%= pageInfo.currentPage + 1 %><%= tagsQuery ? '&tags='+tagsQuery : ''%>">></a>
+            <% } else { %>
+              <span class="page-arrow">></span>
+            <% } %>
+          </span>
+        </section>
+        <% } %>
     </div>
   </div>
 
