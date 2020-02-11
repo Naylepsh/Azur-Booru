@@ -74,9 +74,10 @@ exports.show = async (req, res) => {
 
 exports.edit = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id).populate('tags');
-    const tags = post.tags.map(tag => tag.name);
-    res.render('posts/edit', { post, tags });
+    const post = await Post.findById(req.params.id);
+    const tags = await Promise.all(post.tags.map(id => Tag.findById(id)));
+    const tagNames = tags.map(tag => tag.name);
+    res.render('posts/edit', { post, tags: tagNames });
   } catch(err) {
     console.error(err);
     miscUtils.sendError(res, err, 500);
@@ -106,7 +107,7 @@ exports.update = async (req, res) => {
     newPost.tags = newTags.map(tag => tag._id);
     
     // update post
-    for (const key in oldPost) {
+    for (const key in newPost) {
       oldPost[key] = newPost[key];
     }
     oldPost.save();

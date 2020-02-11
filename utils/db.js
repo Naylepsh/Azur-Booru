@@ -1,7 +1,6 @@
 const multer = require('multer');
 const crypto = require('crypto');
 const path = require('path');
-const Post = require('../models/post');
 
 function generateRandomFilename(file) {
   try {
