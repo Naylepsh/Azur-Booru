@@ -1,6 +1,6 @@
 const Post = require('../models/post');
 const Tag = require('../models/tag');
-const miscUtils = require('../utils/lib/misc');
+const miscUtils = require('../utils/misc');
 
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
@@ -9,9 +9,10 @@ exports.list = async(req, res, next) => {
   try {
     const tagNames = miscUtils.distinctWordsInString(req.query.tags);
     const tagsInQuery = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
+    const tagsIds = tagsInQuery.map(tag => tag._id);
 
     const query = tagsInQuery.length > 0 ?
-      {tags: { '$all' : tagsInQuery.map(tag => tag._id) }} :
+      {tags: { '$all' : tagsIds }} :
       {}
 
     const count = await Post.countDocuments(query);
@@ -40,7 +41,7 @@ exports.create = async (req, res) => {
     const tagNames = miscUtils.distinctWordsInString(req.body.tags);
     const tags = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
     const tagsIds = tags.map(tag => tag._id);
-    
+
     const post = await Post.create({
       imageLink: `/uploads/${req.file.filename}`,
       thumbnailLink: `/thumbnails/thumbnail_${req.file.filename}`,

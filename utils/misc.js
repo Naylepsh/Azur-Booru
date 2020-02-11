@@ -1,6 +1,5 @@
 const jimp = require('jimp');
 
-
 module.exports = {
   makeThumbnail: async (pathToFile, pathToThumbnail) => {
     const image = await jimp.read(pathToFile);

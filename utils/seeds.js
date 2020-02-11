@@ -1,5 +1,5 @@
-const db = require('../../config').mongoose;
-const Post = require('../../models/post');
+const db = require('../config').mongoose;
+const Post = require('../models/post');
 
 const seeds = [
   {
