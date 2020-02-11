@@ -18,9 +18,10 @@ module.exports = {
     }
   },
 
-  getWordsFromString: (str) => {
+  distinctWordsInString: (str) => {
     if (!str) return [];
-    return str.replace(/\s/g, ' ').split(' ').filter( word => word.length > 0);
+    const words = str.replace(/\s/g, ' ').split(' ').filter( word => word.length > 0);
+    return [...new Set(words)];
   },
 
   sendError: (res, err, backupCode) => {

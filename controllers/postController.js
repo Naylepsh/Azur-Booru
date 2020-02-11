@@ -7,7 +7,7 @@ const TAGS_PER_PAGE = 15;
 
 exports.list = async(req, res, next) => {
   try {
-    const tagNames = miscUtils.getWordsFromString(req.query.tags);
+    const tagNames = miscUtils.distinctWordsInString(req.query.tags);
     const tagsInQuery = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
 
     const query = tagsInQuery.length > 0 ?
@@ -37,9 +37,10 @@ exports.new = (req, res) => {
 exports.create = async (req, res) => {
   try {
     miscUtils.makeThumbnail(`./public/uploads/${req.file.filename}`, `./public/thumbnails/thumbnail_${req.file.filename}`);
-    const tagNames = miscUtils.getWordsFromString(req.body.tags);
+    const tagNames = miscUtils.distinctWordsInString(req.body.tags);
     const tags = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
     const tagsIds = tags.map(tag => tag._id);
+    
     const post = await Post.create({
       imageLink: `/uploads/${req.file.filename}`,
       thumbnailLink: `/thumbnails/thumbnail_${req.file.filename}`,
@@ -91,13 +92,14 @@ exports.update = async (req, res) => {
     let oldPost = await Post.findById(req.params.id);
     let oldTags = await Promise.all(oldPost.tags.map(tag => Tag.findById(tag._id)));
     let oldTagsIds = oldTags.map(tag => tag._id);
+
     await Promise.all(oldTagsIds.map( id => Tag.removePost(id, oldPost._id)));
 
     // add new tags
     let newPost = req.body.post;
     const newTags = await Promise.all(
       miscUtils
-      .getWordsFromString(newPost.tags)
+      .distinctWordsInString(newPost.tags)
       .map(tagName => Tag.findOrCreate(tagName)));
     await Promise.all(newTags.map(tag => Tag.addPost(tag._id, oldPost._id)));
     newPost.tags = newTags.map(tag => tag._id);
