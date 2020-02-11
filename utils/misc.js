@@ -1,4 +1,5 @@
 const jimp = require('jimp');
+const fs = require('fs');
 
 module.exports = {
   makeThumbnail: async (pathToFile, pathToThumbnail) => {
@@ -8,6 +9,14 @@ module.exports = {
     const ySize = 200;
     thumbnail.cover(xSize, ySize);
     await thumbnail.writeAsync(pathToThumbnail);
+  },
+
+  removeFile: (pathToFile) => {
+    fs.unlink(pathToFile, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
   },
 
   paginationInfo: (numberOfRecords, page, images_per_page) => {
@@ -35,6 +44,7 @@ module.exports = {
    * Leaves only selected attributes of a given object
    */
   pickAttributes: (object, keys) => {
+    console.log(object);
     return keys.reduce((obj, key) => {
       if (object && object.hasOwnProperty(key)) {
          obj[key] = object[key];

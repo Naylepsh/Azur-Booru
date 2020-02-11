@@ -127,6 +127,8 @@ exports.destroy = async (req, res) => {
   try {
     const post = await Post.findByIdAndRemove(req.params.id);
     await Promise.all(post.tags.map(tag => Tag.removePost(tag._id, post._id)));
+    miscUtils.removeFile(post.imageLink);
+    miscUtils.removeFile(post.thumbnailLink);
     res.redirect('/posts');
   } catch (err) {
     console.error(err);
