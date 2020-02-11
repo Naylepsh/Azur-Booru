@@ -1,17 +1,19 @@
 const Post = require('../models/post');
 const Tag = require('../models/tag');
-const miscUtils = require('../utils/lib/misc');
+const miscUtils = require('../utils/misc');
 
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
+const POST_BODY_ATTRIBUTES = ['source', 'title', 'tags', 'rating'];
 
 exports.list = async(req, res, next) => {
   try {
-    const tagNames = miscUtils.getWordsFromString(req.query.tags);
+    const tagNames = miscUtils.distinctWordsInString(req.query.tags);
     const tagsInQuery = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
+    const tagsIds = tagsInQuery.map(tag => tag._id);
 
     const query = tagsInQuery.length > 0 ?
-      {tags: { '$all' : tagsInQuery.map(tag => tag._id) }} :
+      {tags: { '$all' : tagsIds }} :
       {}
 
     const count = await Post.countDocuments(query);
@@ -36,17 +38,19 @@ exports.new = (req, res) => {
 
 exports.create = async (req, res) => {
   try {
+    req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
     miscUtils.makeThumbnail(`./public/uploads/${req.file.filename}`, `./public/thumbnails/thumbnail_${req.file.filename}`);
-    const tagNames = miscUtils.getWordsFromString(req.body.tags);
+    const tagNames = miscUtils.distinctWordsInString(req.body.post.tags);
     const tags = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
     const tagsIds = tags.map(tag => tag._id);
+
     const post = await Post.create({
       imageLink: `/uploads/${req.file.filename}`,
       thumbnailLink: `/thumbnails/thumbnail_${req.file.filename}`,
-      source: req.body.source,
-      title: req.body.title,
+      source: req.body.post.source,
+      title: req.body.post.title,
       tags: tagsIds,
-      rating: req.body.rating
+      rating: req.body.post.rating
     });
     await Promise.all(tagsIds.map( id => Tag.addPost(id, post._id)));
     res.redirect('/posts');
@@ -72,9 +76,10 @@ exports.show = async (req, res) => {
 
 exports.edit = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id).populate('tags');
-    const tags = post.tags.map(tag => tag.name);
-    res.render('posts/edit', { post, tags });
+    const post = await Post.findById(req.params.id);
+    const tags = await Promise.all(post.tags.map(id => Tag.findById(id)));
+    const tagNames = tags.map(tag => tag.name);
+    res.render('posts/edit', { post, tags: tagNames });
   } catch(err) {
     console.error(err);
     miscUtils.sendError(res, err, 500);
@@ -87,23 +92,26 @@ exports.update = async (req, res) => {
    *   make image editable (will require changing form back to enctype="multipart/form-data")
    */
   try {
+    req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
+    
     // remove old tags
     let oldPost = await Post.findById(req.params.id);
     let oldTags = await Promise.all(oldPost.tags.map(tag => Tag.findById(tag._id)));
     let oldTagsIds = oldTags.map(tag => tag._id);
+
     await Promise.all(oldTagsIds.map( id => Tag.removePost(id, oldPost._id)));
 
     // add new tags
     let newPost = req.body.post;
     const newTags = await Promise.all(
       miscUtils
-      .getWordsFromString(newPost.tags)
+      .distinctWordsInString(newPost.tags)
       .map(tagName => Tag.findOrCreate(tagName)));
     await Promise.all(newTags.map(tag => Tag.addPost(tag._id, oldPost._id)));
     newPost.tags = newTags.map(tag => tag._id);
     
     // update post
-    for (const key in oldPost) {
+    for (const key in newPost) {
       oldPost[key] = newPost[key];
     }
     oldPost.save();

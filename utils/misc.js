@@ -1,6 +1,5 @@
 const jimp = require('jimp');
 
-
 module.exports = {
   makeThumbnail: async (pathToFile, pathToThumbnail) => {
     const image = await jimp.read(pathToFile);
@@ -18,9 +17,10 @@ module.exports = {
     }
   },
 
-  getWordsFromString: (str) => {
+  distinctWordsInString: (str) => {
     if (!str) return [];
-    return str.replace(/\s/g, ' ').split(' ').filter( word => word.length > 0);
+    const words = str.replace(/\s/g, ' ').split(' ').filter( word => word.length > 0);
+    return [...new Set(words)];
   },
 
   sendError: (res, err, backupCode) => {
@@ -28,5 +28,18 @@ module.exports = {
       message: err.message,
       error: err
     });
+  },
+
+  /**
+   * lodash's .pick implementation.
+   * Leaves only selected attributes of a given object
+   */
+  pickAttributes: (object, keys) => {
+    return keys.reduce((obj, key) => {
+      if (object && object.hasOwnProperty(key)) {
+         obj[key] = object[key];
+      }
+      return obj;
+    }, {});
   }
 }

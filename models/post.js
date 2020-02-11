@@ -12,7 +12,7 @@ const PostSchema = new mongoose.Schema({
     ref: 'Tag',
     validate: {
       validator: function(value) {
-        return value && value.length > MIN_TAGS;
+        return value && value.length >= MIN_TAGS;
       },
       message: `Post should contain at least ${MIN_TAGS} tags`
     }
