@@ -7,7 +7,7 @@
 }) %>
 <body>
   <% include ../partials/nav-bar.ejs %>
-  <div class="container">
+  <div class="container text-center">
     <% include ../partials/search-bar.ejs %>
     <aside class="sidebar">
       <% include ../partials/tag-list.ejs %>
@@ -27,7 +27,7 @@
         <h3>Nobody here but us chickens!</h3>
       <% } %>
       <% if (posts && posts.length > 0) {%>
-        <section class="pagination">
+        <section class="pagination text-center">
           <span class="pages">
             <% if (pageInfo.currentPage > 1) { %>
               <a class="page-arrow" href="/posts?page=<%= pageInfo.currentPage - 1 %><%= tagsQuery ? '&tags='+tagsQuery : ''%>"><</a>
