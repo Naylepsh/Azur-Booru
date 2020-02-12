@@ -6,8 +6,9 @@ const methodOverride = require('method-override');
 const mongoose = require('mongoose');
 const config = require('./config');
 
-const indexRoutes = require('./routes/index.js');
+const indexRoutes = require('./routes/index');
 const postsRoutes = require('./routes/posts');
+const authRoutes = require('./routes/auth');
 
 // DB config
 mongoose.set('useUnifiedTopology', true);
@@ -24,5 +25,6 @@ app.use(logger('dev'));
 app.use(methodOverride('_method'));
 app.use(indexRoutes);
 app.use('/posts', postsRoutes);
+app.use('/', authRoutes);
 
 module.exports = app;

@@ -1,0 +1,23 @@
+<%- include('../partials/header', { stylesheets: [
+  "https://fonts.googleapis.com/css?family=Lato:400,700&display=swap",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css",
+  "/css/main.css",
+  "/css/new-post.css"
+], title: "Login | Azur-booru"
+}) %>
+<body>
+  <% include ../partials/nav-bar.ejs %>
+  <div class="container">
+    <form action="/login" method="POST">
+      <div class="form-entry">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username">
+      </div>
+      <div class="form-entry">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password">
+      </div>
+      <button>Login</button>
+    </form>
+  </div>
+<% include ../partials/footer.ejs %>
