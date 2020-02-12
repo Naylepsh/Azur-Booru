@@ -8,10 +8,11 @@ const config = require('./config');
 
 const indexRoutes = require('./routes/index');
 const postsRoutes = require('./routes/posts');
-const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
 
 // DB config
 mongoose.set('useUnifiedTopology', true);
+mongoose.set('useCreateIndex', true);
 mongoose.connect(
   `mongodb://${config.db.host}/${config.db.name}`,
   { useNewUrlParser: true, useFindAndModify: false }
@@ -25,6 +26,6 @@ app.use(logger('dev'));
 app.use(methodOverride('_method'));
 app.use(indexRoutes);
 app.use('/posts', postsRoutes);
-app.use('/', authRoutes);
+app.use('/', userRoutes);
 
 module.exports = app;

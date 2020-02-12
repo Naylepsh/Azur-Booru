@@ -10,6 +10,7 @@
   "author": "Naylepsh",
   "license": "ISC",
   "dependencies": {
+    "@hapi/joi": "^17.1.0",
     "body-parser": "^1.19.0",
     "crypto": "^1.0.1",
     "debug": "^4.1.1",

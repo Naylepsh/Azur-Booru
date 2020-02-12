@@ -34,8 +34,7 @@ module.exports = {
 
   sendError: (res, err, backupCode) => {
     res.status(err.status || backupCode).json({
-      message: err.message,
-      error: err
+      message: err.message
     });
   },
 
