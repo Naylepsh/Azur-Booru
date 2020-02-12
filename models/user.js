@@ -1,30 +1,32 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
 
+const NAME_MIN_LENGTH = 4;
+const NAME_MAX_LENGTH = 64;
+const PASSWORD_MIN_LENGTH = 8;
+const PASSWORD_MAX_LENGTH = 256;
+const PASSWORD_HASHED_MAX_LENGTH = 1024;
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     unique: true,
-    minlength: 4,
-    maxlength: 64
+    minlength: NAME_MIN_LENGTH,
+    maxlength: NAME_MAX_LENGTH
   },
   password: {
     type: String,
     required: true,
-    minlength: 8,
-    maxlength: 1024
+    minlength: PASSWORD_MIN_LENGTH,
+    maxlength: PASSWORD_HASHED_MAX_LENGTH
   }
 });
 
 function validateUser(user) {
-  // const schema = {
-  //   name: Joi.string().min(4).max(64).required(),
-  //   password: Joi.string().min(4).max(255).required()
-  // }
   const schema = Joi.object({
-    name: Joi.string().min(4).max(64).required(),
-    password: Joi.string().min(8).max(255).required()
+    name: Joi.string().min(NAME_MIN_LENGTH).max(NAME_MAX_LENGTH).required(),
+    password: Joi.string().min(PASSWORD_MIN_LENGTH).max(PASSWORD_MAX_LENGTH).required()
   });
   return schema.validate(user);
 }

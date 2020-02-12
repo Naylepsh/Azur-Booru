@@ -30,7 +30,7 @@ exports.list = async(req, res) => {
       tagsQuery: req.query.tags, 
     });
   } catch (err) {
-    console.error(err);
+    miscUtils.sendError(res, err, 500);
   }
 }
 
@@ -66,7 +66,11 @@ exports.create = async (req, res) => {
 
 exports.show = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id)
+    const post = await Post.findById(req.params.id);
+    if (!post) { 
+      return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
+    }
+
     const tags = await Promise.all(post.tags.map(async tag => {
       tag = await Tag.findById(tag._id)
       return {name: tag.name, occurences: tag.posts.length};
@@ -74,13 +78,17 @@ exports.show = async (req, res) => {
     res.render('posts/show', {post: post, tags: tags});
   } catch(err) {
     console.error(err);
-    miscUtils.sendError(res, err, 404);
+    miscUtils.sendError(res, err, 500);
   }
 }
 
 exports.edit = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
+    if (!post) { 
+      return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
+    }
+
     const tags = await Promise.all(post.tags.map(id => Tag.findById(id)));
     const tagNames = tags.map(tag => tag.name);
     res.render('posts/edit', { post, tags: tagNames });
@@ -96,6 +104,10 @@ exports.update = async (req, res) => {
     
     // remove old tags
     let oldPost = await Post.findById(req.params.id);
+    if (!oldPost) { 
+      return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
+    }
+
     let oldTags = await Promise.all(oldPost.tags.map(tag => Tag.findById(tag._id)));
     let oldTagsIds = oldTags.map(tag => tag._id);
 
@@ -126,6 +138,10 @@ exports.update = async (req, res) => {
 exports.destroy = async (req, res) => {
   try {
     const post = await Post.findByIdAndRemove(req.params.id);
+    if (!post) { 
+      return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
+    }
+
     await Promise.all(post.tags.map(tag => Tag.removePost(tag._id, post._id)));
     miscUtils.removeFile(post.imageLink);
     miscUtils.removeFile(post.thumbnailLink);
