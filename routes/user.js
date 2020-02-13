@@ -6,6 +6,7 @@ router
 .get('/register', User.registerForm)
 .post('/register', User.register)
 .get('/login', User.loginForm)
-.post('/login', User.login);
+.post('/login', User.login)
+.get('/logout', User.logout);
 
 module.exports = router;

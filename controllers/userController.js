@@ -23,9 +23,7 @@ exports.register = async (req, res) => {
     password: password
   });
   await user.save();
-
-  const token = user.generateAuthToken();
-  res.header('x-auth-token', token).send(user);
+  res.send(user);
 }
 
 exports.loginForm = (req, res) => {
@@ -49,5 +47,12 @@ exports.login = async (req, res) => {
   }
 
   const token = user.generateAuthToken();
+  res.cookie('jwt-token', token, {expire: 400000 + Date.now()});
+
   res.send(token);
+}
+
+exports.logout = (req, res) => {
+  res.clearCookie('jwt-token');
+  res.redirect('/');
 }
