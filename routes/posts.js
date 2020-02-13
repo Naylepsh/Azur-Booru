@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {storage} = require('../utils/db');
+const { storage } = require('../utils/db');
 const Post = require('../controllers/postController');
 const auth = require('../middleware/auth');
 
