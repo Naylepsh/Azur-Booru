@@ -40,7 +40,10 @@ typings/
 .env
 
 # uploaded files
-public/uploads/
+public/uploads/*
+
+# exception to the rule
+!public/uploads/.gitkeep 
 
 # thumbnails
 public/thumbnails
