@@ -1,10 +1,16 @@
+require('dotenv').config();
+const config = require('./config');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const methodOverride = require('method-override');
 const mongoose = require('mongoose');
-const config = require('./config');
+
+if (!process.env.JWT_SECRET) {
+  console.error('JWT SECRET is not defined');
+  process.exit(1);
+}
 
 const indexRoutes = require('./routes/index');
 const postsRoutes = require('./routes/posts');

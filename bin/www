@@ -87,5 +87,4 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
-  debug(`Users Service URL ${process.env.USER_SERVICE_URL}`);
 }

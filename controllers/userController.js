@@ -47,6 +47,6 @@ exports.login = async (req, res) => {
     return sendError(res, { status: 400, message: 'Invalid username or password.' });
   }
 
-  const token = jwt.sign({ _id: user._id }, 'super s3cret')
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
   res.send(token);
 }
