@@ -24,7 +24,7 @@ exports.register = async (req, res) => {
     password: password
   });
   await user.save();
-  res.send(user);
+  res.redirect('/');
 }
 
 exports.loginForm = (req, res) => {
@@ -51,7 +51,7 @@ exports.login = async (req, res) => {
   const token = user.generateAuthToken();
   res.cookie('jwt-token', token, {expire: 400000 + Date.now()});
 
-  res.send(token);
+  res.redirect('/');
 }
 
 exports.logout = (req, res) => {
