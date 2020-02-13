@@ -40,7 +40,7 @@ typings/
 .env
 
 # uploaded files
-public/uploads
+public/uploads/
 
 # thumbnails
 public/thumbnails
