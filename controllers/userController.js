@@ -59,3 +59,13 @@ exports.logout = (req, res) => {
   res.user = null;
   res.redirect('/');
 }
+
+exports.profile = async (req, res) => {
+  try { 
+    const user = await User.findById(req.user._id).select('-password');
+    res.send(user);
+  } catch (error) {
+    console.error(error);
+    sendError(res, error, 500);
+  }
+}
