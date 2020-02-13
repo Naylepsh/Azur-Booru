@@ -1,5 +1,6 @@
 const { User, validate } = require('../models/user');
 const { sendError } = require('../utils/misc');
+const { hashPassword } = require('../utils/auth');
 
 exports.registerForm = (req, res) => {
   res.render('user/register');
@@ -12,9 +13,10 @@ exports.register = async (req, res) => {
   let user = await User.findOne({ name: req.body.name });
   if (user) { sendError(res, { status: 400, message: 'User already registered.' }) };
 
+  const { salt, password } = await hashPassword(req.body.password);
   user = new User({
     name: req.body.name,
-    password: req.body.password
+    password: password
   });
   await user.save();
   res.send(user);
