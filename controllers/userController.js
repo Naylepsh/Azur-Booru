@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const { User, validate } = require('../models/user');
 const { sendError } = require('../utils/misc');
 const { hashPassword, validatePassword } = require('../utils/auth');
@@ -46,5 +47,6 @@ exports.login = async (req, res) => {
     return sendError(res, { status: 400, message: 'Invalid username or password.' });
   }
 
-  res.send(true);
+  const token = jwt.sign({ _id: user._id }, 'super s3cret')
+  res.send(token);
 }
