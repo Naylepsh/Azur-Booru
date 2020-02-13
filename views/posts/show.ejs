@@ -26,6 +26,7 @@
         </div>
         <ul>
           <div><li class="sidebar-section-generic-content"><a href="/posts/<%= post.id %>/edit">Edit</a></li></div>
+          <% if (user && user._id === post.author._id.toString()) { %>
           <div>
             <li class="sidebar-section-generic-content">
               <form action="/posts/<%= post.id %>?_method=DELETE" method="POST">
@@ -33,6 +34,7 @@
               </form>
             </li>
           </div>
+          <% } %>
         </ul>
       </section>
     </aside>

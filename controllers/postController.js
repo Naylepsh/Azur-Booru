@@ -74,7 +74,7 @@ exports.create = async (req, res) => {
 
 exports.show = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id).populate('author');
     if (!post) { 
       return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
     }
@@ -140,9 +140,15 @@ exports.update = async (req, res) => {
 
 exports.destroy = async (req, res) => {
   try {
+    // wonky things due to .remove being depreciated
+    const isAuthor = authenticateAuthor(req.user, req.params.id);
+    if (!isAuthor) {
+      return miscUtils.sendError(res, { status: 403, message: 'Access denied.' });
+    }
+
     const post = await Post.findByIdAndRemove(req.params.id);
     if (!post) { 
-      return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
+      return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
     }
 
     await Promise.all(post.tags.map(tag => Tag.removePost(tag._id, post._id)));
@@ -153,4 +159,12 @@ exports.destroy = async (req, res) => {
     console.error(err);
     miscUtils.sendError(res, err, 500);
   }
+}
+
+async function authenticateAuthor(user, postId) {
+  const post = await Post.findById(postId).populate('author');
+  if (!post) { 
+    return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
+  }
+  return user._id === post.author._id.toString()
 }
