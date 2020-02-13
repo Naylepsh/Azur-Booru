@@ -32,6 +32,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(logger('dev'));
 app.use(methodOverride('_method'));
+app.use(require('./middleware/auth').loadUser);
 app.use(indexRoutes);
 app.use('/posts', postsRoutes);
 app.use('/', userRoutes);
