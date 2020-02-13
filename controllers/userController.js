@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const { User, validate } = require('../models/user');
 const { sendError } = require('../utils/misc');
 const { hashPassword, validatePassword } = require('../utils/auth');
@@ -24,7 +23,9 @@ exports.register = async (req, res) => {
     password: password
   });
   await user.save();
-  res.send(user);
+
+  const token = user.generateAuthToken();
+  res.header('x-auth-token', token).send(user);
 }
 
 exports.loginForm = (req, res) => {
@@ -47,6 +48,6 @@ exports.login = async (req, res) => {
     return sendError(res, { status: 400, message: 'Invalid username or password.' });
   }
 
-  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+  const token = user.generateAuthToken();
   res.send(token);
 }

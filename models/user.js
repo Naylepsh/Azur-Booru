@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
+const jwt = require('jsonwebtoken');
 
 const NAME_MIN_LENGTH = 4;
 const NAME_MAX_LENGTH = 64;
@@ -22,6 +23,11 @@ const UserSchema = new mongoose.Schema({
     maxlength: PASSWORD_HASHED_MAX_LENGTH
   }
 });
+
+UserSchema.methods.generateAuthToken = function() {
+  const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET);
+  return token;
+}
 
 function validateUser(user) {
   const schema = Joi.object({
