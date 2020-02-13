@@ -27,7 +27,8 @@ exports.list = async(req, res) => {
       posts,
       tags,
       pageInfo,
-      tagsQuery: req.query.tags, 
+      tagsQuery: req.query.tags,
+      user: req.user 
     });
   } catch (err) {
     miscUtils.sendError(res, err, 500);
@@ -35,7 +36,7 @@ exports.list = async(req, res) => {
 }
 
 exports.new = (req, res) => {
-  res.render('posts/new');
+  res.render('posts/new', { user: req.user });
 }
 
 exports.create = async (req, res) => {
@@ -55,7 +56,7 @@ exports.create = async (req, res) => {
       rating: req.body.post.rating
     });
     await Promise.all(tagsIds.map( id => Tag.addPost(id, post._id)));
-    res.redirect('/posts');
+    res.redirect('/posts', { user: req.user });
   } catch (err) {
     miscUtils.removeFile(`./public${IMAGE_PATH}${req.file.filename}`);
     miscUtils.removeFile(`./public${THUMBNAIL_PATH}${req.file.filename}`);
@@ -75,7 +76,7 @@ exports.show = async (req, res) => {
       tag = await Tag.findById(tag._id)
       return {name: tag.name, occurences: tag.posts.length};
     }));
-    res.render('posts/show', {post: post, tags: tags});
+    res.render('posts/show', { post: post, tags: tags, user: req.user });
   } catch(err) {
     console.error(err);
     miscUtils.sendError(res, err, 500);
@@ -91,7 +92,7 @@ exports.edit = async (req, res) => {
 
     const tags = await Promise.all(post.tags.map(id => Tag.findById(id)));
     const tagNames = tags.map(tag => tag.name);
-    res.render('posts/edit', { post, tags: tagNames });
+    res.render('posts/edit', { post, tags: tagNames, user: req.user  });
   } catch(err) {
     console.error(err);
     miscUtils.sendError(res, err, 500);

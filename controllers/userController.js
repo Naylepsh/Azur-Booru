@@ -3,7 +3,8 @@ const { sendError } = require('../utils/misc');
 const { hashPassword, validatePassword } = require('../utils/auth');
 
 exports.registerForm = (req, res) => {
-  res.render('user/register');
+  if (req.user) { res.redirect('/'); }
+  res.render('user/register', { user: req.user });
 }
 
 exports.register = async (req, res) => {
@@ -27,7 +28,8 @@ exports.register = async (req, res) => {
 }
 
 exports.loginForm = (req, res) => {
-  res.render('user/login');
+  if (req.user) { res.redirect('/'); }
+  res.render('user/login', { user: req.user });
 }
 
 exports.login = async (req, res) => {
@@ -54,5 +56,6 @@ exports.login = async (req, res) => {
 
 exports.logout = (req, res) => {
   res.clearCookie('jwt-token');
+  res.user = null;
   res.redirect('/');
 }
