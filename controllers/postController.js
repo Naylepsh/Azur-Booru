@@ -50,7 +50,7 @@ exports.create = async (req, res) => {
 
     miscUtils.makeThumbnail(
       `./public${IMAGE_PATH}${req.file.filename}`, 
-      `./public/${THUMBNAIL_PATH}${req.file.filename}`);
+      `./public${THUMBNAIL_PATH}${req.file.filename}`);
     const tags = await Promise.all(req.body.post.tags.map(name => Tag.findOrCreate(name)));
     const tagsIds = tags.map(tag => tag._id);
 
@@ -145,8 +145,8 @@ exports.destroy = async (req, res) => {
     }
 
     await Promise.all(post.tags.map(tag => Tag.removePost(tag._id, post._id)));
-    miscUtils.removeFile(post.imageLink);
-    miscUtils.removeFile(post.thumbnailLink);
+    miscUtils.removeFile(`./public${post.imageLink}`);
+    miscUtils.removeFile(`./public${post.thumbnailLink}`);
     res.redirect('/posts');
   } catch (err) {
     console.error(err);
