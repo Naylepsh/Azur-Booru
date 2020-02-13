@@ -1,6 +1,6 @@
 const { User, validate } = require('../models/user');
 const { sendError } = require('../utils/misc');
-const { hashPassword } = require('../utils/auth');
+const { hashPassword, validatePassword } = require('../utils/auth');
 
 exports.registerForm = (req, res) => {
   res.render('user/register');
@@ -8,10 +8,14 @@ exports.registerForm = (req, res) => {
 
 exports.register = async (req, res) => {
   const { error } = validate(req.body);
-  if (error) { sendError(res, { status: 400, message: error.details[0].message }) };
+  if (error) { 
+    return sendError(res, { status: 400, message: error.details[0].message });
+  };
 
   let user = await User.findOne({ name: req.body.name });
-  if (user) { sendError(res, { status: 400, message: 'User already registered.' }) };
+  if (user) { 
+    return sendError(res, { status: 400, message: 'User already registered.' });
+  };
 
   const { salt, password } = await hashPassword(req.body.password);
   user = new User({
@@ -24,4 +28,23 @@ exports.register = async (req, res) => {
 
 exports.loginForm = (req, res) => {
   res.render('user/login');
+}
+
+exports.login = async (req, res) => {
+  const { error } = validate(req.body);
+  if (error) {
+    return sendError(res, { status: 400, message: error.details[0].message });
+  };
+
+  const user = await User.findOne({ name: req.body.name });
+  if (!user) { 
+    return sendError(res, { status: 400, message: 'Invalid username or password.' });
+  }
+
+  const validPassword = await validatePassword(req.body.password, user.password);
+  if (!validPassword) { 
+    return sendError(res, { status: 400, message: 'Invalid username or password.' });
+  }
+
+  res.send(true);
 }
