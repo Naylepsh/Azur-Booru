@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Joi = require('@hapi/joi');
 
 const MIN_TAGS = 3
 
@@ -6,7 +7,6 @@ const PostSchema = new mongoose.Schema({
   imageLink: String,
   thumbnailLink: String,
   source: String,
-  title: String,
   tags: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: 'Tag',
@@ -27,4 +27,14 @@ PostSchema.statics.paginate = function(query, toSkip, toLimit) {
   return this.find(query).sort({ _id: -1 }).skip(toSkip).limit(toLimit);
 }
 
-module.exports = mongoose.model('Post', PostSchema);
+function validatePost(post) {
+  const schema = Joi.object({
+    source: Joi.any(),
+    tags: Joi.array().min(MIN_TAGS).required(),
+    rating: Joi.string().required()
+  });
+  return schema.validate(post);
+}
+
+exports.Post = mongoose.model('Post', PostSchema);
+exports.validate = validatePost;
