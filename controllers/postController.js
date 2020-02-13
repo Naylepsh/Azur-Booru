@@ -59,7 +59,8 @@ exports.create = async (req, res) => {
       thumbnailLink: `${THUMBNAIL_PATH}${req.file.filename}`,
       source: req.body.post.source,
       tags: tagsIds,
-      rating: req.body.post.rating
+      rating: req.body.post.rating,
+      author: req.user._id
     });
     await Promise.all(tagsIds.map( id => Tag.addPost(id, post._id)));
     res.redirect('/posts');
