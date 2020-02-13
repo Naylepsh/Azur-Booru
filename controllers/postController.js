@@ -91,13 +91,12 @@ exports.show = async (req, res) => {
 
 exports.edit = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id).populate('tags');
     if (!post) { 
       return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
     }
 
-    const tags = await Promise.all(post.tags.map(id => Tag.findById(id)));
-    const tagNames = tags.map(tag => tag.name);
+    const tagNames = post.tags.map(tag => tag.name);
     res.render('posts/edit', { post, tags: tagNames, user: req.user  });
   } catch(err) {
     console.error(err);
@@ -110,15 +109,11 @@ exports.update = async (req, res) => {
     req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
     
     // remove old tags
-    let oldPost = await Post.findById(req.params.id);
+    let oldPost = await Post.findById(req.params.id).populate('tags');
     if (!oldPost) { 
       return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
     }
-
-    let oldTags = await Promise.all(oldPost.tags.map(tag => Tag.findById(tag._id)));
-    let oldTagsIds = oldTags.map(tag => tag._id);
-
-    await Promise.all(oldTagsIds.map( id => Tag.removePost(id, oldPost._id)));
+    await Promise.all(oldPost.tags.map( tag => Tag.removePost(tag._id, oldPost._id)));
 
     // add new tags
     let newPost = req.body.post;
