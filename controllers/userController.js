@@ -1,7 +1,8 @@
 const { User, validate } = require('../models/user');
-const { ROLES, getRoleNames } = require('../models/role');
+const { getRoleNames } = require('../models/role');
 const { sendError } = require('../utils/misc');
 const { hashPassword, validatePassword } = require('../utils/auth');
+const config = require('../config');
 
 exports.registerForm = (req, res) => {
   if (req.user) { res.redirect('/'); }
@@ -61,7 +62,7 @@ exports.login = async (req, res) => {
 
 exports.logout = (req, res) => {
   res.clearCookie('jwt-token');
-  const prefix = 'role-is-';
+  const prefix = config.cookies.prefix;
   for (const key in req.cookies) {
     if (key.slice(0, prefix.length) === prefix) { res.clearCookie(key); }
   }
@@ -76,6 +77,6 @@ exports.profile = async (req, res) => {
 
 async function storeRoles(res, roles) {
   for (const role of roles) {
-    res.cookie(`role-is-${role}`, true, {expire: 400000 + Date.now()});
+    res.cookie(config.cookies.prefix + role, true, {expire: 400000 + Date.now()});
   }
 }

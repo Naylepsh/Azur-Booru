@@ -8,6 +8,9 @@ const dev = {
     host: 'localhost',
     name: 'booru'
   },
+  cookies: {
+    prefix: 'AzurBooru_'
+  },
 };
 
 const config = {
