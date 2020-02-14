@@ -4,13 +4,15 @@
  * error handling middleware
  */
 exports.asyncWrapper = (handler, error_handlers) => {
-  return async (req, res) => {
+  return async (req, res, next) => {
     try {
       await handler(req, res);
     } catch (err) {
       if (error_handlers && error_handlers.length > 0) {
         res.locals.error_handlers = error_handlers.filter( f => typeof f === 'function' && f.length == 0 );
-      } 
+      } else {
+        res.locals.error_handlers = [];
+      }
       next(err);
     }
   }

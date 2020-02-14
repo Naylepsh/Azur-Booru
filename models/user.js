@@ -21,6 +21,17 @@ const UserSchema = new mongoose.Schema({
     required: true,
     minlength: PASSWORD_MIN_LENGTH,
     maxlength: PASSWORD_HASHED_MAX_LENGTH
+  },
+  roles: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Role',
+    required: true,
+    validate: {
+      validator: function(v) {
+        return v && v.length > 0;
+      },
+      message: 'At least one role required.'
+    }
   }
 });
 

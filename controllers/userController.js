@@ -1,4 +1,5 @@
 const { User, validate } = require('../models/user');
+const Role = require('../models/role');
 const { sendError } = require('../utils/misc');
 const { hashPassword, validatePassword } = require('../utils/auth');
 
@@ -19,9 +20,11 @@ exports.register = async (req, res) => {
   };
 
   const { salt, password } = await hashPassword(req.body.password);
+  const role = await Role.user();
   user = new User({
     name: req.body.name,
-    password: password
+    password,
+    roles: [role._id]
   });
   await user.save();
   res.redirect('/');
