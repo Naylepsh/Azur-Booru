@@ -33,4 +33,10 @@ exports.isAdmin = async (roleId) => {
   const role = await Role.findById(roleId);
   return role.name === ROLES.admin;
 }
-exports.Role = Role
+exports.getRoleNames = async (rolesIds) => {
+  const roles = await Promise.all(rolesIds.map( id => Role.findById(id) ));
+  const rolesDbNames = roles.map( role => role.name );
+  const names = Object.keys(ROLES).filter( role => rolesDbNames.includes(ROLES[role]) );
+  return names;
+}
+exports.Role = Role;

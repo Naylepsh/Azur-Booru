@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
 const jwt = require('jsonwebtoken');
+const Role = require('./role');
 
 const NAME_MIN_LENGTH = 4;
 const NAME_MAX_LENGTH = 64;
@@ -40,6 +41,12 @@ UserSchema.methods.generateAuthToken = function() {
   return token;
 }
 
+UserSchema.statics.getRoles = async (userId) => {
+  const user = await User.findById(userId);
+  const roleNames = await Role.getRoleNames(user.roles);
+  return roleNames;
+}
+
 function validateUser(user) {
   const schema = Joi.object({
     name: Joi.string().min(NAME_MIN_LENGTH).max(NAME_MAX_LENGTH).required(),
@@ -48,5 +55,7 @@ function validateUser(user) {
   return schema.validate(user);
 }
 
-exports.User = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
+
+exports.User = User;
 exports.validate = validateUser;
