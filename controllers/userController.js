@@ -1,5 +1,5 @@
 const { User, validate } = require('../models/user');
-const { getRoleNames } = require('../models/role');
+const Role = require('../models/role');
 const { sendError } = require('../utils/misc');
 const { hashPassword, validatePassword } = require('../utils/auth');
 const config = require('../config');
@@ -54,7 +54,7 @@ exports.login = async (req, res) => {
 
   const token = user.generateAuthToken();
   res.cookie('jwt-token', token, {expire: 400000 + Date.now()});
-  const roleNames = await getRoleNames(user.roles);
+  const roleNames = await Role.getRoleNames(user.roles);
   storeRoles(res, roleNames);
 
   res.redirect('/');
