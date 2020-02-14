@@ -14,9 +14,9 @@ exports.loadUser = function(req, res, next) {
     const cookieRoles = pickAttributes(req.cookies, Object.keys(ROLES).map( role => prefix+role ));
     req.user.roles = {};
     for (const role in cookieRoles) {
-      req.user.roles[role] = cookieRoles[role] === 'true';
+      req.user.roles[role.slice(prefix.length)] = cookieRoles[role] === 'true';
     }
-    
+ 
     next();
   } catch (error) {
     return sendError(res, { status: 400, message: 'Invalid token.' });
