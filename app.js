@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const methodOverride = require('method-override');
 const mongoose = require('mongoose');
+const error = require('./middleware/error');
 
 if (!process.env.JWT_SECRET) {
   console.error('JWT SECRET is not defined');
@@ -36,5 +37,6 @@ app.use(require('./middleware/auth').loadUser);
 app.use(indexRoutes);
 app.use('/posts', postsRoutes);
 app.use('/', userRoutes);
+app.use(error);
 
 module.exports = app;
