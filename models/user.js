@@ -41,9 +41,8 @@ UserSchema.methods.generateAuthToken = function() {
   return token;
 }
 
-UserSchema.statics.getRoles = async (userId) => {
-  const user = await User.findById(userId);
-  const roleNames = await Role.getRoleNames(user.roles);
+UserSchema.methods.getRoles = async function() {
+  const roleNames = await Role.getRoleNames(this.roles);
   return roleNames;
 }
 

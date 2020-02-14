@@ -1,17 +1,8 @@
-const { sendError } = require('../utils/misc');
+const { sendError, pickAttributes } = require('../utils/misc');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/user');
+const { ROLES } = require('../models/role');
 
-async function getRoles(userId) {
-  const roles = await User.getRoles(userId);
-  let rolesObj = {};
-  for (const role of roles) {
-    rolesObj[role] = true;
-  }
-  return rolesObj;
-}
-
-exports.loadUser = async function(req, res, next) {
+exports.loadUser = function(req, res, next) {
   if (!req.cookies || !req.cookies['jwt-token']) {
     return next();
   }
@@ -19,7 +10,13 @@ exports.loadUser = async function(req, res, next) {
   try {
     const decoded = jwt.verify(req.cookies['jwt-token'], process.env.JWT_SECRET);
     req.user = decoded;
-    req.user.roles = await getRoles(req.user);
+    const prefix = 'role-is-';
+    const cookieRoles = pickAttributes(req.cookies, Object.keys(ROLES).map( role => prefix+role ));
+    req.user.roles = {};
+    for (const role in cookieRoles) {
+      req.user.roles[role] = cookieRoles[role] === 'true';
+    }
+    
     next();
   } catch (error) {
     return sendError(res, { status: 400, message: 'Invalid token.' });

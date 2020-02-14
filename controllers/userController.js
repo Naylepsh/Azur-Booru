@@ -1,5 +1,5 @@
 const { User, validate } = require('../models/user');
-const Role = require('../models/role');
+const { ROLES, getRoleNames } = require('../models/role');
 const { sendError } = require('../utils/misc');
 const { hashPassword, validatePassword } = require('../utils/auth');
 
@@ -53,12 +53,18 @@ exports.login = async (req, res) => {
 
   const token = user.generateAuthToken();
   res.cookie('jwt-token', token, {expire: 400000 + Date.now()});
+  const roleNames = await getRoleNames(user.roles);
+  storeRoles(res, roleNames);
 
   res.redirect('/');
 }
 
 exports.logout = (req, res) => {
   res.clearCookie('jwt-token');
+  const prefix = 'role-is-';
+  for (const key in req.cookies) {
+    if (key.slice(0, prefix.length) === prefix) { res.clearCookie(key); }
+  }
   res.user = null;
   res.redirect('/');
 }
@@ -66,4 +72,10 @@ exports.logout = (req, res) => {
 exports.profile = async (req, res) => {
   const user = await User.findById(req.user._id).select('-password');
   res.send(user);
+}
+
+async function storeRoles(res, roles) {
+  for (const role of roles) {
+    res.cookie(`role-is-${role}`, true, {expire: 400000 + Date.now()});
+  }
 }

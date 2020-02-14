@@ -50,5 +50,13 @@ module.exports = {
       }
       return obj;
     }, {});
+  },
+
+  swapKeysAndValues: (object) => {
+    let swapped = {};
+    for(const key in object){
+      swapped[object[key]] = key;
+    }
+    return swapped;
   }
 }
