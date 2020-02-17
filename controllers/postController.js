@@ -1,6 +1,7 @@
 const { Post, validate } = require('../models/post');
 const { Tag } = require('../models/tag');
 const miscUtils = require('../utils/misc');
+const { User } = require('../models/user');
 
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
@@ -64,7 +65,11 @@ exports.create = async (req, res) => {
 exports.show = async (req, res) => {
   const post = await Post.findById(req.params.id)
   .populate('author', 'name')
-  .populate('comments');
+  .populate({
+    path: 'comments',
+    populate: { path: 'author', model: 'User'}
+  });
+
   if (!post) { 
     return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
   }

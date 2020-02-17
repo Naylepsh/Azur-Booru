@@ -38,7 +38,7 @@ app.use(require('./middleware/auth').loadUser);
 app.use(indexRoutes);
 app.use('/posts', postsRoutes);
 app.use('/', userRoutes);
-app.use(commentRoutes);
+app.use(commentRoutes); // cause '/posts/:id/comments' won't show id in req.params for some reason
 app.use(error);
 
 module.exports = app;

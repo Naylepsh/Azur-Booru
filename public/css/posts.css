@@ -53,7 +53,7 @@ form > button {
   max-width: 500px;
 }
 
-/* Search bar */
+/* Search bar form */
 .search-bar {
   margin-top: 25px;
   max-width: 100%;
@@ -198,6 +198,41 @@ img {
   font-size: 15px;
   font-weight: 400;
   width: auto;
+}
+
+/*** Comments ***/
+.comment {
+  margin: 30px 0;
+  position: relative;
+}
+
+.comment > .comment-author-info,
+.comment > .comment-body {
+  margin-left: 32px;
+}
+
+.comment-author-avatar > img {
+  width: 64px;
+  height: auto;
+  position: absolute;
+  border: 2px solid rgba(0,0,0,0.75);
+  border-radius: 50%;
+}
+
+.comment-author-info {
+  font-weight: 700;
+  padding-left: 36px;
+}
+
+.comment-body {
+  border: 2px solid rgba(0,0,0,0.75);
+  border-radius: 4px;
+  margin-top: 15px;
+  padding: 20px;
+}
+
+.comment-new {
+  margin-left: 32px;
 }
 
 /* large size */

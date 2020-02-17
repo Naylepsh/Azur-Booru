@@ -44,15 +44,25 @@
       </section>
       <section class="post-comments">
         <% if (post.comments && post.comments.length > 0) { %>
-          <div class="post-comments-list">
+          <div class="comments-list">
             <ul>
               <% for (const comment of post.comments) { %>
-                <li class="post-comment"><%= comment.body %></li>
+                <li class="comment">
+                  <div class="comment-author-avatar">
+                    <img src="/assets/default-avatar.jpg" alt="<%= comment.author.name %> avatar">
+                  </div>
+                  <div class="comment-author-info">
+                    <a href="#"><%= comment.author.name %></a>
+                  </div>
+                  <div class="comment-body">
+                    <%= comment.body %>
+                  </div>
+                </li>
               <% } %>
             </ul>
           </div>
         <% } %>
-        <div class="post-comment-new">
+        <div class="comment-new">
           <form action="/posts/<%= post._id %>/comments" method="POST">
             <div class="form-entry">
               <label for="body">Body</label>
