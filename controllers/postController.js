@@ -62,7 +62,9 @@ exports.create = async (req, res) => {
 }
 
 exports.show = async (req, res) => {
-  const post = await Post.findById(req.params.id).populate('author');
+  const post = await Post.findById(req.params.id)
+  .populate('author', 'name')
+  .populate('comments');
   if (!post) { 
     return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
   }
@@ -71,6 +73,7 @@ exports.show = async (req, res) => {
     tag = await Tag.findById(tag._id)
     return {name: tag.name, occurences: tag.posts.length};
   }));
+
   res.render('posts/show', { post: post, tags: tags, user: req.user });
 }
 

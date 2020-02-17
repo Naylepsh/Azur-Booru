@@ -19,7 +19,11 @@ const PostSchema = new mongoose.Schema({
   rating: {
     type: String,
     required: true
-  }
+  },
+  comments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
+  }]
 });
 
 PostSchema.statics.paginate = function(query, toSkip, toLimit) {

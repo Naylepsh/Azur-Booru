@@ -17,6 +17,7 @@ if (!process.env.JWT_SECRET) {
 const indexRoutes = require('./routes/index');
 const postsRoutes = require('./routes/posts');
 const userRoutes = require('./routes/user');
+const commentRoutes = require('./routes/comments');
 
 // DB config
 mongoose.set('useUnifiedTopology', true);
@@ -37,6 +38,7 @@ app.use(require('./middleware/auth').loadUser);
 app.use(indexRoutes);
 app.use('/posts', postsRoutes);
 app.use('/', userRoutes);
+app.use(commentRoutes);
 app.use(error);
 
 module.exports = app;
