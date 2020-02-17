@@ -1,5 +1,5 @@
 const { Post, validate } = require('../models/post');
-const Tag = require('../models/tag');
+const { Tag } = require('../models/tag');
 const miscUtils = require('../utils/misc');
 
 const POSTS_PER_PAGE = 20;

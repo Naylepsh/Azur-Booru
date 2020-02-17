@@ -55,4 +55,4 @@ tagSchema.statics.popularTagsOfPosts = async function(posts, tagsLimit) {
   }
 }
 
-module.exports = mongoose.model('Tag', tagSchema);
+exports.Tag = mongoose.model('Tag', tagSchema);
