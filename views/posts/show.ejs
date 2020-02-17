@@ -42,6 +42,26 @@
       <section class="post-image">
         <img src='<%= post.imageLink %>'>
       </section>
+      <section class="post-comments">
+        <% if (post.comments && post.comments.length > 0) { %>
+          <div class="post-comments-list">
+            <ul>
+              <% for (const comment of post.comments) { %>
+                <li class="post-comment"><%= comment.text %></li>
+              <% } %>
+            </ul>
+          </div>
+        <% } %>
+        <div class="post-comment-new">
+          <form action="" method="POST">
+            <div class="form-entry">
+              <label for="body">Body</label>
+              <textarea name="comment[body]" id="body"></textarea>
+            </div>
+            <button>Submit</button>
+          </form>
+        </div>
+      </section>
     </div>
   </div>
 

@@ -5,6 +5,64 @@ body {
   height: 100vh;
 }
 
+.guidelines {
+  margin-top: 40px;
+  text-align: center;
+}
+
+/** FORMS **/
+/* Generic */
+form {
+  width: 100%;
+}
+
+.form-entry > input,
+textarea {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.form-entry > label,
+fieldset > legend {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 2px;
+}
+
+fieldset {
+  border: none;
+}
+
+fieldset > input {
+  width: 0;
+}
+
+fieldset > label {
+  display: inline;
+  font-weight: normal;
+  margin-right: 10px;
+}
+
+form > button {
+  margin-top: 10px;
+}
+
+/* Post form */
+.post-form {
+  margin: auto;
+  max-width: 500px;
+}
+
+/* Search bar */
+.search-bar {
+  margin-top: 25px;
+  max-width: 100%;
+}
+
+.search-bar > button {
+  margin-top: 0;
+}
+
 .nav-bar {
   background: rgba(0,0,0,0.9);
 }
@@ -13,14 +71,10 @@ body {
   background-color: rgba(0,0,0,0.9);
 }
 
-.search-bar {
-  margin-top: 25px;
-}
-
 #content {
   margin-top: 25px;
   margin-bottom: 25px;
-  margin-left: 200px;
+  margin-left: 220px;
 }
 
 .thumbnails {
@@ -129,10 +183,6 @@ img {
 
 .active-tag > span {
   color: rgba(255, 255, 255, 0.8);
-}
-
-.post-image {
-  margin-left: 20px;
 }
 
 .extending-element {
