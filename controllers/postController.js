@@ -56,7 +56,8 @@ exports.create = async (req, res) => {
     source: req.body.post.source,
     tags: tagsIds,
     rating: req.body.post.rating,
-    author: req.user._id
+    author: req.user._id,
+    score: 0
   });
   await Promise.all(tagsIds.map( id => Tag.addPost(id, post._id)));
   res.redirect('/posts');
