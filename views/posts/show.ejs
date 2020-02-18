@@ -15,9 +15,9 @@
           <h3>Information</h3>
         </div>
         <ul>
-          <div><li class="sidebar-section-generic-content"><span>Id:</span><span> <%= post.id %></span></li></div>
-          <div><li class="sidebar-section-generic-content"><span>Source:</span><span> <%= post.source %></span></li></div>
-          <div><li class="sidebar-section-generic-content"><span>Score:</span><span> <%= post.score %></span></li></div>
+          <div><li class="sidebar-section-generic-content"><span>Id:</span> <span id="post-id"><%= post.id %></span></li></div>
+          <div><li class="sidebar-section-generic-content"><span>Source:</span> <span id="post-source"><%= post.source %></span></li></div>
+          <div><li class="sidebar-section-generic-content"><span>Score:</span> <span id="post-score"><%= post.score %></span></li></div>
         </ul>
       </section>
       <section class="sidebar-section-generic">
@@ -41,8 +41,13 @@
     <div id="content">
       <section class="post-image">
         <img src='<%= post.imageLink %>'>
+        <menu class="post-menu">
+          <li><button id="post-vote-up">Vote up</button></li>
+          <li><button id="post-vote-down">Vote down</button></li>
+          <li><button id="post-favorite">Favorite</button></li>
+        </menu>
       </section>
-      <section class="post-comments">
+      <section class="comments">
         <% if (post.comments && post.comments.length > 0) { %>
           <div class="comments-list">
             <ul>
@@ -80,8 +85,7 @@
             <form action="/comments" method="POST">
               <input type="hidden" name="postId" value="<%= post._id %>">
               <div class="form-entry">
-                <label for="body">Body</label>
-                <textarea name="comment[body]" id="body"></textarea>
+                <textarea name="comment[body]" id="body" placeholder="Add a comment..."></textarea>
               </div>
               <button>Submit</button>
             </form>
@@ -93,4 +97,5 @@
 
   <script src="/js/tags.js"></script>
   <script src="/js/sidebar.js"></script>
+  <script src="/js/score.js"></script>
 <% include ../partials/footer.ejs %>

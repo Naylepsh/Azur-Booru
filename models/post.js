@@ -31,6 +31,16 @@ const PostSchema = new mongoose.Schema({
       validator: Number.isInteger,
       message: '{VALUE} is not an integer value'
     }
+  },
+  voters: {
+    up: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }],
+    down: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }]
   }
 });
 

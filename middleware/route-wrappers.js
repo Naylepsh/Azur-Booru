@@ -10,7 +10,8 @@ exports.asyncWrapper = (handler, error_handlers) => {
     } catch (err) {
       if (error_handlers && error_handlers.length > 0) {
         res.locals.error_handlers = error_handlers.filter( f => typeof f === 'function' && f.length == 0 );
-      } else {
+      }
+      if (!res.locals.error_handlers) {
         res.locals.error_handlers = [];
       }
       next(err);

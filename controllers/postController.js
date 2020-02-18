@@ -140,6 +140,36 @@ exports.destroy = async (req, res) => {
   res.redirect('/posts');
 }
 
+exports.voteUp = async (req, res) => {
+  await vote(req, res, 'up');
+}
+
+exports.voteDown = async (req, res) => {
+  await vote(req, res, 'down');
+}
+
+async function vote(req, res, direction) {
+  let post = await Post.findById(req.params.id);
+  if (!post) { 
+    return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
+  }
+
+  if (direction == 'up') {
+    if (!post.voters.up.includes(req.user._id)) {
+      post.voters.up.push(req.user._id);
+      post.score++;
+    }
+  } else if (direction == 'down') {
+    if (!post.voters.down.includes(req.user._id)) {
+      post.voters.down.push(req.user._id);
+      post.score--;
+    }
+  }
+
+  await post.save();
+  res.end(post.score.toString());
+}
+
 async function authenticateAuthor(user, postId) {
   const post = await Post.findById(postId).populate('author');
   if (!post) { 

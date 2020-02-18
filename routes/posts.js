@@ -12,6 +12,8 @@ router
 .get('/:id', asyncWrapper(Post.show))
 .get('/:id/edit', authorizeUser, asyncWrapper(Post.edit))
 .put('/:id', authorizeUser, asyncWrapper(Post.update))
-.delete('/:id', authorizeUser, asyncWrapper(Post.destroy));
+.delete('/:id', authorizeUser, asyncWrapper(Post.destroy))
+.post('/:id/vote-up', authorizeUser, asyncWrapper(Post.voteUp))
+.post('/:id/vote-down', authorizeUser, asyncWrapper(Post.voteDown));
 
 module.exports = router;
