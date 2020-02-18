@@ -43,9 +43,41 @@ button {
 	text-align: right;
 }
 
-.search-bar {
-  display: flex;
-  justify-content: center;
+/** FORMS **/
+/* Generic */
+form {
+  width: 100%;
+}
+
+.form-entry > input,
+textarea {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.form-entry > label,
+fieldset > legend {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 2px;
+}
+
+fieldset {
+  border: none;
+}
+
+fieldset > input {
+  width: 0;
+}
+
+fieldset > label {
+  display: inline;
+  font-weight: normal;
+  margin-right: 10px;
+}
+
+form > button {
+  margin-top: 10px;
 }
 
 form > * {
@@ -62,8 +94,27 @@ form > button {
   margin-left: 5px;
 }
 
+/* Search bar form */
+.search-bar {
+  display: flex;
+	justify-content: center;
+	margin-top: 25px;
+  max-width: 100%;
+}
+
 .search-bar > #search {
   width: calc(100% - 100px);
+}
+
+.search-bar > button {
+  margin-top: 0;
+}
+
+/* user form */
+.user-form {
+	margin: auto;
+	margin-top: 40px;
+  max-width: 500px;
 }
 
 .pagination {

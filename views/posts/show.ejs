@@ -62,16 +62,18 @@
             </ul>
           </div>
         <% } %>
-        <div class="comment-new">
-          <form action="/posts/<%= post._id %>/comments" method="POST">
-            <input type="hidden" name="postId" value="<%= post._id %>">
-            <div class="form-entry">
-              <label for="body">Body</label>
-              <textarea name="comment[body]" id="body"></textarea>
-            </div>
-            <button>Submit</button>
-          </form>
-        </div>
+        <% if (user) { %>
+          <div class="comment-new">
+            <form action="/posts/<%= post._id %>/comments" method="POST">
+              <input type="hidden" name="postId" value="<%= post._id %>">
+              <div class="form-entry">
+                <label for="body">Body</label>
+                <textarea name="comment[body]" id="body"></textarea>
+              </div>
+              <button>Submit</button>
+            </form>
+          </div>
+        <% } %>
       </section>
     </div>
   </div>

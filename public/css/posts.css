@@ -10,57 +10,11 @@ body {
   text-align: center;
 }
 
-/** FORMS **/
-/* Generic */
-form {
-  width: 100%;
-}
-
-.form-entry > input,
-textarea {
-  width: 100%;
-  margin-bottom: 5px;
-}
-
-.form-entry > label,
-fieldset > legend {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 2px;
-}
-
-fieldset {
-  border: none;
-}
-
-fieldset > input {
-  width: 0;
-}
-
-fieldset > label {
-  display: inline;
-  font-weight: normal;
-  margin-right: 10px;
-}
-
-form > button {
-  margin-top: 10px;
-}
-
+/*** FORMS  ***/
 /* Post form */
 .post-form {
   margin: auto;
   max-width: 500px;
-}
-
-/* Search bar form */
-.search-bar {
-  margin-top: 25px;
-  max-width: 100%;
-}
-
-.search-bar > button {
-  margin-top: 0;
 }
 
 .nav-bar {
@@ -229,6 +183,7 @@ img {
   border-radius: 4px;
   margin-top: 15px;
   padding: 20px;
+  background-color: rgb(252, 252, 252);
 }
 
 .comment-new {

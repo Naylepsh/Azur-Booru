@@ -2,13 +2,13 @@
   "https://fonts.googleapis.com/css?family=Lato:400,700&display=swap",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css",
   "/css/main.css",
-  "/css/new-post.css"
+  "/css/posts.css"
 ], title: "Register | Azur-booru"
 }) %>
 <body>
   <% include ../partials/nav-bar.ejs %>
   <div class="container">
-    <form action="/register" method="POST">
+    <form class="user-form" action="/register" method="POST">
       <div class="form-entry">
         <label for="username">Username</label>
         <input type="text" name="name" id="username">
