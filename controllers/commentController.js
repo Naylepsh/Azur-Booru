@@ -14,3 +14,19 @@ exports.create = async (req, res) => {
   await post.save();
   res.redirect(`/posts/${req.body.postId}`);
 }
+
+exports.delete = async (req, res) => {
+  let post = await Post.findById(req.body.postId);
+  if (!post) {
+    return sendError(res, { status: 404, message: `Post with id ${req.body.postId} does not exist` });
+  }
+
+  const comment = await Comment.findByIdAndRemove(req.params.id);
+  if (!comment) {
+    return sendError(res, { status: 404, message: `Comment with id ${req.params.id} does not exist` });
+  }
+
+  post.comments.remove(comment);
+  await post.save();
+  res.redirect(`/posts/${req.body.postId}`);
+}

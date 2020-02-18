@@ -1,5 +1,4 @@
 <%- include('../partials/header', { stylesheets: [
-  "https://fonts.googleapis.com/css?family=Lato:400,700&display=swap",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css",
   "/css/main.css",
   "/css/posts.css"
@@ -57,6 +56,19 @@
                   <div class="comment-body">
                     <%= comment.body %>
                   </div>
+                  <menu class="comment-menu">
+                    <li><a href="#">Vote up</a></li>
+                    <li><a href="#">Vote down</a></li>
+                    <% if (comment.author._id.toString() === user._id) { %>
+                      <li>
+                        <form action="/comments/<%= comment._id %>?_method=DELETE"
+                          method="POST">
+                          <input type="hidden" name="postId" value="<%= post._id %>">
+                          <button>Delete</button>
+                        </form>
+                      </li>
+                    <% } %>
+                  </menu>
                 </li>
               <% } %>
             </ul>
@@ -64,7 +76,7 @@
         <% } %>
         <% if (user) { %>
           <div class="comment-new">
-            <form action="/posts/<%= post._id %>/comments" method="POST">
+            <form action="/comments" method="POST">
               <input type="hidden" name="postId" value="<%= post._id %>">
               <div class="form-entry">
                 <label for="body">Body</label>

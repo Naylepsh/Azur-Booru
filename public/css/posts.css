@@ -120,7 +120,6 @@ img {
 
 .tag > a {
   text-transform: uppercase;
-  color: #0062d0;
 }
 
 .tag > span {
@@ -149,7 +148,7 @@ img {
   background: none;
   border: none;
   text-transform: uppercase;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 400;
   width: auto;
 }
@@ -160,9 +159,12 @@ img {
   position: relative;
 }
 
-.comment > .comment-author-info,
-.comment > .comment-body {
+.comment > * {
   margin-left: 32px;
+}
+
+.comment > .comment-author-avatar {
+  margin-left: 0;
 }
 
 .comment-author-avatar > img {
@@ -184,6 +186,24 @@ img {
   margin-top: 15px;
   padding: 20px;
   background-color: rgb(252, 252, 252);
+}
+
+.comment-menu * {
+  display: inline;
+}
+
+.comment-menu li {
+  margin-left: 20px;
+}
+
+.comment-menu button {
+  width: auto;
+  background: none;
+  border: none;
+  color: #0062d0;
+  font-size: 16px;
+  font-weight: 400;
+  margin-left: 0;
 }
 
 .comment-new {

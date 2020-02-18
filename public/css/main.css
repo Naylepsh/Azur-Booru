@@ -14,10 +14,11 @@ body {
 }
 
 a {
-  text-decoration: none;
+	text-decoration: none;
+	color: #0062d0;
 }
 
-ul {
+ul, menu {
   list-style: none;
 }
 
@@ -46,7 +47,7 @@ button {
 /** FORMS **/
 /* Generic */
 form {
-  width: 100%;
+	width: 100%;
 }
 
 .form-entry > input,
@@ -76,22 +77,20 @@ fieldset > label {
   margin-right: 10px;
 }
 
-form > button {
-  margin-top: 10px;
-}
-
 form > * {
   padding: 5px;
 }
 
 form > button {
-  background-color: #0062d0;
+	margin-top: 10px;
+	margin-left: 5px;
+	font-family: 'Lato', sans-serif;
+	background-color: #0062d0;
   color: #FFF;
   font-weight: bold;
   border-color: #0062d0;
   border-style: solid;
   width: 100px;
-  margin-left: 5px;
 }
 
 /* Search bar form */

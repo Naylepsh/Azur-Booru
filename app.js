@@ -36,9 +36,9 @@ app.use(logger('dev'));
 app.use(methodOverride('_method'));
 app.use(require('./middleware/auth').loadUser);
 app.use(indexRoutes);
+app.use(userRoutes);
 app.use('/posts', postsRoutes);
-app.use('/', userRoutes);
-app.use('/posts/:id/comments', commentRoutes);
+app.use('/comments', commentRoutes);
 app.use(error);
 
 module.exports = app;
