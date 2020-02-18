@@ -6,7 +6,7 @@ function vote(direction) {
   const postScore = document.getElementById('post-score');
 
   const req = new XMLHttpRequest();
-  req.open('POST', `/posts/${postId}/vote-up`, true);
+  req.open('POST', `/posts/${postId}/toggle-vote`, true);
   req.onreadystatechange = function() {
     if (req.readyState == XMLHttpRequest.DONE) {
       postScore.innerHTML = req.responseText;
@@ -14,15 +14,10 @@ function vote(direction) {
   }
   let form = new FormData();
   form.append('voteType', direction);
-  console.log(form)
   req.send(form);
 }
 
-postVoteUpBtn.addEventListener('click', () => {
-  vote('up');
-});
+postVoteUpBtn.addEventListener('click', () => { vote('up') });
 
-postVoteDownBtn.addEventListener('click', () => {
-  vote('down');
-});
+postVoteDownBtn.addEventListener('click', () => { vote('down') });
 

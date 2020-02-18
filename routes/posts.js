@@ -13,9 +13,7 @@ router
 .get('/:id/edit', authorizeUser, asyncWrapper(Post.edit))
 .put('/:id', authorizeUser, asyncWrapper(Post.update))
 .delete('/:id', authorizeUser, asyncWrapper(Post.destroy))
-// .post('/:id/vote-up', authorizeUser, asyncWrapper(Post.voteUp))
-// .post('/:id/vote-down', authorizeUser, asyncWrapper(Post.voteDown));
-.post('/:id/toggle-vote', authorizeUser, asyncWrapper(Post.toggleVote))
-// .post('/:id/toggle-vote', authorizeUser, asyncWrapper(Post.nothing))
+// storage.single() has to be there due to some XMLHttpRequest form shenanigans
+.post('/:id/toggle-vote', storage.single(), authorizeUser, asyncWrapper(Post.toggleVote));
 
 module.exports = router;

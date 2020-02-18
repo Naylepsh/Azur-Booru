@@ -141,7 +141,6 @@ exports.destroy = async (req, res) => {
 }
 
 exports.toggleVote = async (req, res) => {
-  console.log(req.body);
   console.log(req.body.voteType)
   let post = await Post.findById(req.params.id);
   if (!post) { 
@@ -159,10 +158,6 @@ exports.toggleVote = async (req, res) => {
   await post.save();
 
   res.end(post.score.toString());
-}
-
-exports.nothing = async (req, res) => {
-  res.end('5');
 }
 
 async function authenticateAuthor(user, postId) {
