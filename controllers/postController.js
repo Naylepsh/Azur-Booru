@@ -140,34 +140,29 @@ exports.destroy = async (req, res) => {
   res.redirect('/posts');
 }
 
-exports.voteUp = async (req, res) => {
-  await vote(req, res, 'up');
-}
-
-exports.voteDown = async (req, res) => {
-  await vote(req, res, 'down');
-}
-
-async function vote(req, res, direction) {
+exports.toggleVote = async (req, res) => {
+  console.log(req.body);
+  console.log(req.body.voteType)
   let post = await Post.findById(req.params.id);
   if (!post) { 
     return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
   }
 
-  if (direction == 'up') {
-    if (!post.voters.up.includes(req.user._id)) {
-      post.voters.up.push(req.user._id);
-      post.score++;
-    }
-  } else if (direction == 'down') {
-    if (!post.voters.down.includes(req.user._id)) {
-      post.voters.down.push(req.user._id);
-      post.score--;
-    }
+  if (req.body.voteType === 'up') {
+    miscUtils.toggleInArray(req.user._id, post.voters.up);
+    miscUtils.removeFromArrayIfExists(req.user._id, post.voters.down);
+  } else if (req.body.voteType === 'down') {
+    miscUtils.toggleInArray(req.user._id, post.voters.down);
+    miscUtils.removeFromArrayIfExists(req.user._id, post.voters.up);
   }
-
+  post.score = post.voters.up.length - post.voters.down.length;
   await post.save();
+
   res.end(post.score.toString());
+}
+
+exports.nothing = async (req, res) => {
+  res.end('5');
 }
 
 async function authenticateAuthor(user, postId) {

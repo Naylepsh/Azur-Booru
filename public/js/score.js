@@ -6,13 +6,16 @@ function vote(direction) {
   const postScore = document.getElementById('post-score');
 
   const req = new XMLHttpRequest();
-  req.open('POST', `/posts/${postId}/vote-${direction}`, true);
+  req.open('POST', `/posts/${postId}/vote-up`, true);
   req.onreadystatechange = function() {
     if (req.readyState == XMLHttpRequest.DONE) {
       postScore.innerHTML = req.responseText;
     }
   }
-  req.send();
+  let form = new FormData();
+  form.append('voteType', direction);
+  console.log(form)
+  req.send(form);
 }
 
 postVoteUpBtn.addEventListener('click', () => {

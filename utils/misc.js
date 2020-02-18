@@ -58,5 +58,23 @@ module.exports = {
       swapped[object[key]] = key;
     }
     return swapped;
+  },
+
+  toggleInArray: (object, array) => {
+    const index = array.indexOf(object);
+    if (index > -1) {
+      array.splice(index, 1);
+    } else {
+      array.push(object);
+    }
+    return array;
+  },
+
+  removeFromArrayIfExists: (object, array) => {
+    const index = array.indexOf(object);
+    if (index > -1) {
+      array.splice(index, 1);
+    }
+    return array;
   }
 }

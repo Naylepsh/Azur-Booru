@@ -13,7 +13,9 @@ router
 .get('/:id/edit', authorizeUser, asyncWrapper(Post.edit))
 .put('/:id', authorizeUser, asyncWrapper(Post.update))
 .delete('/:id', authorizeUser, asyncWrapper(Post.destroy))
-.post('/:id/vote-up', authorizeUser, asyncWrapper(Post.voteUp))
-.post('/:id/vote-down', authorizeUser, asyncWrapper(Post.voteDown));
+// .post('/:id/vote-up', authorizeUser, asyncWrapper(Post.voteUp))
+// .post('/:id/vote-down', authorizeUser, asyncWrapper(Post.voteDown));
+.post('/:id/toggle-vote', authorizeUser, asyncWrapper(Post.toggleVote))
+// .post('/:id/toggle-vote', authorizeUser, asyncWrapper(Post.nothing))
 
 module.exports = router;
