@@ -1,7 +1,7 @@
 const { Post, validate } = require('../models/post');
 const { Tag } = require('../models/tag');
+const { Comment } = require('../models/comment');
 const miscUtils = require('../utils/misc');
-const { User } = require('../models/user');
 
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
@@ -131,10 +131,11 @@ exports.destroy = async (req, res) => {
   if (!post) { 
     return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
   }
-
+  await Promise.all(post.comments.map(commentId => Comment.findByIdAndRemove(commentId)));
   await Promise.all(post.tags.map(tag => Tag.removePost(tag._id, post._id)));
   miscUtils.removeFile(`./public${post.imageLink}`);
   miscUtils.removeFile(`./public${post.thumbnailLink}`);
+
   res.redirect('/posts');
 }
 
