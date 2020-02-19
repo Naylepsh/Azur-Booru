@@ -41,11 +41,13 @@
     <div id="content">
       <section class="post-image">
         <img src='<%= post.imageLink %>'>
-        <menu class="post-menu">
-          <li><button id="post-vote-up">Vote up</button></li>
-          <li><button id="post-vote-down">Vote down</button></li>
-          <li><button id="post-favorite">Favorite</button></li>
-        </menu>
+        <% if (user) { %>
+          <menu class="post-menu">
+            <li><button id="post-vote-up">Vote up</button></li>
+            <li><button id="post-vote-down">Vote down</button></li>
+            <li><button id="post-favorite">Favorite</button></li>
+          </menu>
+        <% } %>
       </section>
       <section class="comments">
         <% if (post.comments && post.comments.length > 0) { %>

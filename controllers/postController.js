@@ -141,7 +141,6 @@ exports.destroy = async (req, res) => {
 }
 
 exports.toggleVote = async (req, res) => {
-  console.log(req.body.voteType)
   let post = await Post.findById(req.params.id);
   if (!post) { 
     return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });

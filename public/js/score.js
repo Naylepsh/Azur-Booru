@@ -17,7 +17,12 @@ function vote(direction) {
   req.send(form);
 }
 
-postVoteUpBtn.addEventListener('click', () => { vote('up') });
+if (postVoteUpBtn) {
+  postVoteUpBtn.addEventListener('click', () => { vote('up') });
+}
 
-postVoteDownBtn.addEventListener('click', () => { vote('down') });
+if (postVoteDownBtn) {
+  postVoteDownBtn.addEventListener('click', () => { vote('down') });
+}
+
 
