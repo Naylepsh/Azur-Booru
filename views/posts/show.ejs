@@ -55,6 +55,7 @@
             <ul>
               <% for (const comment of post.comments) { %>
                 <li class="comment">
+                  <span class="hidden comment-id"><%= comment._id %></span>
                   <div class="comment-author-avatar">
                     <img src="/assets/default-avatar.jpg" alt="<%= comment.author.name %> avatar">
                   </div>
@@ -66,8 +67,9 @@
                   </div>
                   <% if (user) { %>
                     <menu class="comment-menu">
-                      <li><a href="#">Vote up</a></li>
-                      <li><a href="#">Vote down</a></li>
+                      <li>Score: <span class="comment-score"><%= comment.score %></span></li>
+                      <li><button class="comment-vote-up">Vote up</button></li>
+                      <li><button class="comment-vote-down">Vote down</button></li>
                       <% if (comment.author._id.toString() === user._id) { %>
                         <li>
                           <form action="/comments/<%= comment._id %>?_method=DELETE"
