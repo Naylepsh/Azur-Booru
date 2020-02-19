@@ -64,6 +64,7 @@ img {
 
 .sidebar > section {
   border: 2px solid black;
+  border-radius: 4px;
   margin: 10px 0;
 }
 

@@ -78,20 +78,26 @@ fieldset > label {
   margin-right: 10px;
 }
 
-form > * {
-  padding: 5px;
+form input,
+form button {
+	padding: 5px;
+	border-style: solid;
+	border-radius: 4px;
 }
 
-form > button {
+form button {
 	margin-top: 10px;
-	margin-left: 5px;
+	width: 100px;
 	font-family: 'Lato', sans-serif;
+	font-weight: bold;
 	background-color: #0062d0;
   color: #FFF;
-  font-weight: bold;
   border-color: #0062d0;
-  border-style: solid;
-  width: 100px;
+}
+
+form input {
+	border-color: lightgray;
+	border-width: 1px;
 }
 
 /* Search bar form */
@@ -107,7 +113,8 @@ form > button {
 }
 
 .search-bar > button {
-  margin-top: 0;
+	margin-top: 0;
+	margin-left: 5px;
 }
 
 /* user form */
