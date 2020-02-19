@@ -64,19 +64,21 @@
                   <div class="comment-body">
                     <%= comment.body %>
                   </div>
-                  <menu class="comment-menu">
-                    <li><a href="#">Vote up</a></li>
-                    <li><a href="#">Vote down</a></li>
-                    <% if (comment.author._id.toString() === user._id) { %>
-                      <li>
-                        <form action="/comments/<%= comment._id %>?_method=DELETE"
-                          method="POST">
-                          <input type="hidden" name="postId" value="<%= post._id %>">
-                          <button>Delete</button>
-                        </form>
-                      </li>
-                    <% } %>
-                  </menu>
+                  <% if (user) { %>
+                    <menu class="comment-menu">
+                      <li><a href="#">Vote up</a></li>
+                      <li><a href="#">Vote down</a></li>
+                      <% if (comment.author._id.toString() === user._id) { %>
+                        <li>
+                          <form action="/comments/<%= comment._id %>?_method=DELETE"
+                            method="POST">
+                            <input type="hidden" name="postId" value="<%= post._id %>">
+                            <button>Delete</button>
+                          </form>
+                        </li>
+                      <% } %>
+                    </menu>
+                  <% } %>
                 </li>
               <% } %>
             </ul>
