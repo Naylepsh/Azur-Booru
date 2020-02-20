@@ -5,10 +5,12 @@ const miscUtils = require('../utils/misc');
 const COMMENTS_PER_PAGE = 10;
 
 exports.list = async (req, res) => {
-  const query = {};
+  let query = {};
+  if (req.query.body) { query.body = {$regex: req.query.body}; }
+  // if (req.query.author) { query.author = {$elemMatch: {name: req.query.author}}; }
   const numberOfRecords = await Comment.countDocuments();
   const pageInfo = miscUtils.paginationInfo({numberOfRecords, 
-    query: {}, // temporary empty
+    query: req.query,
     page: req.query.page, 
     recordsPerPage: COMMENTS_PER_PAGE
   });
