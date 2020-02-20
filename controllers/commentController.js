@@ -30,6 +30,10 @@ exports.list = async (req, res) => {
   });
 }
 
+exports.search = (req, res) => {
+  res.render('comments/search', { user: req.user });
+}
+
 exports.create = async (req, res) => {
   let post = await Post.findById(req.body.postId);
   if (!post) {

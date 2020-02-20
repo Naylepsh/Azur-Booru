@@ -1,0 +1,19 @@
+<%- include('../partials/header', { stylesheets: [
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css",
+  "/css/main.css",
+  "/css/posts.css"
+], title: "Search Comments"
+}) %>
+<div class="container">
+  <form class="user-form" action="/comments" method="GET">
+    <div class="form-entry">
+      <label for="body">Body</label>
+      <input type="text" name="body" id="body" placeholder="Fragment of comment's body">
+    </div>
+    <div class="form-entry">
+      <label for="author">Author</label>
+      <input type="text" name="author" id="author" placeholder="Author's name">
+    </div>
+    <button>Search</button>
+  </form>
+</div>
