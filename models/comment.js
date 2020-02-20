@@ -35,8 +35,10 @@ const CommentSchema = new mongoose.Schema({
   }
 });
 
-CommentSchema.statics.paginate = async function(query, toSkip, toLimit) {
-  return this.find(query).sort({ _id: -1 }).skip(toSkip).limit(toLimit).populate('author').populate('post');
+CommentSchema.statics.paginate = function(query, toSkip, toLimit) {
+  return this.find(query).sort({ _id: -1 })
+  .skip(toSkip).limit(toLimit)
+  .populate('author').populate('post');
 }
 
 exports.Comment = mongoose.model('Comment', CommentSchema);

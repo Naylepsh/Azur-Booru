@@ -18,12 +18,15 @@
                 comment: comment,
                 user: user
               }) %>
-            </div>
-            
+            </div> 
           <% } %>
         </ul>
       </div>
+    <% } else {%>
+      <div class="text-center"><h3>Nobody here but us chickens!</h3></div>
     <% } %>
   </section>
-  <%- include('../partials/pagination', pageInfo) %>
+  <% if (comments && comments.length > 0) { %>
+    <%- include('../partials/pagination', pageInfo) %>
+  <% } %>
 </div>

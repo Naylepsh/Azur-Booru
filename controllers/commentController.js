@@ -1,13 +1,18 @@
 const { Comment } = require('../models/comment');
 const { Post } = require('../models/post');
+const { User } = require('../models/user');
 const miscUtils = require('../utils/misc');
 
 const COMMENTS_PER_PAGE = 10;
 
 exports.list = async (req, res) => {
-  let query = {};
-  if (req.query.body) { query.body = {$regex: req.query.body}; }
-  // if (req.query.author) { query.author = {$elemMatch: {name: req.query.author}}; }
+  let mainQuery = {};
+  if (req.query.body) { mainQuery.body = {$regex: req.query.body}; }
+  let authorQuery = {};
+  if (req.query.author) { 
+    const author = await User.findOne({name: req.query.author});
+    mainQuery.author = author ? author._id : null; // workaround for when such user doesnt exist
+  }
   const numberOfRecords = await Comment.countDocuments();
   const pageInfo = miscUtils.paginationInfo({numberOfRecords, 
     query: req.query,
@@ -15,7 +20,8 @@ exports.list = async (req, res) => {
     recordsPerPage: COMMENTS_PER_PAGE
   });
 
-  const comments = await Comment.paginate(query, (pageInfo.currentPage - 1)*COMMENTS_PER_PAGE, COMMENTS_PER_PAGE);
+  const comments = await Comment.paginate(mainQuery, (pageInfo.currentPage - 1)*COMMENTS_PER_PAGE, COMMENTS_PER_PAGE, authorQuery);
+  console.log(comments);
   res.render('comments/index', {
     comments,
     pageInfo,
