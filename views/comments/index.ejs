@@ -10,10 +10,16 @@
       <div class="comments-list">
         <ul>
           <% for (const comment of comments) { %>
-            <%- include('../partials/comment', {
-              comment: comment,
-              user: user
-            }) %>
+            <div class="comment-preview">
+              <div class="thumbnail">
+                <a href="/posts/<%= comment.post._id %>"><img src="<%= comment.post.thumbnailLink%>"></a>
+              </div>
+              <%- include('../partials/comment', {
+                comment: comment,
+                user: user
+              }) %>
+            </div>
+            
           <% } %>
         </ul>
       </div>

@@ -155,12 +155,18 @@ img {
 }
 
 .comments {
-  margin-top: 20px;
-}
-
-.comment {
   margin: 30px 0;
   position: relative;
+}
+
+.comment-preview {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  margin-bottom: 40px;
+}
+
+.comment-preview > .comment {
+  margin: auto 0 auto 20px;
 }
 
 .comment > * {

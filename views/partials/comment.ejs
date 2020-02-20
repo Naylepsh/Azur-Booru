@@ -18,7 +18,7 @@
         <li>
           <form action="/comments/<%= comment._id %>?_method=DELETE"
             method="POST">
-            <input type="hidden" name="postId" value="<%= comment.postId %>">
+            <input type="hidden" name="postId" value="<%= comment.post._id %>">
             <button>Delete</button>
           </form>
         </li>

@@ -26,7 +26,7 @@ exports.create = async (req, res) => {
 
   req.body.comment.author = req.user._id;
   req.body.comment.score = 0;
-  req.body.comment.postId = post._id;
+  req.body.comment.post = post._id;
   const comment = await Comment.create(req.body.comment);
   post.comments.push(comment);
   await post.save();
