@@ -18,8 +18,11 @@ exports.list = async(req, res) => {
     {tags: { '$all' : tagsIds }} :
     {}
 
-  const count = await Post.countDocuments(query);
-  const pageInfo = miscUtils.paginationInfo(count, req.query.page, POSTS_PER_PAGE);
+  const numberOfRecords = await Post.countDocuments(query);
+  const pageInfo = miscUtils.paginationInfo({numberOfRecords, 
+    query: miscUtils.pickAttributes(req.query, ['tags']),
+    page: req.query.page,
+    recordsPerPage: POSTS_PER_PAGE});
 
   const posts = await Post.paginate(query, (pageInfo.currentPage - 1)*POSTS_PER_PAGE, POSTS_PER_PAGE);
   const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);

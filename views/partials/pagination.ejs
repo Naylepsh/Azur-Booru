@@ -1,0 +1,45 @@
+<!-- 
+  needs:
+  {
+    urlPrefix, -- like /post
+    urlSuffix, -- all the queries in proper format like tag=foo&price=100
+    currentPage,
+    lastPage
+  }
+ -->
+
+<section class="pagination text-center">
+  <span class="pages">
+    <% if (currentPage > 1) { %>
+      <a class="page-arrow"
+      href="<%= urlPrefix %>?page=<%= currentPage - 1 %><%= urlSuffix %>"><</a>
+    <% } else { %>
+      <span class="page-arrow"><</span>
+    <% } %>
+
+    <% if (currentPage - 3 > 1) { %>
+      <a class="page non-active-page" href="<%= urlPrefix %>?page=1<%= urlSuffix %>">1</a>
+      <span class="skipped-pages">...</span>
+    <% } %>
+
+    <% for (let i = Math.max(1, currentPage - 3); i <= Math.min(lastPage, currentPage + 3); i++) { %>
+      <% if (i == currentPage) { %>
+        <a id="active-page" class="page" href="<%= urlPrefix %>?page=<%= i %><%= urlSuffix %>"><%= i %></a>
+      <% } else { %>
+        <a class="page non-active-page" href="<%= urlPrefix %>?page=<%= i %><%= urlSuffix %>"><%= i %></a>
+      <% } %>
+    <% } %>
+
+    <% if (currentPage + 3 < lastPage) { %>
+      <span class="skipped-pages">...</span>
+      <a class="page non-active-page" 
+      href="<%= urlPrefix %>?page=<%= lastPage %><%= urlSuffix %>"><%= lastPage %></a>    
+    <% } %>
+
+    <% if (currentPage < lastPage) { %>
+      <a class="page-arrow" href="<%= urlPrefix %>?page=<%= currentPage + 1 %><%= urlSuffix %>">></a>
+    <% } else { %>
+      <span class="page-arrow">></span>
+    <% } %>
+  </span>
+</section>
