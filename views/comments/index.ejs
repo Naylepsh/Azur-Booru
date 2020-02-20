@@ -1,0 +1,22 @@
+<%- include('../partials/header', { stylesheets: [
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css",
+  "/css/main.css",
+  "/css/posts.css"
+], title: "Comments"
+}) %>
+<div class="container">
+  <section class="comments">
+    <% if (comments && comments.length > 0) { %>
+      <div class="comments-list">
+        <ul>
+          <% for (const comment of comments) { %>
+            <%- include('../partials/comment', {
+              comment: comment,
+              user: user
+            }) %>
+          <% } %>
+        </ul>
+      </div>
+    <% } %>
+  </section>
+</div>

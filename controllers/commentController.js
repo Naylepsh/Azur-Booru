@@ -2,6 +2,22 @@ const { Comment } = require('../models/comment');
 const { Post } = require('../models/post');
 const miscUtils = require('../utils/misc');
 
+const COMMENTS_PER_PAGE = 10;
+
+exports.list = async (req, res) => {
+  const query = {};
+  const count = await Comment.countDocuments();
+  const pageInfo = miscUtils.paginationInfo(count, req.query.page, COMMENTS_PER_PAGE);
+
+  const comments = await Comment.paginate(query, (pageInfo.currentPage - 1)*COMMENTS_PER_PAGE, COMMENTS_PER_PAGE);
+  res.render('comments/index', {
+    comments,
+    pageInfo,
+    tagsQuery: req.query.tags,
+    user: req.user 
+  });
+}
+
 exports.create = async (req, res) => {
   let post = await Post.findById(req.body.postId);
   if (!post) {
@@ -10,6 +26,7 @@ exports.create = async (req, res) => {
 
   req.body.comment.author = req.user._id;
   req.body.comment.score = 0;
+  req.body.comment.postId = post._id;
   const comment = await Comment.create(req.body.comment);
   post.comments.push(comment);
   await post.save();

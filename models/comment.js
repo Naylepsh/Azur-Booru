@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
+  postId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   body: {
     type: String,
     required: true
@@ -29,5 +34,9 @@ const CommentSchema = new mongoose.Schema({
     }
   }
 });
+
+CommentSchema.statics.paginate = function(query, toSkip, toLimit) {
+  return this.find(query).sort({ _id: -1 }).skip(toSkip).limit(toLimit).populate('author');
+}
 
 exports.Comment = mongoose.model('Comment', CommentSchema);

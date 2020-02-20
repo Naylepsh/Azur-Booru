@@ -5,6 +5,7 @@ const Comment = require('../controllers/commentController');
 const { asyncWrapper }  = require('../middleware/route-wrappers');
 
 router
+.get('/', asyncWrapper(Comment.list))
 .post('/', asyncWrapper(Comment.create))
 .delete('/:id', asyncWrapper(Comment.delete))
 // storage.single() has to be there due to some XMLHttpRequest form shenanigans
