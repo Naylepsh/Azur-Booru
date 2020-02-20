@@ -6,8 +6,12 @@ const COMMENTS_PER_PAGE = 10;
 
 exports.list = async (req, res) => {
   const query = {};
-  const count = await Comment.countDocuments();
-  const pageInfo = miscUtils.paginationInfo(count, req.query.page, COMMENTS_PER_PAGE);
+  const numberOfRecords = await Comment.countDocuments();
+  const pageInfo = miscUtils.paginationInfo({numberOfRecords, 
+    query: {}, // temporary empty
+    page: req.query.page, 
+    recordsPerPage: COMMENTS_PER_PAGE
+  });
 
   const comments = await Comment.paginate(query, (pageInfo.currentPage - 1)*COMMENTS_PER_PAGE, COMMENTS_PER_PAGE);
   res.render('comments/index', {
