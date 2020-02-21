@@ -11,7 +11,9 @@ const THUMBNAIL_PATH = '/thumbnails/thumbnail_'
 
 exports.list = async(req, res) => {
   const tagNames = miscUtils.distinctWordsInString(req.query.tags);
-  const tagsInQuery = await Promise.all(tagNames.map(name => Tag.findOrCreate(name)));
+  const tagsInQuery = await Tag.findOrCreateMany(tagNames.map(name => {
+    return {name};
+  }));
   const tagsIds = tagsInQuery.map(tag => tag._id);
 
   const query = tagsInQuery.length > 0 ?
@@ -31,7 +33,7 @@ exports.list = async(req, res) => {
     posts,
     tags,
     pageInfo,
-    tagsQuery: req.query.tags,
+    tagsQuery: tagNames,
     user: req.user 
   });
 }
@@ -51,7 +53,9 @@ exports.create = async (req, res) => {
   miscUtils.makeThumbnail(
     `./public${IMAGE_PATH}${req.file.filename}`, 
     `./public${THUMBNAIL_PATH}${req.file.filename}`);
-  const tags = await Promise.all(req.body.post.tags.map(name => Tag.findOrCreate(name)));
+  const tags = await Tag.findOrCreateMany(req.body.post.tags.map(name => {
+    return {name};
+  }));
   const tagsIds = tags.map(tag => tag._id);
 
   const post = await Post.create({
@@ -63,7 +67,7 @@ exports.create = async (req, res) => {
     author: req.user._id,
     score: 0
   });
-  await Promise.all(tagsIds.map( id => Tag.addPost(id, post._id)));
+  await Promise.all(tags.map(tag => tag.addPost(post._id)));
   res.redirect('/posts');
 }
 
@@ -80,7 +84,7 @@ exports.show = async (req, res) => {
   }
 
   const tags = await Promise.all(post.tags.map(async tag => {
-    tag = await Tag.findById(tag._id)
+    tag = await Tag.findById(tag._id);
     return {name: tag.name, occurences: tag.posts.length};
   }));
 
@@ -105,15 +109,15 @@ exports.update = async (req, res) => {
   if (!oldPost) { 
     return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
   }
-  await Promise.all(oldPost.tags.map( tag => Tag.removePost(tag._id, oldPost._id)));
+  await Promise.all(oldPost.tags.map(tag => tag.removePost(oldPost._id)));
 
   // add new tags
   let newPost = req.body.post;
-  const newTags = await Promise.all(
-    miscUtils
-    .distinctWordsInString(newPost.tags)
-    .map(tagName => Tag.findOrCreate(tagName)));
-  await Promise.all(newTags.map(tag => Tag.addPost(tag._id, oldPost._id)));
+  const tagNames = miscUtils.distinctWordsInString(newPost.tags);
+  const newTags = await Tag.findOrCreateMany(tagNames.map(name => {
+    return {name}
+  }));
+  await Promise.all(newTags.map(tag => tag.addPost(oldPost._id)));
   newPost.tags = newTags.map(tag => tag._id);
   
   // update post
@@ -132,12 +136,12 @@ exports.destroy = async (req, res) => {
     return miscUtils.sendError(res, { status: 403, message: 'Access denied.' });
   }
 
-  const post = await Post.findByIdAndRemove(req.params.id);
+  const post = await Post.findByIdAndRemove(req.params.id).populate('tags');
   if (!post) { 
     return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
   }
   await Promise.all(post.comments.map(commentId => Comment.findByIdAndRemove(commentId)));
-  await Promise.all(post.tags.map(tag => Tag.removePost(tag._id, post._id)));
+  await Promise.all(post.tags.map(tag => tag.removePost(post._id)));
   miscUtils.removeFile(`./public${post.imageLink}`);
   miscUtils.removeFile(`./public${post.thumbnailLink}`);
 

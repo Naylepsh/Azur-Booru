@@ -17,30 +17,26 @@ const tagSchema = new mongoose.Schema({
   }]
 });
 
-tagSchema.statics.findOrCreate = async function(name) {
-  let tag = await this.findOne({name});
+tagSchema.statics.findOrCreate = async function(tagObject) {
+  let tag = await this.findOne(tagObject);
   if (!tag) {
-    tag = await this.create({name});
+    tag = await this.create(tagObject);
   }
   return tag;
 }
 
-tagSchema.statics.addPost = async function(tagId, postId) {
-  let tag = await this.findById(tagId);
-  if (!tag) {
-    throw `Tag ${tagId} does not exist in database.`;
-  }
-  tag.posts.push(postId);
-  await tag.save();
+tagSchema.statics.findOrCreateMany = async function(tagObjects) {
+  return await Promise.all(tagObjects.map(tagObject => this.findOrCreate(tagObject)));
 }
 
-tagSchema.statics.removePost = async function(tagId, postId) {
-  let tag = await this.findById(tagId);
-  if (!tag) {
-    throw `Tag ${tagId} does not exist in database.`;
-  }
-  tag.posts.remove(postId);
-  await tag.save();
+tagSchema.methods.addPost = async function(postId) {
+  this.posts.push(postId);
+  await this.save();
+}
+
+tagSchema.methods.removePost = async function(postId) {
+  this.posts.remove(postId);
+  await this.save();
 }
 
 tagSchema.statics.popularTagsOfPosts = async function(posts, tagsLimit) {
