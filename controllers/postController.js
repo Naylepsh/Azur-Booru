@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { Post, validate } = require('../models/post');
 const { Tag } = require('../models/tag');
 const { Comment } = require('../models/comment');
+const { sendError, PostError } = require('../utils/error');
 const miscUtils = require('../utils/misc');
 
 const POSTS_PER_PAGE = 20;
@@ -12,9 +13,7 @@ const THUMBNAIL_PATH = '/thumbnails/thumbnail_'
 
 exports.list = async(req, res) => {
   const tagNames = miscUtils.distinctWordsInString(req.query.tags);
-  const tagsInQuery = await Tag.findOrCreateMany(tagNames.map(name => {
-    return {name};
-  }));
+  const tagsInQuery = await Promise.all(tagNames.map(name => Tag.findOne({name})));
   const tagsIds = tagsInQuery.map(tag => tag._id);
 
   const query = tagsInQuery.length > 0 ?
@@ -44,19 +43,20 @@ exports.new = (req, res) => {
 }
 
 exports.create = async (req, res) => {
+  req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
+  req.body.post.tags = miscUtils.distinctWordsInString(req.body.post.tags);
+  const { error } = validate(req.body.post);
+  if (error) { 
+    return miscUtils.sendError(res, { status: 400, message: error.details[0].message });
+  };
+
+  miscUtils.makeThumbnail(
+    `./public${IMAGE_PATH}${req.file.filename}`, 
+    `./public${THUMBNAIL_PATH}${req.file.filename}`);
+
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
-    req.body.post.tags = miscUtils.distinctWordsInString(req.body.post.tags);
-    const { error } = validate(req.body.post);
-    if (error) { 
-      return miscUtils.sendError(res, { status: 400, message: error.details[0].message });
-    };
-
-    miscUtils.makeThumbnail(
-      `./public${IMAGE_PATH}${req.file.filename}`, 
-      `./public${THUMBNAIL_PATH}${req.file.filename}`);
     const tags = await Tag.findOrCreateMany(req.body.post.tags.map(name => {
       return {name};
     }), session);
@@ -75,10 +75,12 @@ exports.create = async (req, res) => {
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
+    miscUtils.removeFile(`./public${IMAGE_PATH}${req.file.filename}`);
+    miscUtils.removeFile(`./public${THUMBNAIL_PATH}${req.file.filename}`);
     throw error;
   } finally {
-    res.redirect('/posts');
     session.endSession();
+    res.redirect('/posts');
   }
 }
 
@@ -114,30 +116,45 @@ exports.edit = async (req, res) => {
 
 exports.update = async (req, res) => {
   req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
-  
-  // remove old tags
-  let oldPost = await Post.findById(req.params.id).populate('tags');
-  if (!oldPost) { 
-    return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
-  }
-  await Promise.all(oldPost.tags.map(tag => tag.removePost(oldPost._id)));
 
-  // add new tags
-  let newPost = req.body.post;
-  const tagNames = miscUtils.distinctWordsInString(newPost.tags);
-  const newTags = await Tag.findOrCreateMany(tagNames.map(name => {
-    return {name}
-  }));
-  await Promise.all(newTags.map(tag => tag.addPost(oldPost._id)));
-  newPost.tags = newTags.map(tag => tag._id);
-  
-  // update post
-  for (const key in newPost) {
-    oldPost[key] = newPost[key];
-  }
-  oldPost.save();
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    // remove old tags
+    let oldPost = await Post.findById(req.params.id).session(session).populate('tags');
+    if (!oldPost) {
+      const status = 404;
+      const message = 'User not found';
+      throw new PostError(status, message);
+    }
+    await Promise.all(oldPost.tags.map(tag => tag.removePost(oldPost._id)));
 
-  res.redirect(`/posts/${req.params.id}`);
+    // add new tags
+    let newPost = req.body.post;
+    const tagNames = miscUtils.distinctWordsInString(newPost.tags);
+    const newTags = await Tag.findOrCreateMany(tagNames.map(name => {
+      return {name}
+    }), session);
+    await Promise.all(newTags.map(tag => tag.addPost(oldPost._id)));
+    newPost.tags = newTags.map(tag => tag._id);
+    
+    // update post
+    for (const key in newPost) {
+      oldPost[key] = newPost[key];
+    }
+    await oldPost.save();
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    if (error instanceof PostError) {
+      sendError(res, error);
+    } else {
+      throw error;
+    }
+  } finally {
+    session.endSession();
+    res.redirect(`/posts/${req.params.id}`);
+  }
 }
 
 exports.destroy = async (req, res) => {
@@ -147,16 +164,28 @@ exports.destroy = async (req, res) => {
     return miscUtils.sendError(res, { status: 403, message: 'Access denied.' });
   }
 
-  const post = await Post.findByIdAndRemove(req.params.id).populate('tags');
-  if (!post) { 
-    return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
-  }
-  await Promise.all(post.comments.map(commentId => Comment.findByIdAndRemove(commentId)));
-  await Promise.all(post.tags.map(tag => tag.removePost(post._id)));
-  miscUtils.removeFile(`./public${post.imageLink}`);
-  miscUtils.removeFile(`./public${post.thumbnailLink}`);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const post = await Post.findByIdAndRemove(req.params.id).session(session).populate('tags');
+    if (!post) {
+      const status = 404;
+      const message = 'Post not found.'; 
+      throw new PostError(status, message);
+    }
+    await Promise.all(post.comments.map(commentId => Comment.findByIdAndRemove(commentId).session(session)));
+    await Promise.all(post.tags.map(tag => tag.removePost(post._id)));
+    await session.commitTransaction();
 
-  res.redirect('/posts');
+    miscUtils.removeFile(`./public${post.imageLink}`);
+    miscUtils.removeFile(`./public${post.thumbnailLink}`);
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+    res.redirect('/posts');
+  }
 }
 
 exports.toggleVote = async (req, res) => {
