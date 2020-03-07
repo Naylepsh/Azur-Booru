@@ -1,6 +1,7 @@
 const { Comment } = require('../models/comment');
 const { Post } = require('../models/post');
 const { User } = require('../models/user');
+const { sendError, PostError } = require('../utils/error');
 const miscUtils = require('../utils/misc');
 
 const COMMENTS_PER_PAGE = 10;
@@ -37,7 +38,7 @@ exports.search = (req, res) => {
 exports.create = async (req, res) => {
   let post = await Post.findById(req.body.postId);
   if (!post) {
-    return miscUtils.sendError(res, { status: 404, message: `Post with id ${req.body.postId} does not exist` });
+    return sendError(res, { status: 404, message: `Post with id ${req.body.postId} does not exist` });
   }
 
   req.body.comment.author = req.user._id;
@@ -52,12 +53,12 @@ exports.create = async (req, res) => {
 exports.delete = async (req, res) => {
   let post = await Post.findById(req.body.postId);
   if (!post) {
-    return miscUtils.sendError(res, { status: 404, message: `Post with id ${req.body.postId} does not exist` });
+    return sendError(res, { status: 404, message: `Post with id ${req.body.postId} does not exist` });
   }
 
   const comment = await Comment.findByIdAndRemove(req.params.id);
   if (!comment) {
-    return miscUtils.sendError(res, { status: 404, message: `Comment with id ${req.params.id} does not exist` });
+    return sendError(res, { status: 404, message: `Comment with id ${req.params.id} does not exist` });
   }
 
   post.comments.remove(comment);
@@ -68,7 +69,7 @@ exports.delete = async (req, res) => {
 exports.toggleVote = async (req, res) => {
   let comment = await Comment.findById(req.params.id);
   if (!comment) { 
-    return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
+    return sendError(res, { status: 404, message: 'Post not found.' });
   }
 
   if (req.body.voteType === 'up') {

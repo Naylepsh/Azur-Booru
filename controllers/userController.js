@@ -1,6 +1,6 @@
 const { User, validate } = require('../models/user');
 const Role = require('../models/role');
-const { sendError } = require('../utils/misc');
+const { sendError } = require('../utils/error');
 const { hashPassword, validatePassword } = require('../utils/auth');
 const config = require('../config');
 
