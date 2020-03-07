@@ -6,7 +6,7 @@
 * Create 3 subdirectories for mongoDB replica sets ```mkdir data/rs1 data/rs2 data/rs3```
 * Run ```./db-setup.ps1``` to start up replica sets
 ### AzurBooru Setup:
-* Copy [a relative link](.env.example) to ```.env``` within this directory
+* Copy [.env.example](.env.example) to ```.env``` within this directory
 * Download dependencies with ```npm i```
 * Change commands in package.json scripts to those suitable for your operating system
 * Run ```npm start```
