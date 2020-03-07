@@ -1,7 +1,7 @@
 # Scuffed clone of classic booru imageboards for Azur Lane related images
 
 ## Setup
-### MongoDB Replica Sets Setup
+### MongoDB Replica Sets Local Setup
 #### Windows:
 * Move to this repository's main directory
 * Create 3 subdirectories for mongoDB replica sets ```mkdir data/rs1 data/rs2 data/rs3```
