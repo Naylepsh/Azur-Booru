@@ -47,3 +47,6 @@ public/uploads/*
 
 # thumbnails
 public/thumbnails
+
+# mongo replica sets
+data/
