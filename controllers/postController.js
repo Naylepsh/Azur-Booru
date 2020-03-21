@@ -47,7 +47,7 @@ exports.create = async (req, res) => {
   req.body.post.tags = miscUtils.distinctWordsInString(req.body.post.tags);
   const { error } = validate(req.body.post);
   if (error) { 
-    return sendError(res, { status: 400, message: error.details[0].message });
+    return miscUtils.sendError(res, { status: 400, message: error.details[0].message });
   };
 
   miscUtils.makeThumbnail(
@@ -93,7 +93,7 @@ exports.show = async (req, res) => {
   });
 
   if (!post) { 
-    return sendError(res, { status: 404, message: 'User not found.' });
+    return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
   }
 
   const tags = await Promise.all(post.tags.map(async tag => {
@@ -107,7 +107,7 @@ exports.show = async (req, res) => {
 exports.edit = async (req, res) => {
   const post = await Post.findById(req.params.id).populate('tags');
   if (!post) { 
-    return sendError(res, { status: 404, message: 'User not found.' });
+    return miscUtils.sendError(res, { status: 404, message: 'User not found.' });
   }
 
   const tagNames = post.tags.map(tag => tag.name);
@@ -161,7 +161,7 @@ exports.destroy = async (req, res) => {
   const isAuthor = authenticateAuthor(req.user, req.params.id);
   const isAdmin = req.user.roles.admin;
   if (!isAuthor && !isAdmin) {
-    return sendError(res, { status: 403, message: 'Access denied.' });
+    return miscUtils.sendError(res, { status: 403, message: 'Access denied.' });
   }
 
   const session = await mongoose.startSession();
@@ -191,7 +191,7 @@ exports.destroy = async (req, res) => {
 exports.toggleVote = async (req, res) => {
   let post = await Post.findById(req.params.id);
   if (!post) { 
-    return sendError(res, { status: 404, message: 'Post not found.' });
+    return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
   }
 
   if (req.body.voteType === 'up') {
@@ -210,7 +210,7 @@ exports.toggleVote = async (req, res) => {
 async function authenticateAuthor(user, postId) {
   const post = await Post.findById(postId).populate('author');
   if (!post) { 
-    return sendError(res, { status: 404, message: 'Post not found.' });
+    return miscUtils.sendError(res, { status: 404, message: 'Post not found.' });
   }
   return user._id === post.author._id.toString()
 }

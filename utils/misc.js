@@ -34,6 +34,12 @@ module.exports = {
     return [...new Set(words)];
   },
 
+  sendError: (res, err, backupCode) => {
+    res.status(err.status || backupCode).json({
+      message: err.message
+    });
+  },
+
   /**
    * lodash's .pick implementation.
    * Leaves only selected attributes of a given object
