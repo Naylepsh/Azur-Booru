@@ -23,8 +23,8 @@ const commentRoutes = require('./routes/comments');
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useCreateIndex', true);
 mongoose.connect(
-  `mongodb://${config.db.host}:${config.db.port}/${config.db.name}`,
-  { useNewUrlParser: true, useFindAndModify: false, replicaSet: 'rs' }
+  `mongodb://${config.db.host}/${config.db.name}`,
+  { useNewUrlParser: true, useFindAndModify: false }
 );
 
 // App Config
