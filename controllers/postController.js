@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const { Post, validate } = require('../models/post');
 const { Tag } = require('../models/tag');
 const { Comment } = require('../models/comment');
@@ -44,49 +43,32 @@ exports.new = (req, res) => {
 }
 
 exports.create = async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
-    req.body.post.tags = miscUtils.distinctWordsInString(req.body.post.tags);
-    const { error } = validate(req.body.post);
-    if (error) { 
-      return miscUtils.sendError(res, { status: 400, message: error.details[0].message });
-    };
+  req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
+  req.body.post.tags = miscUtils.distinctWordsInString(req.body.post.tags);
+  const { error } = validate(req.body.post);
+  if (error) { 
+    return miscUtils.sendError(res, { status: 400, message: error.details[0].message });
+  };
 
-    miscUtils.makeThumbnail(
-      `./public${IMAGE_PATH}${req.file.filename}`, 
-      `./public${THUMBNAIL_PATH}${req.file.filename}`);
-    const tags = await Tag.findOrCreateMany(req.body.post.tags.map(name => {
-      return {name};
-    }), session);
-    console.log('tags done');
-    for (const tag of tags) {
-      // console.log(tag);
-    }
-    const tagsIds = tags.map(tag => tag._id);
+  miscUtils.makeThumbnail(
+    `./public${IMAGE_PATH}${req.file.filename}`, 
+    `./public${THUMBNAIL_PATH}${req.file.filename}`);
+  const tags = await Tag.findOrCreateMany(req.body.post.tags.map(name => {
+    return {name};
+  }));
+  const tagsIds = tags.map(tag => tag._id);
 
-    const post = await Post.create([{
-      imageLink: `${IMAGE_PATH}${req.file.filename}`,
-      thumbnailLink: `${THUMBNAIL_PATH}${req.file.filename}`,
-      source: req.body.post.source,
-      tags: tagsIds,
-      rating: req.body.post.rating,
-      author: req.user._id,
-      score: 0
-    }], { session });
-    for (const tag of tags) {
-      console.log(tag);
-    }
-    await Promise.all(tags.map(tag => tag.addPost(post._id)));
-    await session.commitTransaction();
-  } catch (error) {
-    await session.abortTransaction();
-    throw error;
-  } finally {
-    res.redirect('/posts');
-    session.endSession();
-  }
+  const post = await Post.create({
+    imageLink: `${IMAGE_PATH}${req.file.filename}`,
+    thumbnailLink: `${THUMBNAIL_PATH}${req.file.filename}`,
+    source: req.body.post.source,
+    tags: tagsIds,
+    rating: req.body.post.rating,
+    author: req.user._id,
+    score: 0
+  });
+  await Promise.all(tags.map(tag => tag.addPost(post._id)));
+  res.redirect('/posts');
 }
 
 exports.show = async (req, res) => {

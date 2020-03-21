@@ -48,7 +48,5 @@ public/uploads/*
 # thumbnails
 public/thumbnails
 
-# mongo replica sets and setup
+# mongo replica sets
 data/
-db-mongo-cmds.js
-db-setup.ps1
