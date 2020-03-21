@@ -60,6 +60,10 @@ exports.create = async (req, res) => {
     const tags = await Tag.findOrCreateMany(req.body.post.tags.map(name => {
       return {name};
     }), session);
+    console.log('tags done');
+    for (const tag of tags) {
+      // console.log(tag);
+    }
     const tagsIds = tags.map(tag => tag._id);
 
     const post = await Post.create([{
@@ -71,6 +75,9 @@ exports.create = async (req, res) => {
       author: req.user._id,
       score: 0
     }], { session });
+    for (const tag of tags) {
+      console.log(tag);
+    }
     await Promise.all(tags.map(tag => tag.addPost(post._id)));
     await session.commitTransaction();
   } catch (error) {
