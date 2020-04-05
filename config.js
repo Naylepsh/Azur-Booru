@@ -7,6 +7,9 @@ const dev = {
   db: {
     URI: process.env.MONGODB_URI,
   },
+  bucket: {
+    name: process.env.GOOGLE_CLOUD_BUCKET_NAME,
+  },
   cookies: {
     prefix: "AzurBooru_",
   },
