@@ -2,14 +2,13 @@ const env = process.env.NODE_ENV;
 
 const dev = {
   app: {
-    port: 3000
+    port: 3000,
   },
   db: {
-    host: 'localhost',
-    name: 'booru'
+    URI: process.env.MONGODB_URI,
   },
   cookies: {
-    prefix: 'AzurBooru_'
+    prefix: "AzurBooru_",
   },
 };
 
