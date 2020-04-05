@@ -3,8 +3,6 @@ const crypto = require("crypto");
 const path = require("path");
 
 const upload_path = "./public/uploads";
-// const storage = new Storage();
-// const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
 
 function generateRandomFilename(file) {
   try {
@@ -12,6 +10,7 @@ function generateRandomFilename(file) {
       crypto.randomBytes(16).toString("hex") + path.extname(file.originalname);
     return name;
   } catch (err) {
+    // TODO: Add better error handling
     console.log(err);
     return;
   }
@@ -27,7 +26,5 @@ exports.storage = multer({
     },
   }),
 });
-
-// exports.bucket = bucket;
 
 exports.upload_path = upload_path;

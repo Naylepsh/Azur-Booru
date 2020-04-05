@@ -1,5 +1,5 @@
-const jimp = require('jimp');
-const fs = require('fs');
+const jimp = require("jimp");
+const fs = require("fs");
 
 module.exports = {
   makeThumbnail: async (pathToFile, pathToThumbnail) => {
@@ -12,31 +12,45 @@ module.exports = {
   },
 
   removeFile: (pathToFile) => {
-    fs.unlink(pathToFile, err => {
+    fs.unlink(pathToFile, (err) => {
       if (err) {
         console.error(err);
       }
     });
   },
 
-  paginationInfo: ({ urlPrefix, numberOfRecords, query, page, recordsPerPage}) => {
+  paginationInfo: ({
+    urlPrefix,
+    numberOfRecords,
+    query,
+    page,
+    recordsPerPage,
+  }) => {
     return {
       urlPrefix,
-      urlSuffix: query ? '&'+Object.entries(query).map( ([name, value]) => name+'='+value).join('&') : '',
+      urlSuffix: query
+        ? "&" +
+          Object.entries(query)
+            .map(([name, value]) => name + "=" + value)
+            .join("&")
+        : "",
       currentPage: page ? parseInt(page) : 1,
-      lastPage: Math.ceil(numberOfRecords / recordsPerPage)
-    }
+      lastPage: Math.ceil(numberOfRecords / recordsPerPage),
+    };
   },
 
   distinctWordsInString: (str) => {
     if (!str) return [];
-    const words = str.replace(/\s/g, ' ').split(' ').filter( word => word.length > 0);
+    const words = str
+      .replace(/\s/g, " ")
+      .split(" ")
+      .filter((word) => word.length > 0);
     return [...new Set(words)];
   },
 
   sendError: (res, err, backupCode) => {
     res.status(err.status || backupCode).json({
-      message: err.message
+      message: err.message,
     });
   },
 
@@ -48,7 +62,7 @@ module.exports = {
     return keys.reduce((obj, key) => {
       // prototype.has.... in case if object is of a null prototype
       if (object && Object.prototype.hasOwnProperty.call(object, key)) {
-         obj[key] = object[key];
+        obj[key] = object[key];
       }
       return obj;
     }, {});
@@ -56,7 +70,7 @@ module.exports = {
 
   swapKeysAndValues: (object) => {
     let swapped = {};
-    for(const key in object){
+    for (const key in object) {
       swapped[object[key]] = key;
     }
     return swapped;
@@ -78,5 +92,5 @@ module.exports = {
       array.splice(index, 1);
     }
     return array;
-  }
-}
+  },
+};
