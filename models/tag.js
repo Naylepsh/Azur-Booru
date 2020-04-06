@@ -35,18 +35,12 @@ tagSchema.statics.findOrCreateMany = async function (tagObjects, session) {
 };
 
 tagSchema.methods.addPost = async function (postId) {
-  // console.log(this.posts);
   this.posts.push(postId);
-  // console.log(this.posts);
-  // console.log("added post to tag");
   await this.save();
 };
 
 tagSchema.methods.removePost = async function (postId) {
-  // console.log(this.posts);
   this.posts.remove(postId);
-  // console.log(this.posts);
-  // console.log("finished removing from tag");
   await this.save();
 };
 
