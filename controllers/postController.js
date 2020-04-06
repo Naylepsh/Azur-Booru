@@ -1,14 +1,13 @@
 const { Post, validate } = require("../models/post");
 const { Tag } = require("../models/tag");
 const { Comment } = require("../models/comment");
+const { User } = require("../models/user");
 const miscUtils = require("../utils/misc");
-const { bucket } = require("../utils/storage");
+const mongoose = require("mongoose");
 
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
 const POST_BODY_ATTRIBUTES = ["source", "title", "tags", "rating"];
-const IMAGE_PATH = "/uploads/";
-const THUMBNAIL_PATH = "/thumbnails/thumbnail_";
 
 exports.list = async (req, res) => {
   const tagNames = miscUtils.distinctWordsInString(req.query.tags);
@@ -59,26 +58,40 @@ exports.create = async (req, res) => {
     });
   }
 
-  const tags = await Tag.findOrCreateMany(
-    req.body.post.tags.map((name) => {
-      return { name };
-    })
-  );
-  const tagsIds = tags.map((tag) => tag._id);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const tags = await Tag.findOrCreateMany(
+      req.body.post.tags.map((name) => {
+        return { name };
+      }),
+      session
+    );
+    const tagsIds = tags.map((tag) => tag._id);
 
-  const { postImageURL, postThumbnailURL } = req;
-
-  const post = await Post.create({
-    imageLink: req.postImageURL,
-    thumbnailLink: req.postThumbnailURL,
-    source: req.body.post.source,
-    tags: tagsIds,
-    rating: req.body.post.rating,
-    author: req.user._id,
-    score: 0,
-  });
-  await Promise.all(tags.map((tag) => tag.addPost(post._id)));
-  res.redirect("/posts");
+    const post = await Post.create(
+      [
+        {
+          imageLink: req.postImageURL,
+          thumbnailLink: req.postThumbnailURL,
+          source: req.body.post.source,
+          tags: tagsIds,
+          rating: req.body.post.rating,
+          author: req.user._id,
+          score: 0,
+        },
+      ],
+      { session }
+    );
+    await Promise.all(tags.map((tag) => tag.addPost(post._id)));
+    await session.commitTransaction();
+  } catch (e) {
+    await session.abortTransaction();
+    throw e;
+  } finally {
+    session.endSession();
+    res.redirect("/posts");
+  }
 };
 
 exports.show = async (req, res) => {
@@ -153,27 +166,38 @@ exports.update = async (req, res) => {
 };
 
 exports.destroy = async (req, res) => {
-  const isAuthor = authenticateAuthor(req.user, req.params.id);
-  const isAdmin = req.user.roles.admin;
-  if (!isAuthor && !isAdmin) {
-    return miscUtils.sendError(res, { status: 403, message: "Access denied." });
-  }
-
-  const post = await Post.findByIdAndRemove(req.params.id).populate("tags");
+  const post = await Post.findById(req.params.id).populate("tags");
   if (!post) {
     return miscUtils.sendError(res, {
       status: 404,
       message: "Post not found.",
     });
   }
-  await Promise.all(
-    post.comments.map((commentId) => Comment.findByIdAndRemove(commentId))
-  );
-  await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
-  // miscUtils.removeFile(`./public${post.imageLink}`);
-  // miscUtils.removeFile(`./public${post.thumbnailLink}`);
 
-  res.redirect("/posts");
+  const isAuthor = authenticateAuthor(post, req.user);
+  const isAdmin = req.user.roles.admin;
+  if (!isAuthor && !isAdmin) {
+    return miscUtils.sendError(res, { status: 403, message: "Access denied." });
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    await Post.deleteOne(post);
+    await Promise.all(
+      post.comments.map((commentId) =>
+        Comment.findByIdAndRemove(commentId).session(session)
+      )
+    );
+    await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
+    await session.commitTransaction();
+  } catch (e) {
+    await session.abortTransaction();
+    throw e;
+  } finally {
+    session.endSession();
+    res.redirect("/posts");
+  }
 };
 
 exports.toggleVote = async (req, res) => {
@@ -198,13 +222,8 @@ exports.toggleVote = async (req, res) => {
   res.end(post.score.toString());
 };
 
-async function authenticateAuthor(user, postId) {
-  const post = await Post.findById(postId).populate("author");
-  if (!post) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: "Post not found.",
-    });
-  }
-  return user._id === post.author._id.toString();
+async function authenticateAuthor(post, user) {
+  const author = await User.findById(post.author);
+
+  return user._id === author._id.toString();
 }

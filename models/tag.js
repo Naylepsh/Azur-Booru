@@ -19,17 +19,17 @@ const tagSchema = new mongoose.Schema({
   ],
 });
 
-tagSchema.statics.findOrCreate = async function (tagObject) {
+tagSchema.statics.findOrCreate = async function (tagObject, session) {
   let tag = await this.findOne(tagObject);
   if (!tag) {
-    tag = await this.create(tagObject);
+    tag = await this.create(tagObject).session(session);
   }
   return tag;
 };
 
-tagSchema.statics.findOrCreateMany = async function (tagObjects) {
+tagSchema.statics.findOrCreateMany = async function (tagObjects, session) {
   return await Promise.all(
-    tagObjects.map((tagObject) => this.findOrCreate(tagObject))
+    tagObjects.map((tagObject) => this.findOrCreate(tagObject, session))
   );
 };
 
