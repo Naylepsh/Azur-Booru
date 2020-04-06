@@ -69,7 +69,7 @@ exports.create = async (req, res) => {
     );
     const tagsIds = tags.map((tag) => tag._id);
 
-    const post = await Post.create(
+    const posts = await Post.create(
       [
         {
           imageLink: req.postImageURL,
@@ -83,6 +83,7 @@ exports.create = async (req, res) => {
       ],
       { session }
     );
+    const post = posts[0];
     await Promise.all(tags.map((tag) => tag.addPost(post._id)));
     await session.commitTransaction();
   } catch (e) {
@@ -143,25 +144,33 @@ exports.update = async (req, res) => {
       message: "User not found.",
     });
   }
-  await Promise.all(oldPost.tags.map((tag) => tag.removePost(oldPost._id)));
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    await Promise.all(oldPost.tags.map((tag) => tag.removePost(oldPost._id)));
 
-  // add new tags
-  let newPost = req.body.post;
-  const tagNames = miscUtils.distinctWordsInString(newPost.tags);
-  const newTags = await Tag.findOrCreateMany(
-    tagNames.map((name) => {
-      return { name };
-    })
-  );
-  await Promise.all(newTags.map((tag) => tag.addPost(oldPost._id)));
-  newPost.tags = newTags.map((tag) => tag._id);
+    // add new tags
+    let newPost = req.body.post;
+    const tagNames = miscUtils.distinctWordsInString(newPost.tags);
+    const newTags = await Tag.findOrCreateMany(
+      tagNames.map((name) => {
+        return { name };
+      }),
+      session
+    );
+    await Promise.all(newTags.map((tag) => tag.addPost(oldPost._id)));
+    newPost.tags = newTags.map((tag) => tag._id);
 
-  // update post
-  for (const key in newPost) {
-    oldPost[key] = newPost[key];
+    // update post
+    for (const key in newPost) {
+      oldPost[key] = newPost[key];
+    }
+    oldPost.save();
+    await session.commitTransaction();
+  } catch (e) {
+    await session.abortTransaction();
+    throw e;
   }
-  oldPost.save();
-
   res.redirect(`/posts/${req.params.id}`);
 };
 
@@ -183,13 +192,14 @@ exports.destroy = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    await Post.deleteOne(post);
+    await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
     await Promise.all(
       post.comments.map((commentId) =>
         Comment.findByIdAndRemove(commentId).session(session)
       )
     );
-    await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
+    await Post.deleteOne(post);
+
     await session.commitTransaction();
   } catch (e) {
     await session.abortTransaction();

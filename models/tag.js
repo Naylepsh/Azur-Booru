@@ -22,7 +22,8 @@ const tagSchema = new mongoose.Schema({
 tagSchema.statics.findOrCreate = async function (tagObject, session) {
   let tag = await this.findOne(tagObject);
   if (!tag) {
-    tag = await this.create(tagObject).session(session);
+    const tags = await this.create([tagObject], { session });
+    tag = tags[0];
   }
   return tag;
 };
@@ -34,12 +35,23 @@ tagSchema.statics.findOrCreateMany = async function (tagObjects, session) {
 };
 
 tagSchema.methods.addPost = async function (postId) {
+  // console.log(this.posts);
   this.posts.push(postId);
+  // console.log(this.posts);
+  // console.log("added post to tag");
   await this.save();
 };
 
 tagSchema.methods.removePost = async function (postId) {
+  // console.log(this.posts);
   this.posts.remove(postId);
+  // console.log(this.posts);
+  // console.log("finished removing from tag");
+  await this.save();
+};
+
+tagSchema.methods.cleanDeletedPostReferences = async function () {
+  this.posts = this.posts.filter((post) => post); // leave non-null refs
   await this.save();
 };
 
