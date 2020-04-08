@@ -143,6 +143,7 @@ img {
   text-align: center;
   text-transform: uppercase;
   padding: 15px 15px;
+  cursor: pointer;
 }
 
 .tag {
