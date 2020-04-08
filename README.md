@@ -32,7 +32,10 @@ Azurbooru is an image board inspired by Danbooru and Gelbooru with Azur Lane rel
 ## Screenshots
 
 Post list:
-![](https://i.imgur.com/UxDmnXO.jpg)
+![](https://i.imgur.com/uSQj1jp.jpg)
 
 Post view:
-![](https://i.imgur.com/lh1wLe3.jpg)
+![](https://i.imgur.com/PoVGNbr.jpg)
+
+Post comments:
+![](https://i.imgur.com/gOU3Ptc.png)

@@ -1,6 +1,51 @@
 body {
-  background: linear-gradient(22.5deg, rgba(67, 67, 67, 0.02) 0%, rgba(67, 67, 67, 0.02) 29%,rgba(47, 47, 47, 0.02) 29%, rgba(47, 47, 47, 0.02) 37%,rgba(23, 23, 23, 0.02) 37%, rgba(23, 23, 23, 0.02) 55%,rgba(182, 182, 182, 0.02) 55%, rgba(182, 182, 182, 0.02) 69%,rgba(27, 27, 27, 0.02) 69%, rgba(27, 27, 27, 0.02) 71%,rgba(250, 250, 250, 0.02) 71%, rgba(250, 250, 250, 0.02) 100%),linear-gradient(67.5deg, rgba(117, 117, 117, 0.02) 0%, rgba(117, 117, 117, 0.02) 14%,rgba(199, 199, 199, 0.02) 14%, rgba(199, 199, 199, 0.02) 40%,rgba(33, 33, 33, 0.02) 40%, rgba(33, 33, 33, 0.02) 48%,rgba(135, 135, 135, 0.02) 48%, rgba(135, 135, 135, 0.02) 60%,rgba(148, 148, 148, 0.02) 60%, rgba(148, 148, 148, 0.02) 95%,rgba(53, 53, 53, 0.02) 95%, rgba(53, 53, 53, 0.02) 100%),linear-gradient(135deg, rgba(190, 190, 190, 0.02) 0%, rgba(190, 190, 190, 0.02) 6%,rgba(251, 251, 251, 0.02) 6%, rgba(251, 251, 251, 0.02) 18%,rgba(2, 2, 2, 0.02) 18%, rgba(2, 2, 2, 0.02) 27%,rgba(253, 253, 253, 0.02) 27%, rgba(253, 253, 253, 0.02) 49%,rgba(128, 128, 128, 0.02) 49%, rgba(128, 128, 128, 0.02) 76%,rgba(150, 150, 150, 0.02) 76%, rgba(150, 150, 150, 0.02) 100%),linear-gradient(90deg, #FFF,#FFF), 
-  linear-gradient(to right, black 1px, transparent 1px, transparent);
+  background: linear-gradient(
+      22.5deg,
+      rgba(67, 67, 67, 0.02) 0%,
+      rgba(67, 67, 67, 0.02) 29%,
+      rgba(47, 47, 47, 0.02) 29%,
+      rgba(47, 47, 47, 0.02) 37%,
+      rgba(23, 23, 23, 0.02) 37%,
+      rgba(23, 23, 23, 0.02) 55%,
+      rgba(182, 182, 182, 0.02) 55%,
+      rgba(182, 182, 182, 0.02) 69%,
+      rgba(27, 27, 27, 0.02) 69%,
+      rgba(27, 27, 27, 0.02) 71%,
+      rgba(250, 250, 250, 0.02) 71%,
+      rgba(250, 250, 250, 0.02) 100%
+    ),
+    linear-gradient(
+      67.5deg,
+      rgba(117, 117, 117, 0.02) 0%,
+      rgba(117, 117, 117, 0.02) 14%,
+      rgba(199, 199, 199, 0.02) 14%,
+      rgba(199, 199, 199, 0.02) 40%,
+      rgba(33, 33, 33, 0.02) 40%,
+      rgba(33, 33, 33, 0.02) 48%,
+      rgba(135, 135, 135, 0.02) 48%,
+      rgba(135, 135, 135, 0.02) 60%,
+      rgba(148, 148, 148, 0.02) 60%,
+      rgba(148, 148, 148, 0.02) 95%,
+      rgba(53, 53, 53, 0.02) 95%,
+      rgba(53, 53, 53, 0.02) 100%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(190, 190, 190, 0.02) 0%,
+      rgba(190, 190, 190, 0.02) 6%,
+      rgba(251, 251, 251, 0.02) 6%,
+      rgba(251, 251, 251, 0.02) 18%,
+      rgba(2, 2, 2, 0.02) 18%,
+      rgba(2, 2, 2, 0.02) 27%,
+      rgba(253, 253, 253, 0.02) 27%,
+      rgba(253, 253, 253, 0.02) 49%,
+      rgba(128, 128, 128, 0.02) 49%,
+      rgba(128, 128, 128, 0.02) 76%,
+      rgba(150, 150, 150, 0.02) 76%,
+      rgba(150, 150, 150, 0.02) 100%
+    ),
+    linear-gradient(90deg, #fff, #fff),
+    linear-gradient(to right, black 1px, transparent 1px, transparent);
   background-attachment: fixed;
   height: 100vh;
 }
@@ -18,11 +63,11 @@ body {
 }
 
 .nav-bar {
-  background: rgba(0,0,0,0.9);
+  background: rgba(0, 0, 0, 0.9);
 }
 
 .mobile-menu {
-  background-color: rgba(0,0,0,0.9);
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 #content {
@@ -87,7 +132,7 @@ img {
   color: #194b96;
 }
 
-.sidebar-section-generic-content a, 
+.sidebar-section-generic-content a,
 .sidebar-section-generic-content #delete-button {
   color: #0062d0;
 }
@@ -165,6 +210,10 @@ img {
   margin-bottom: 40px;
 }
 
+.comment {
+  margin-bottom: 10px;
+}
+
 .comment-preview > .comment {
   margin: auto 0 auto 20px;
 }
@@ -181,7 +230,7 @@ img {
   width: 64px;
   height: auto;
   position: absolute;
-  border: 2px solid rgba(0,0,0,0.75);
+  border: 2px solid rgba(0, 0, 0, 0.75);
   border-radius: 50%;
 }
 
@@ -191,7 +240,7 @@ img {
 }
 
 .comment-body {
-  border: 2px solid rgba(0,0,0,0.75);
+  border: 2px solid rgba(0, 0, 0, 0.75);
   border-radius: 4px;
   margin-top: 15px;
   padding: 20px;
@@ -256,7 +305,6 @@ img {
 
 /* extra-small size */
 @media only screen and (max-width: 576px) {
-
   #content {
     margin-left: 0;
   }
