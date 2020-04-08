@@ -38,4 +38,4 @@ Post view:
 ![](https://i.imgur.com/PoVGNbr.jpg)
 
 Post comments:
-![](https://i.imgur.com/gOU3Ptc.png)
+![](https://i.imgur.com/YITnEmC.png)
