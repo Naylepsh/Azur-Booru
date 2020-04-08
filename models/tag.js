@@ -63,9 +63,9 @@ tagSchema.statics.popularTagsOfPosts = async function (posts, tagsLimit) {
     let occurences = tags.map((tag) => {
       return { name: tag.name, occurences: tag.posts.length };
     });
-    occurences.sort((t1, t2) => (t1.occurences > t2.occurences ? 1 : -1));
+    occurences.sort((t1, t2) => (t1.occurences <= t2.occurences ? 1 : -1));
     occurences = occurences.slice(0, tagsLimit);
-    occurences.sort((t1, t2) => (t1.name > t2.name ? 1 : -1));
+    occurences.sort((t1, t2) => (t1.name >= t2.name ? 1 : -1));
     return occurences;
   }
 };
