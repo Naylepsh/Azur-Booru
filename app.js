@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
-const error = require("./middleware/error");
+const errorMiddleware = require("./middleware/error");
 
 if (!process.env.JWT_SECRET) {
   console.error("JWT SECRET is not defined");
@@ -18,6 +18,7 @@ const indexRoutes = require("./routes/index");
 const postsRoutes = require("./routes/posts");
 const userRoutes = require("./routes/user");
 const commentRoutes = require("./routes/comments");
+const errorRoutes = require("./routes/error");
 
 // DB config
 mongoose.set("useUnifiedTopology", true);
@@ -36,9 +37,10 @@ app.use(logger("dev"));
 app.use(methodOverride("_method"));
 app.use(require("./middleware/auth").loadUser);
 app.use(indexRoutes);
+app.use(errorRoutes);
 app.use(userRoutes);
 app.use("/posts", postsRoutes);
 app.use("/comments", commentRoutes);
-app.use(error);
+app.use(errorMiddleware);
 
 module.exports = app;
