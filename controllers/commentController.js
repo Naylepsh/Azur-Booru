@@ -1,6 +1,7 @@
 const { Comment } = require("../models/comment");
 const { Post } = require("../models/post");
 const { User } = require("../models/user");
+const { StatusError } = require("../utils/errors");
 const miscUtils = require("../utils/misc");
 const mongoose = require("mongoose");
 
@@ -46,10 +47,7 @@ exports.search = (req, res) => {
 exports.create = async (req, res) => {
   let post = await Post.findById(req.body.postId);
   if (!post) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: `Post with id ${req.body.postId} does not exist`,
-    });
+    throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
   req.body.comment.author = req.user._id;
@@ -64,7 +62,7 @@ exports.create = async (req, res) => {
     await session.commitTransaction();
   } catch (e) {
     await session.abortTransaction();
-    throw e;
+    throw new StatusError(500, e.message);
   } finally {
     session.endSession();
     res.redirect(`/posts/${req.body.postId}`);
@@ -74,30 +72,24 @@ exports.create = async (req, res) => {
 exports.delete = async (req, res) => {
   let post = await Post.findById(req.body.postId);
   if (!post) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: `Post with id ${req.body.postId} does not exist`,
-    });
+    throw new StatusError(404, `Post ${req.params.id} not found`);
+  }
+
+  const comment = await Comment.findById(req.params.id);
+  if (!comment) {
+    throw new StatusError(404, `Comment ${req.params.id} not found`);
   }
 
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const comment = await Comment.findById(req.params.id);
-    if (!comment) {
-      return miscUtils.sendError(res, {
-        status: 404,
-        message: `Comment with id ${req.params.id} does not exist`,
-      });
-    }
-
     post.comments.remove(comment._id);
     await post.save();
     await Comment.findByIdAndRemove(comment._id);
     await session.commitTransaction();
   } catch (e) {
     await session.abortTransaction();
-    throw e;
+    throw new StatusError(500, e.message);
   } finally {
     session.endSession();
     res.redirect(`/posts/${req.body.postId}`);
@@ -107,10 +99,7 @@ exports.delete = async (req, res) => {
 exports.toggleVote = async (req, res) => {
   let comment = await Comment.findById(req.params.id);
   if (!comment) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: "Post not found.",
-    });
+    throw new StatusError(404, `Comment ${req.params.id} not found`);
   }
 
   if (req.body.voteType === "up") {
