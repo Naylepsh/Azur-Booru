@@ -69,6 +69,12 @@ module.exports = {
   },
 
   swapKeysAndValues: (object) => {
+    const values = Object.values(object);
+    const uniqueValues = new Set(values);
+    if (uniqueValues.size !== values.length) {
+      throw new Error("Object values are not unique");
+    }
+
     let swapped = {};
     for (const key in object) {
       swapped[object[key]] = key;
