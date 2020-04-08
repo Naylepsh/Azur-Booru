@@ -198,7 +198,7 @@ exports.destroy = async (req, res) => {
         Comment.findByIdAndRemove(commentId).session(session)
       )
     );
-    await Post.deleteOne(post);
+    await Post.findByIdAndRemove(post._id);
 
     await session.commitTransaction();
   } catch (e) {

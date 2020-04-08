@@ -2,6 +2,7 @@ const { Comment } = require("../models/comment");
 const { Post } = require("../models/post");
 const { User } = require("../models/user");
 const miscUtils = require("../utils/misc");
+const mongoose = require("mongoose");
 
 const COMMENTS_PER_PAGE = 10;
 
@@ -29,7 +30,7 @@ exports.list = async (req, res) => {
     COMMENTS_PER_PAGE,
     authorQuery
   );
-  console.log(comments);
+
   res.render("comments/index", {
     comments,
     pageInfo,
@@ -54,10 +55,20 @@ exports.create = async (req, res) => {
   req.body.comment.author = req.user._id;
   req.body.comment.score = 0;
   req.body.comment.post = post._id;
-  const comment = await Comment.create(req.body.comment);
-  post.comments.push(comment);
-  await post.save();
-  res.redirect(`/posts/${req.body.postId}`);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const comment = await Comment.create(req.body.comment);
+    post.comments.push(comment);
+    await post.save();
+    await session.commitTransaction();
+  } catch (e) {
+    await session.abortTransaction();
+    throw e;
+  } finally {
+    session.endSession();
+    res.redirect(`/posts/${req.body.postId}`);
+  }
 };
 
 exports.delete = async (req, res) => {
@@ -69,17 +80,28 @@ exports.delete = async (req, res) => {
     });
   }
 
-  const comment = await Comment.findByIdAndRemove(req.params.id);
-  if (!comment) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: `Comment with id ${req.params.id} does not exist`,
-    });
-  }
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const comment = await Comment.findById(req.params.id);
+    if (!comment) {
+      return miscUtils.sendError(res, {
+        status: 404,
+        message: `Comment with id ${req.params.id} does not exist`,
+      });
+    }
 
-  post.comments.remove(comment);
-  await post.save();
-  res.redirect(`/posts/${req.body.postId}`);
+    post.comments.remove(comment._id);
+    await post.save();
+    await Comment.findByIdAndRemove(comment._id);
+    await session.commitTransaction();
+  } catch (e) {
+    await session.abortTransaction();
+    throw e;
+  } finally {
+    session.endSession();
+    res.redirect(`/posts/${req.body.postId}`);
+  }
 };
 
 exports.toggleVote = async (req, res) => {
