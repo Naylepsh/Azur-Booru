@@ -2,6 +2,7 @@ const { Post, validate } = require("../models/post");
 const { Tag } = require("../models/tag");
 const { Comment } = require("../models/comment");
 const { User } = require("../models/user");
+const { StatusError } = require("../utils/errors");
 const miscUtils = require("../utils/misc");
 const mongoose = require("mongoose");
 
@@ -88,7 +89,7 @@ exports.create = async (req, res) => {
     await session.commitTransaction();
   } catch (e) {
     await session.abortTransaction();
-    throw e;
+    throw new StatusError(500, e.message);
   } finally {
     session.endSession();
     res.redirect("/posts");
@@ -104,10 +105,7 @@ exports.show = async (req, res) => {
     });
 
   if (!post) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: "User not found.",
-    });
+    throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
   const tags = await Promise.all(
@@ -123,10 +121,7 @@ exports.show = async (req, res) => {
 exports.edit = async (req, res) => {
   const post = await Post.findById(req.params.id).populate("tags");
   if (!post) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: "User not found.",
-    });
+    throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
   const tagNames = post.tags.map((tag) => tag.name);
@@ -139,11 +134,9 @@ exports.update = async (req, res) => {
   // remove old tags
   let oldPost = await Post.findById(req.params.id).populate("tags");
   if (!oldPost) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: "User not found.",
-    });
+    throw new StatusError(404, `Post ${req.params.id} not found`);
   }
+
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
@@ -169,7 +162,7 @@ exports.update = async (req, res) => {
     await session.commitTransaction();
   } catch (e) {
     await session.abortTransaction();
-    throw e;
+    throw new StatusError(500, e.message);
   }
   res.redirect(`/posts/${req.params.id}`);
 };
@@ -177,10 +170,7 @@ exports.update = async (req, res) => {
 exports.destroy = async (req, res) => {
   const post = await Post.findById(req.params.id).populate("tags");
   if (!post) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: "Post not found.",
-    });
+    throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
   const isAuthor = authenticateAuthor(post, req.user);
@@ -203,7 +193,7 @@ exports.destroy = async (req, res) => {
     await session.commitTransaction();
   } catch (e) {
     await session.abortTransaction();
-    throw e;
+    throw new StatusError(500, e.message);
   } finally {
     session.endSession();
     res.redirect("/posts");
@@ -213,10 +203,7 @@ exports.destroy = async (req, res) => {
 exports.toggleVote = async (req, res) => {
   let post = await Post.findById(req.params.id);
   if (!post) {
-    return miscUtils.sendError(res, {
-      status: 404,
-      message: "Post not found.",
-    });
+    throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
   if (req.body.voteType === "up") {
