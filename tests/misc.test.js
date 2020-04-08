@@ -98,3 +98,28 @@ describe("removeFromArrayIfExists", () => {
     expect(result).toBe(source);
   });
 });
+
+describe("distinctWordsInString", () => {
+  it("should return all words from string of unique words", () => {
+    const source = "word1 word2";
+    const result = miscUtils.distinctWordsInString(source);
+
+    expect(result).toContain("word1");
+    expect(result).toContain("word2");
+  });
+
+  it("should return only one word", () => {
+    const source = "word1 word1";
+    const result = miscUtils.distinctWordsInString(source);
+
+    expect(result.length).toBe(1);
+    expect(result).toContain("word1");
+  });
+
+  it("should handle empty string", () => {
+    const source = "";
+    const result = miscUtils.distinctWordsInString(source);
+
+    expect(result.length).toBe(0);
+  });
+});
