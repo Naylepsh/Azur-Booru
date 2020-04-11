@@ -25,7 +25,9 @@
           <h3>Options</h3> 
         </div>
         <ul>
-          <div><li class="sidebar-section-generic-content"><a href="/posts/<%= post.id %>/edit">Edit</a></li></div>
+          <% if (user) { %>
+            <div><li class="sidebar-section-generic-content"><a href="/posts/<%= post.id %>/edit">Edit</a></li></div>
+          <% } %>
           <% if (user && user._id === post.author._id.toString()) { %>
           <div>
             <li class="sidebar-section-generic-content">
