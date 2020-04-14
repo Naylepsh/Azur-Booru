@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { storage } = require("../utils/storage");
-const Comment = require("../controllers/commentController");
-const { asyncWrapper } = require("../middleware/route-wrappers");
+const { storage } = require("../../utils/storage");
+const Comment = require("../../controllers/commentController");
+const { asyncWrapper } = require("../../middleware/route-wrappers");
 
 router
   .get("/", asyncWrapper(Comment.list))

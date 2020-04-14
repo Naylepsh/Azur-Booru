@@ -14,10 +14,10 @@ if (!process.env.JWT_SECRET) {
   process.exit(1);
 }
 
-const indexRoutes = require("./routes/index");
-const postsRoutes = require("./routes/posts");
-const userRoutes = require("./routes/user");
-const commentRoutes = require("./routes/comments");
+const indexRoutes = require("./routes/landing");
+const postsRoutes = require("./routes/v1.0/posts");
+const userRoutes = require("./routes/v1.0/user");
+const commentRoutes = require("./routes/v1.0/comments");
 const errorRoutes = require("./routes/error");
 
 // DB config
@@ -36,11 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger("dev"));
 app.use(methodOverride("_method"));
 app.use(require("./middleware/auth").loadUser);
-app.use(indexRoutes);
-app.use(errorRoutes);
-app.use(userRoutes);
-app.use("/posts", postsRoutes);
-app.use("/comments", commentRoutes);
+require("./routes/index")(app);
 app.use(errorMiddleware);
 
 module.exports = app;

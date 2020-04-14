@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express();
-const User = require("../controllers/userController");
-const { authorizeUser } = require("../middleware/auth");
-const { asyncWrapper } = require("../middleware/route-wrappers");
+const User = require("../../controllers/userController");
+const { authorizeUser } = require("../../middleware/auth");
+const { asyncWrapper } = require("../../middleware/route-wrappers");
 
 router
   .get("/register", User.registerForm)

@@ -1,12 +1,8 @@
-const express = require("express");
-const router = express();
-const { asyncWrapper } = require("../middleware/route-wrappers");
-
-router.get(
-  "/",
-  asyncWrapper((req, res) => {
-    res.render("landing", { user: req.user });
-  })
-);
-
-module.exports = router;
+module.exports = function (app) {
+  // app.use(express.json());
+  app.use(require("./landing"));
+  app.use("/api/v1.0/posts", require("./v1.0/posts"));
+  app.use("/api/v1.0/", require("./v1.0/user"));
+  app.use("/api/v1.0/comments", require("./v1.0/comments"));
+  app.use(require("./error"));
+};
