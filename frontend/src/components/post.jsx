@@ -13,14 +13,24 @@ class Post extends Component {
   async componentDidMount() {
     const id = this.props.match.params.id;
     const { data } = await getPost(id);
-
-    this.setState({ post: data.post, tags: data.tags });
+    this.setState({ post: this.mapToViewModel(data.post), tags: data.tags });
   }
+
+  mapToViewModel = (post) => {
+    return {
+      id: post._id,
+      imageLink: post.imageLink,
+      source: post.source,
+      score: post.score,
+      rating: post.rating,
+      comments: post.comments,
+    };
+  };
 
   renderPostContent() {
     return (
       <section className="post-image">
-        <img src={this.state.post.imageLink} />
+        <img src={this.state.post.imageLink} alt="post" />
         <menu className="post-menu">
           <li>
             <button id="post-vote-up">Vote up</button>
