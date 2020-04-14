@@ -1,4 +1,4 @@
-body {
+.landing-page-bg {
   background: url("/assets/cover-pic.jpg") no-repeat center/cover;
   background-attachment: fixed;
   height: 100vh;
