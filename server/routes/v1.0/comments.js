@@ -8,6 +8,7 @@ router
   .get("/", asyncWrapper(Comment.list))
   // .get("/search", Comment.search)
   .post("/", asyncWrapper(Comment.create))
+  .get("/:id", asyncWrapper(Comment.show))
   .delete("/:id", asyncWrapper(Comment.delete))
   // storage.single() has to be there due to some XMLHttpRequest form shenanigans
   .post("/:id/toggle-vote", storage.single(), asyncWrapper(Comment.toggleVote));

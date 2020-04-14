@@ -79,6 +79,15 @@ exports.create = async (req, res) => {
   }
 };
 
+exports.show = async (req, res) => {
+  const comment = await Comment.findById(req.params.id).populate("author");
+  if (!comment) {
+    throw new StatusError(404, `Comment ${req.params.id} not found`);
+  }
+
+  res.send(comment);
+};
+
 exports.delete = async (req, res) => {
   let post = await Post.findById(req.body.postId);
   if (!post) {
