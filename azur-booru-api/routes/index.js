@@ -5,6 +5,6 @@ module.exports = function (app) {
 
   // load apis
   app.use("/api/v1.0/posts", require("./v1.0/posts"));
-  app.use("/api/v1.0/", require("./v1.0/user"));
+  // app.use("/api/v1.0/", require("./v1.0/user"));
   app.use("/api/v1.0/comments", require("./v1.0/comments"));
 };

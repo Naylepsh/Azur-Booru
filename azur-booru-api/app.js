@@ -14,12 +14,6 @@ if (!process.env.JWT_SECRET) {
   process.exit(1);
 }
 
-const indexRoutes = require("./routes/landing");
-const postsRoutes = require("./routes/v1.0/posts");
-const userRoutes = require("./routes/v1.0/user");
-const commentRoutes = require("./routes/v1.0/comments");
-const errorRoutes = require("./routes/error");
-
 // DB config
 mongoose.set("useUnifiedTopology", true);
 mongoose.set("useCreateIndex", true);
