@@ -1,5 +1,6 @@
 import React from "react";
 import "../css/landing.css";
+import SearchBar from "./searchBar";
 
 const Landing = () => {
   return (
@@ -10,6 +11,7 @@ const Landing = () => {
         </a>
       </h1>
       <p>tfw no cute botes to hold signs</p>
+      <SearchBar />
     </section>
   );
 };
