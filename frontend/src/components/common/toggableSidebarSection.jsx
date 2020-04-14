@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 class ToggableSidebarSection extends Component {
   state = {
-    isCollapsed: false,
+    isCollapsed: true,
   };
 
   handleToggle = () => {
