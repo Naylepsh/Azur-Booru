@@ -32,17 +32,25 @@ exports.list = async (req, res) => {
     authorQuery
   );
 
-  res.render("comments/index", {
+  res.send({
     comments,
     pageInfo,
     tagsQuery: req.query.tags,
     user: req.user,
   });
+
+  // res.render("comments/index", {
+  //   comments,
+  //   pageInfo,
+  //   tagsQuery: req.query.tags,
+  //   user: req.user,
+  // });
 };
 
-exports.search = (req, res) => {
-  res.render("comments/search", { user: req.user });
-};
+// TODO: Port to front-end
+// exports.search = (req, res) => {
+//   res.render("comments/search", { user: req.user });
+// };
 
 exports.create = async (req, res) => {
   let post = await Post.findById(req.body.postId);
@@ -55,8 +63,9 @@ exports.create = async (req, res) => {
   req.body.comment.post = post._id;
   const session = await mongoose.startSession();
   session.startTransaction();
+  let comment;
   try {
-    const comment = await Comment.create(req.body.comment);
+    comment = await Comment.create(req.body.comment);
     post.comments.push(comment);
     await post.save();
     await session.commitTransaction();
@@ -65,7 +74,8 @@ exports.create = async (req, res) => {
     throw new StatusError(500, e.message);
   } finally {
     session.endSession();
-    res.redirect(`/posts/${req.body.postId}`);
+    res.send(comment);
+    // res.redirect(`/posts/${req.body.postId}`);
   }
 };
 
@@ -92,7 +102,8 @@ exports.delete = async (req, res) => {
     throw new StatusError(500, e.message);
   } finally {
     session.endSession();
-    res.redirect(`/posts/${req.body.postId}`);
+    res.send(post);
+    // res.redirect(`/posts/${req.body.postId}`);
   }
 };
 

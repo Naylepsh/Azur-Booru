@@ -29,7 +29,8 @@ mongoose.connect(config.db.URI, {
 });
 
 // App Config
-app.set("view engine", "ejs");
+// app.set("view engine", "ejs");
+app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: true }));

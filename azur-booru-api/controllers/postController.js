@@ -35,18 +35,28 @@ exports.list = async (req, res) => {
     POSTS_PER_PAGE
   );
   const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);
-  res.render("posts/index", {
+
+  res.send({
     posts,
     tags,
     pageInfo,
     tagsQuery: tagNames,
     user: req.user,
   });
+
+  // res.render("posts/index", {
+  //   posts,
+  //   tags,
+  //   pageInfo,
+  //   tagsQuery: tagNames,
+  //   user: req.user,
+  // });
 };
 
-exports.new = (req, res) => {
-  res.render("posts/new", { user: req.user });
-};
+// TODO: Port to front-end
+// exports.new = (req, res) => {
+//   res.render("posts/new", { user: req.user });
+// };
 
 exports.create = async (req, res) => {
   req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
@@ -61,6 +71,7 @@ exports.create = async (req, res) => {
 
   const session = await mongoose.startSession();
   session.startTransaction();
+  let post;
   try {
     const tags = await Tag.findOrCreateMany(
       req.body.post.tags.map((name) => {
@@ -84,7 +95,7 @@ exports.create = async (req, res) => {
       ],
       { session }
     );
-    const post = posts[0];
+    post = posts[0];
     await Promise.all(tags.map((tag) => tag.addPost(post._id)));
     await session.commitTransaction();
   } catch (e) {
@@ -92,7 +103,8 @@ exports.create = async (req, res) => {
     throw new StatusError(500, e.message);
   } finally {
     session.endSession();
-    res.redirect("/posts");
+    res.send(post);
+    // res.redirect("/posts");
   }
 };
 
@@ -115,32 +127,35 @@ exports.show = async (req, res) => {
     })
   );
 
-  res.render("posts/show", { post: post, tags: tags, user: req.user });
+  res.send({ post: post, tags: tags, user: req.user });
+
+  // res.render("posts/show", { post: post, tags: tags, user: req.user });
 };
 
-exports.edit = async (req, res) => {
-  const post = await Post.findById(req.params.id).populate("tags");
-  if (!post) {
-    throw new StatusError(404, `Post ${req.params.id} not found`);
-  }
+// TODO: Port to front-end
+// exports.edit = async (req, res) => {
+//   const post = await Post.findById(req.params.id).populate("tags");
+//   if (!post) {
+//     throw new StatusError(404, `Post ${req.params.id} not found`);
+//   }
 
-  const tagNames = post.tags.map((tag) => tag.name);
-  res.render("posts/edit", { post, tags: tagNames, user: req.user });
-};
+//   const tagNames = post.tags.map((tag) => tag.name);
+//   res.render("posts/edit", { post, tags: tagNames, user: req.user });
+// };
 
 exports.update = async (req, res) => {
   req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
 
   // remove old tags
-  let oldPost = await Post.findById(req.params.id).populate("tags");
-  if (!oldPost) {
+  let post = await Post.findById(req.params.id).populate("tags");
+  if (!post) {
     throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    await Promise.all(oldPost.tags.map((tag) => tag.removePost(oldPost._id)));
+    await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
 
     // add new tags
     let newPost = req.body.post;
@@ -151,20 +166,21 @@ exports.update = async (req, res) => {
       }),
       session
     );
-    await Promise.all(newTags.map((tag) => tag.addPost(oldPost._id)));
+    await Promise.all(newTags.map((tag) => tag.addPost(post._id)));
     newPost.tags = newTags.map((tag) => tag._id);
 
     // update post
     for (const key in newPost) {
-      oldPost[key] = newPost[key];
+      post[key] = newPost[key];
     }
-    oldPost.save();
+    post.save();
     await session.commitTransaction();
   } catch (e) {
     await session.abortTransaction();
     throw new StatusError(500, e.message);
   }
-  res.redirect(`/posts/${req.params.id}`);
+  res.send(post);
+  // res.redirect(`/posts/${req.params.id}`);
 };
 
 exports.destroy = async (req, res) => {
@@ -196,7 +212,8 @@ exports.destroy = async (req, res) => {
     throw new StatusError(500, e.message);
   } finally {
     session.endSession();
-    res.redirect("/posts");
+    res.send(post);
+    // res.redirect("/posts");
   }
 };
 
