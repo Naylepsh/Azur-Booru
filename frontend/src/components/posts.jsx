@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "../css/posts.css";
 import SearchBar from "./searchBar";
-import TagsSidebar from "./tagsSidebar";
+import PostsSidebar from "./postsSidebar";
 
 class Posts extends Component {
   state = {
@@ -12,7 +12,7 @@ class Posts extends Component {
     return (
       <div class="container text-center">
         <SearchBar />
-        <TagsSidebar tags={this.state.tags} />
+        <PostsSidebar tags={this.state.tags} />
       </div>
     );
   }
