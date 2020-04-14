@@ -7,14 +7,14 @@ class TagsSidebar extends Component {
     const { tags } = this.props;
 
     return (
-      <section class="tags">
-        <div class="sidebar-section-name">
+      <section className="tags">
+        <div className="sidebar-section-name">
           <h3>tags</h3>
         </div>
         <ul>
           {tags.map((tag) => (
-            <div>
-              <li class="tag">
+            <div key={tag.name}>
+              <li className="tag">
                 <a href="/posts?tags=<%= tag.name %>">{tag.name}</a>
                 <span>{tag.occurences}</span>
               </li>

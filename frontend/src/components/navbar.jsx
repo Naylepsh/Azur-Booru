@@ -23,10 +23,12 @@ class Navbar extends Component {
         <Link id="animenu__brand" to="/">
           Azur-Booru
         </Link>
-        <button className="animenu__btn" onClick={this.handleNavToggle}>
-          <Link id="mobile-menu-toggler">
-            <i class="fa fa-bars" aria-hidden="true"></i>
-          </Link>
+        <button
+          id="mobile-menu-toggler"
+          className="animenu__btn"
+          onClick={this.handleNavToggle}
+        >
+          <i className="fa fa-bars" aria-hidden="true"></i>
         </button>
 
         <ul className={this.getNavClass()}>
@@ -120,7 +122,7 @@ class Navbar extends Component {
 
           <li>
             <Link
-              href="#"
+              to="/"
               className="animenu__nav__hasDropdown"
               aria-haspopup="true"
             >

@@ -10,7 +10,7 @@ const SearchBar = () => {
           name="tags"
           placeholder="Ex: 1girl blue_sky ocean"
         />
-        <button class="search-button">Search</button>
+        <button className="search-button">Search</button>
       </form>
     </React.Fragment>
   );

@@ -5,7 +5,7 @@ class PostsSidebar extends Component {
   state = {};
   render() {
     return (
-      <aside class="sidebar">
+      <aside className="sidebar">
         <TagsSidebar tags={this.props.tags} />
       </aside>
     );

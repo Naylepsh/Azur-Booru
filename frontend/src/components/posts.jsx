@@ -24,7 +24,7 @@ class Posts extends Component {
 
   render() {
     return (
-      <div class="container text-center">
+      <div className="container text-center">
         <SearchBar />
         <PostsSidebar tags={this.state.tags} />
         <div id="content">
