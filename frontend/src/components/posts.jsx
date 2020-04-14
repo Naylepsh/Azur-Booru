@@ -7,27 +7,34 @@ import { getPosts } from "../services/postService";
 
 class Posts extends Component {
   state = {
-    tags: [{ name: "tag1", occurences: 5 }],
-    thumbnails: [
-      { id: 1, source: "https://picsum.photos/200/200" },
-      { id: 2, source: "https://picsum.photos/200/200" },
-      { id: 3, source: "https://picsum.photos/200/200" },
-      { id: 4, source: "https://picsum.photos/200/200" },
-      { id: 5, source: "https://picsum.photos/200/200" },
-      { id: 10, source: "https://picsum.photos/200/200" },
-      { id: 20, source: "https://picsum.photos/200/200" },
-      { id: 30, source: "https://picsum.photos/200/200" },
-      { id: 40, source: "https://picsum.photos/200/200" },
-      { id: 50, source: "https://picsum.photos/200/200" },
-    ],
+    posts: [],
+    tags: [],
+    thumbnails: [],
+    pageInfo: {},
     url: "/",
   };
 
   async componentDidMount() {
-    console.log("getting posts");
     const { data } = await getPosts();
-    console.log("data: ", data);
+    this.setState(this.mapToViewModel(data));
   }
+
+  mapToViewModel = (data) => {
+    return {
+      thumbnails: data.posts.map(this.getThumbnailInfoFromPost),
+      posts: data.posts,
+      tags: data.tags,
+      tagsQuery: data.tagsQuery,
+      pageInfo: data.pageInfo,
+    };
+  };
+
+  getThumbnailInfoFromPost = (post) => {
+    return {
+      id: post._id,
+      source: post.thumbnailLink,
+    };
+  };
 
   render() {
     return (
