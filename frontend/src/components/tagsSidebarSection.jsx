@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-class TagsSidebar extends Component {
+class TagsSidebarSection extends Component {
   state = {};
 
   render() {
@@ -26,4 +26,4 @@ class TagsSidebar extends Component {
   }
 }
 
-export default TagsSidebar;
+export default TagsSidebarSection;

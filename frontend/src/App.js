@@ -4,14 +4,16 @@ import "./App.css";
 import NavBar from "./components/navbar";
 import Landing from "./components/landing";
 import Posts from "./components/posts";
+import Post from "./components/post";
 
 function App() {
   return (
     <React.Fragment>
       <NavBar />
       <Switch>
+        <Route path="/posts/:id" component={Post} />
         <Route path="/posts" component={Posts} />
-        <Route path="/" exact component={Landing} />
+        <Route path="/" component={Landing} />
       </Switch>
     </React.Fragment>
   );

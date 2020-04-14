@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import TagsSidebarSection from "./tagsSidebarSection";
 import PostInfoSidebarSection from "./postInfoSidebarSection";
+import OptionsSidebarSection from "./optionsSidebarSection";
 
-class PostsSidebar extends Component {
+class PostSidebar extends Component {
   state = {};
   render() {
     const { tags, post } = this.props;
     const { id, source, score, rating } = post;
-
     return (
       <aside className="sidebar">
         <TagsSidebarSection tags={tags} />
@@ -17,9 +17,10 @@ class PostsSidebar extends Component {
           score={score}
           rating={rating}
         />
+        <OptionsSidebarSection id={id} />
       </aside>
     );
   }
 }
 
-export default PostsSidebar;
+export default PostSidebar;
