@@ -3,6 +3,7 @@ import SearchBar from "./searchBar";
 import "../css/posts.css";
 import PostSidebar from "./postSidebar";
 import { getPost } from "../services/postService";
+import Comment from "./common/comment";
 
 class Post extends Component {
   state = {
@@ -46,13 +47,30 @@ class Post extends Component {
     );
   }
 
+  renderComments = () => {
+    const { post } = this.state;
+    if (!post || !post.comments) return;
+
+    return post.comments.map((comment) => (
+      <Comment
+        id={comment._id}
+        body={comment.body}
+        score={comment.score}
+        author={comment.author}
+      />
+    ));
+  };
+
   render() {
     const { post, tags } = this.state;
     return (
       <div className="container">
         <SearchBar />
         <PostSidebar tags={tags} post={post} />
-        <div id="content">{this.renderPostContent()}</div>
+        <div id="content">
+          {this.renderPostContent()}
+          {this.renderComments()}
+        </div>
       </div>
     );
   }
