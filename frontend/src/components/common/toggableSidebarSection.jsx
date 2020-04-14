@@ -18,8 +18,8 @@ class ToggableSidebarSection extends Component {
     const { sectionClasses, name, renderItems } = this.props;
 
     return (
-      <section className={sectionClasses} onClick={this.handleToggle}>
-        <div className="sidebar-section-name">
+      <section className={sectionClasses}>
+        <div className="sidebar-section-name" onClick={this.handleToggle}>
           <h3>{name}</h3>
         </div>
         <ul className={this.getUlClasses()}>{renderItems()}</ul>
