@@ -2,7 +2,7 @@ const env = process.env.NODE_ENV;
 
 const dev = {
   app: {
-    port: 3000,
+    port: 3001,
   },
   db: {
     URI: process.env.MONGODB_URI,

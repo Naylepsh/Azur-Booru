@@ -3,6 +3,7 @@ import "../css/posts.css";
 import SearchBar from "./searchBar";
 import PostsSidebar from "./postsSidebar";
 import Thumbnails from "./common/thumbnails";
+import { getPosts } from "../services/postService";
 
 class Posts extends Component {
   state = {
@@ -21,6 +22,12 @@ class Posts extends Component {
     ],
     url: "/",
   };
+
+  async componentDidMount() {
+    console.log("getting posts");
+    const { data } = await getPosts();
+    console.log("data: ", data);
+  }
 
   render() {
     return (

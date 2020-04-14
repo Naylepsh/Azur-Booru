@@ -8,6 +8,7 @@ const logger = require("morgan");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const errorMiddleware = require("./middleware/error");
+const cors = require("cors");
 
 if (!process.env.JWT_SECRET) {
   console.error("JWT SECRET is not defined");
@@ -29,6 +30,7 @@ app.use(cookieParser());
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger("dev"));
+app.use(cors());
 app.use(methodOverride("_method"));
 app.use(require("./middleware/auth").loadUser);
 require("./routes/index")(app);
