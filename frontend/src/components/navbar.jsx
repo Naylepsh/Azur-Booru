@@ -4,7 +4,7 @@ import { Link, NavLink } from "react-router-dom";
 const NavBar = () => {
   return (
     <nav className="animenu">
-      <Link className="navbar-brand" to="/">
+      <Link id="animenu__brand" to="/">
         Azur-Booru
       </Link>
       <button className="animenu__btn">
@@ -13,7 +13,7 @@ const NavBar = () => {
         </Link>
       </button>
 
-      {/* <ul className="animenu__nav">
+      <ul className="animenu__nav">
         <li>
           <Link
             to="/posts"
@@ -44,6 +44,7 @@ const NavBar = () => {
             </li>
           </ul>
         </li>
+
         <li>
           <Link
             to="/comments"
@@ -69,6 +70,7 @@ const NavBar = () => {
             </li>
           </ul>
         </li>
+
         <li>
           <Link
             to="#"
@@ -99,6 +101,7 @@ const NavBar = () => {
             </li>
           </ul>
         </li>
+
         <li>
           <Link
             href="#"
@@ -113,22 +116,28 @@ const NavBar = () => {
             role="menu"
           >
             <li>
-              <NavLink href="/logout" role="menuitem">
+              <NavLink to="/logout" role="menuitem">
                 Logout
               </NavLink>
             </li>
             <li>
-              <NavLink href="/login" role="menuitem">
+              <NavLink to="/login" role="menuitem">
                 Login
               </NavLink>
             </li>
             <li>
-              <NavLink href="/register" role="menuitem">
+              <NavLink to="/register" role="menuitem">
                 Sign Up
               </NavLink>
             </li>
           </ul>
         </li>
+      </ul>
+
+      {/* <ul className="animenu__nav">
+
+        
+        
       </ul> */}
     </nav>
   );
