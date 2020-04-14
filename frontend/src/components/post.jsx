@@ -51,14 +51,22 @@ class Post extends Component {
     const { post } = this.state;
     if (!post || !post.comments) return;
 
-    return post.comments.map((comment) => (
-      <Comment
-        id={comment._id}
-        body={comment.body}
-        score={comment.score}
-        author={comment.author}
-      />
-    ));
+    return (
+      <section class="comments">
+        <div class="comments-list">
+          <ul>
+            {post.comments.map((comment) => (
+              <Comment
+                id={comment._id}
+                body={comment.body}
+                score={comment.score}
+                author={comment.author}
+              />
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
   };
 
   render() {
