@@ -5,17 +5,18 @@
   width: 100%;
 }
 
-.container {
+.static-index {
   margin-top: 20%;
+  text-align: center;
 }
 
-.container > p {
+.static-index > p {
   text-shadow: -1px 0 rgba(0, 0, 0, 0.5), 0 1px rgba(0, 0, 0, 0.5),
     1px 0 rgba(0, 0, 0, 0.5), 0 -1px rgba(0, 0, 0, 0.5);
   color: white;
 }
 
-.container > h1 > a {
+.static-index > h1 > a {
   font-size: 36px;
   text-shadow: -1px 0 rgba(0, 0, 0, 0.5), 0 1px rgba(0, 0, 0, 0.5),
     1px 0 rgba(0, 0, 0, 0.5), 0 -1px rgba(0, 0, 0, 0.5);
@@ -31,17 +32,17 @@
 }
 
 @media only screen and (max-width: 768px) {
-  .container {
+  .static-index {
     padding: 50px 0;
   }
 }
 
 @media only screen and (max-width: 576px) {
-  .container {
+  .static-index {
     padding: 100px 0;
   }
 
-  .container * {
+  .static-index * {
     padding-top: 10px;
     padding-bottom: 10px;
   }

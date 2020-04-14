@@ -13,7 +13,7 @@ class Landing extends Component {
 
   render() {
     return (
-      <section class="container text-center">
+      <section class="static-index container">
         <h1>
           <a href="/posts">
             'Refreshed' take on classic boorus with Azur Lane theme
