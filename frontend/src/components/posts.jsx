@@ -11,7 +11,7 @@ class Posts extends Component {
     tags: [],
     thumbnails: [],
     pageInfo: {},
-    url: "/",
+    url: "/posts",
   };
 
   async componentDidMount() {
