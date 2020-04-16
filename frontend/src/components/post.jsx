@@ -12,18 +12,19 @@ class Post extends Component {
     post: {},
     tags: [],
     selectedTags: [],
+    query: "",
   };
 
   async componentDidMount() {
     const id = this.props.match.params.id;
-    const selectedTags = queryString
-      .parse(this.props.location.search)
-      .tags.split();
+    const query = queryString.parse(this.props.location.search).tags;
+    const selectedTags = query.split();
     const { data } = await getPost(id);
     this.setState({
       post: this.mapToViewModel(data.post),
       tags: data.tags,
       selectedTags,
+      query,
     });
   }
 
@@ -43,6 +44,20 @@ class Post extends Component {
     selectedTags = toggleInArray(tagName, selectedTags);
 
     this.setState({ selectedTags });
+  };
+
+  handleQueryChange = ({ currentTarget: input }) => {
+    const query = input.value;
+    const typedTags = query.split(" ");
+    const tagNames = this.state.tags.map((tag) => tag.name);
+    let selectedTags = [];
+    for (const tag of typedTags) {
+      if (tagNames.includes(tag)) {
+        selectedTags.push(tag);
+      }
+    }
+
+    this.setState({ selectedTags, query });
   };
 
   renderPostContent() {
@@ -87,11 +102,12 @@ class Post extends Component {
   };
 
   render() {
-    const { post, tags, selectedTags } = this.state;
-    const query = selectedTags.join(" ");
+    const { post, tags, selectedTags, query } = this.state;
+    // const query = selectedTags.join(" ");
+    console.log(query);
     return (
       <div className="container">
-        <SearchBar value={query} />
+        <SearchBar value={query} onChange={this.handleQueryChange} />
         <PostSidebar
           tags={tags}
           post={post}

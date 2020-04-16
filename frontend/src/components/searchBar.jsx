@@ -1,6 +1,6 @@
 import React from "react";
 
-const SearchBar = ({ value }) => {
+const SearchBar = ({ value, onChange }) => {
   return (
     <React.Fragment>
       <form action="/posts" method="get" className="search-bar">
@@ -10,6 +10,7 @@ const SearchBar = ({ value }) => {
           name="tags"
           value={value}
           placeholder="Ex: 1girl blue_sky ocean"
+          onChange={onChange}
         />
         <button className="search-button">Search</button>
       </form>
