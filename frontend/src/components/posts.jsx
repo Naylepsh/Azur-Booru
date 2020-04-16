@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import "../css/posts.css";
+import queryString from "query-string";
 import SearchBar from "./searchBar";
 import PostsSidebar from "./postsSidebar";
 import Thumbnails from "./common/thumbnails";
 import { getPosts } from "../services/postService";
+import { toggleInArray } from "../utils/iterable";
+import "../css/posts.css";
 
 class Posts extends Component {
   state = {
@@ -12,11 +14,16 @@ class Posts extends Component {
     thumbnails: [],
     pageInfo: {},
     url: "/posts",
+    query: "",
+    selectedTags: [],
   };
 
   async componentDidMount() {
     const { data } = await getPosts();
-    this.setState(this.mapToViewModel(data));
+    let query = queryString.parse(this.props.location.search).tags;
+    query = query ? query : "";
+    const selectedTags = query.split();
+    this.setState({ ...this.mapToViewModel(data), query, selectedTags });
   }
 
   mapToViewModel = (data) => {
@@ -36,13 +43,40 @@ class Posts extends Component {
     };
   };
 
+  handleTagToggle = (tagName) => {
+    let selectedTags = [...this.state.selectedTags];
+    selectedTags = toggleInArray(tagName, selectedTags);
+    const query = selectedTags.join(" ");
+
+    this.setState({ selectedTags, query });
+  };
+
+  handleQueryChange = ({ currentTarget: input }) => {
+    const query = input.value;
+    const typedTags = query.split(" ");
+    const tagNames = this.state.tags.map((tag) => tag.name);
+    let selectedTags = [];
+    for (const tag of typedTags) {
+      if (tagNames.includes(tag)) {
+        selectedTags.push(tag);
+      }
+    }
+
+    this.setState({ selectedTags, query });
+  };
+
   render() {
+    const { query, tags, thumbnails, url, selectedTags } = this.state;
     return (
       <div className="container text-center">
-        <SearchBar />
-        <PostsSidebar tags={this.state.tags} />
+        <SearchBar value={query} onChange={this.handleQueryChange} />
+        <PostsSidebar
+          tags={tags}
+          selectedTags={selectedTags}
+          handleTagToggle={this.handleTagToggle}
+        />
         <div id="content">
-          <Thumbnails thumbnails={this.state.thumbnails} url={this.state.url} />
+          <Thumbnails thumbnails={thumbnails} url={url} />
         </div>
       </div>
     );

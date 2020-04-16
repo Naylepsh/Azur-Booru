@@ -4,11 +4,15 @@ import TagsSidebarSection from "./tagsSidebarSection";
 class PostsSidebar extends Component {
   state = {};
   render() {
-    const { tags } = this.props;
+    const { tags, selectedTags, handleTagToggle } = this.props;
 
     return (
       <aside className="sidebar">
-        <TagsSidebarSection tags={tags} />
+        <TagsSidebarSection
+          tags={tags}
+          selectedTags={selectedTags}
+          onClick={handleTagToggle}
+        />
       </aside>
     );
   }

@@ -17,7 +17,8 @@ class Post extends Component {
 
   async componentDidMount() {
     const id = this.props.match.params.id;
-    const query = queryString.parse(this.props.location.search).tags;
+    let query = queryString.parse(this.props.location.search).tags;
+    query = query ? query : "";
     const selectedTags = query.split();
     const { data } = await getPost(id);
     this.setState({
@@ -42,8 +43,9 @@ class Post extends Component {
   handleTagToggle = (tagName) => {
     let selectedTags = [...this.state.selectedTags];
     selectedTags = toggleInArray(tagName, selectedTags);
+    const query = selectedTags.join(" ");
 
-    this.setState({ selectedTags });
+    this.setState({ selectedTags, query });
   };
 
   handleQueryChange = ({ currentTarget: input }) => {
@@ -103,8 +105,6 @@ class Post extends Component {
 
   render() {
     const { post, tags, selectedTags, query } = this.state;
-    // const query = selectedTags.join(" ");
-    console.log(query);
     return (
       <div className="container">
         <SearchBar value={query} onChange={this.handleQueryChange} />
