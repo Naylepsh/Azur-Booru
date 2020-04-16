@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import { getComment } from "../../services/commentService";
+import React from "react";
 
 const Comment = ({ id, body, score, author }) => {
   return (

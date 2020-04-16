@@ -1,6 +1,6 @@
 import React from "react";
 
-const SearchBar = () => {
+const SearchBar = ({ value }) => {
   return (
     <React.Fragment>
       <form action="/posts" method="get" className="search-bar">
@@ -8,6 +8,7 @@ const SearchBar = () => {
           id="search"
           type="text"
           name="tags"
+          value={value}
           placeholder="Ex: 1girl blue_sky ocean"
         />
         <button className="search-button">Search</button>

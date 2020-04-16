@@ -1,20 +1,30 @@
 import React, { Component } from "react";
+import queryString from "query-string";
 import SearchBar from "./searchBar";
-import "../css/posts.css";
 import PostSidebar from "./postSidebar";
-import { getPost } from "../services/postService";
 import Comment from "./common/comment";
+import { getPost } from "../services/postService";
+import { toggleInArray } from "../utils/iterable";
+import "../css/posts.css";
 
 class Post extends Component {
   state = {
     post: {},
     tags: [],
+    selectedTags: [],
   };
 
   async componentDidMount() {
     const id = this.props.match.params.id;
+    const selectedTags = queryString
+      .parse(this.props.location.search)
+      .tags.split();
     const { data } = await getPost(id);
-    this.setState({ post: this.mapToViewModel(data.post), tags: data.tags });
+    this.setState({
+      post: this.mapToViewModel(data.post),
+      tags: data.tags,
+      selectedTags,
+    });
   }
 
   mapToViewModel = (post) => {
@@ -26,6 +36,13 @@ class Post extends Component {
       rating: post.rating,
       comments: post.comments,
     };
+  };
+
+  handleTagToggle = (tagName) => {
+    let selectedTags = [...this.state.selectedTags];
+    selectedTags = toggleInArray(tagName, selectedTags);
+
+    this.setState({ selectedTags });
   };
 
   renderPostContent() {
@@ -52,8 +69,8 @@ class Post extends Component {
     if (!post || !post.comments) return;
 
     return (
-      <section class="comments">
-        <div class="comments-list">
+      <section className="comments">
+        <div className="comments-list">
           <ul>
             {post.comments.map((comment) => (
               <Comment
@@ -70,11 +87,17 @@ class Post extends Component {
   };
 
   render() {
-    const { post, tags } = this.state;
+    const { post, tags, selectedTags } = this.state;
+    const query = selectedTags.join(" ");
     return (
       <div className="container">
-        <SearchBar />
-        <PostSidebar tags={tags} post={post} />
+        <SearchBar value={query} />
+        <PostSidebar
+          tags={tags}
+          post={post}
+          selectedTags={selectedTags}
+          handleTagToggle={this.handleTagToggle}
+        />
         <div id="content">
           {this.renderPostContent()}
           {this.renderComments()}

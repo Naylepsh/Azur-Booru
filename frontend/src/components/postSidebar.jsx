@@ -6,11 +6,15 @@ import OptionsSidebarSection from "./optionsSidebarSection";
 class PostSidebar extends Component {
   state = {};
   render() {
-    const { tags, post } = this.props;
+    const { tags, post, selectedTags, handleTagToggle } = this.props;
     const { id, source, score, rating } = post;
     return (
       <aside className="sidebar">
-        <TagsSidebarSection tags={tags} />
+        <TagsSidebarSection
+          tags={tags}
+          selectedTags={selectedTags}
+          onClick={handleTagToggle}
+        />
         <PostInfoSidebarSection
           id={id}
           source={source}
