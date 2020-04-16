@@ -7,6 +7,7 @@ import { getPost } from "../services/postService";
 import { handleTagToggle, handleQueryChange } from "../utils/tagQueryHandlers";
 import "../css/posts.css";
 import CommentPrompt from "./CommentPrompt/commentPrompt";
+import Comments from "./Comments/comments";
 
 class Post extends Component {
   state = {
@@ -60,6 +61,15 @@ class Post extends Component {
     this.setState({ selectedTags, query });
   };
 
+  handleCommentSubmit = (value) => {
+    // const { postId } = this.props;
+    // get user
+    // create comment
+    // send post request to server
+    // update state
+    console.log(value);
+  };
+
   renderPostContent() {
     return (
       <section className="post-image">
@@ -79,29 +89,6 @@ class Post extends Component {
     );
   }
 
-  renderComments = () => {
-    const { post } = this.state;
-    if (!post || !post.comments) return;
-
-    return (
-      <section className="comments">
-        <div className="comments-list">
-          <ul>
-            {post.comments.map((comment) => (
-              <Comment
-                id={comment._id}
-                body={comment.body}
-                score={comment.score}
-                author={comment.author}
-              />
-            ))}
-          </ul>
-        </div>
-        <CommentPrompt />
-      </section>
-    );
-  };
-
   render() {
     const { post, tags, selectedTags, query } = this.state;
     return (
@@ -115,7 +102,12 @@ class Post extends Component {
         />
         <div id="content">
           {this.renderPostContent()}
-          {this.renderComments()}
+          {post.comments && (
+            <Comments
+              comments={post.comments}
+              onSubmit={this.handleCommentSubmit}
+            />
+          )}
         </div>
       </div>
     );

@@ -2,27 +2,27 @@ import React from "react";
 
 const Comment = ({ id, body, score, author }) => {
   return (
-    <li class="comment">
-      <span class="hidden comment-id">{id}</span>
-      <div class="comment-author-avatar">
+    <li className="comment">
+      <span className="hidden comment-id">{id}</span>
+      <div className="comment-author-avatar">
         <img
           src="/assets/default-avatar.jpg"
           alt="<%= comment.author.name %> avatar"
         />
       </div>
-      <div class="comment-author-info">
+      <div className="comment-author-info">
         <a href="#">{author.name}</a>
       </div>
-      <div class="comment-body">{body}</div>
-      <menu class="comment-menu">
+      <div className="comment-body">{body}</div>
+      <menu className="comment-menu">
         <li>
-          Score: <span class="comment-score">{score}</span>
+          Score: <span className="comment-score">{score}</span>
         </li>
         <li>
-          <button class="comment-vote-up">Vote up</button>
+          <button className="comment-vote-up">Vote up</button>
         </li>
         <li>
-          <button class="comment-vote-down">Vote down</button>
+          <button className="comment-vote-down">Vote down</button>
         </li>
         <li>
           <form

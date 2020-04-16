@@ -1,17 +1,30 @@
-import React from "react";
+import React, { Component } from "react";
 import "./commentPrompt.css";
 
-const CommentPrompt = ({ onSubmit }) => {
-  return (
-    <div className="comment-new">
-      <div
-        className="comment-prompt"
-        contenteditable="true"
-        data-text="Add a comment..."
-      ></div>
-      <button onClick={onSubmit}>Submit</button>
-    </div>
-  );
-};
+class CommentPrompt extends Component {
+  state = {
+    body: "",
+  };
+
+  handleChange = (body) => {
+    this.setState({ body });
+  };
+
+  render() {
+    return (
+      <div className="comment-new">
+        <div
+          className="comment-prompt"
+          contentEditable="true"
+          data-text="Add a comment..."
+          onInput={({ target }) => this.handleChange(target.innerText)}
+        ></div>
+        <button onClick={() => this.props.onSubmit(this.state.body)}>
+          Submit
+        </button>
+      </div>
+    );
+  }
+}
 
 export default CommentPrompt;
