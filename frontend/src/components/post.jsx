@@ -6,6 +6,7 @@ import Comment from "./common/comment";
 import { getPost } from "../services/postService";
 import { handleTagToggle, handleQueryChange } from "../utils/tagQueryHandlers";
 import "../css/posts.css";
+import CommentPrompt from "./CommentPrompt/commentPrompt";
 
 class Post extends Component {
   state = {
@@ -96,6 +97,7 @@ class Post extends Component {
             ))}
           </ul>
         </div>
+        <CommentPrompt />
       </section>
     );
   };
