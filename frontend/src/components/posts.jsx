@@ -4,7 +4,7 @@ import SearchBar from "./searchBar";
 import PostsSidebar from "./postsSidebar";
 import Thumbnails from "./common/thumbnails";
 import { getPosts } from "../services/postService";
-import { toggleInArray } from "../utils/iterable";
+import { handleTagToggle, handleQueryChange } from "../utils/tagQueryHandlers";
 import "../css/posts.css";
 
 class Posts extends Component {
@@ -43,24 +43,21 @@ class Posts extends Component {
     };
   };
 
+  getTagNames = () => {
+    return this.state.tags.map((tag) => tag.name);
+  };
+
   handleTagToggle = (tagName) => {
-    let selectedTags = [...this.state.selectedTags];
-    selectedTags = toggleInArray(tagName, selectedTags);
-    const query = selectedTags.join(" ");
+    const { query, selectedTags } = handleTagToggle(tagName, [
+      ...this.state.selectedTags,
+    ]);
 
     this.setState({ selectedTags, query });
   };
 
   handleQueryChange = ({ currentTarget: input }) => {
     const query = input.value;
-    const typedTags = query.split(" ");
-    const tagNames = this.state.tags.map((tag) => tag.name);
-    let selectedTags = [];
-    for (const tag of typedTags) {
-      if (tagNames.includes(tag)) {
-        selectedTags.push(tag);
-      }
-    }
+    const selectedTags = handleQueryChange(query, this.getTagNames());
 
     this.setState({ selectedTags, query });
   };
