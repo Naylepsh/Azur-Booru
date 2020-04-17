@@ -2,12 +2,10 @@ import React, { Component } from "react";
 import queryString from "query-string";
 import SearchBar from "./searchBar";
 import PostSidebar from "./postSidebar";
-import Comment from "./common/comment";
+import Comments from "./Comments/comments";
 import { getPost } from "../services/postService";
 import { handleTagToggle, handleQueryChange } from "../utils/tagQueryHandlers";
 import "../css/posts.css";
-import CommentPrompt from "./CommentPrompt/commentPrompt";
-import Comments from "./Comments/comments";
 
 class Post extends Component {
   state = {

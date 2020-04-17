@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Comment from "../common/comment";
 import CommentPrompt from "../CommentPrompt/commentPrompt";
 

@@ -1,7 +1,7 @@
 import React from "react";
-import { Route, Redirect, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import "./App.css";
-import NavBar from "./components/navbar";
+import NavBar from "./components/Navbar/navbar";
 import Landing from "./components/landing";
 import Posts from "./components/posts";
 import Post from "./components/post";
