@@ -52,13 +52,33 @@ class Form extends Component {
 
     const data = { ...this.state.data };
     data[input.name] = input.value;
-
     this.setState({ data, errors });
+  };
+
+  /* Dirty workaround for file upload.
+   * TODO: Find a better solution that's DRY and allows file validation and errors messages
+   */
+  handleFileChange = (event, name) => {
+    const data = { ...this.state.data };
+    data[name] = event.target.files[0];
+    this.setState({ data });
+    console.log(this.state);
+  };
+
+  /*
+   * Passing name to renderInput mess up file upload.
+   * Browser will yell "An attempt was made to use an object that is not, or is no longer, usable"
+   * Hence why "" is used.
+   */
+  renderFileInput = (name, label, rest = {}) => {
+    return this.renderInput("", label, "file", {
+      ...rest,
+      onChange: (event) => this.handleFileChange(event, name),
+    });
   };
 
   renderInput = (name, label, type = "text", rest = {}) => {
     const { data, errors } = this.state;
-
     return (
       <Input
         type={type}

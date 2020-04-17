@@ -21,7 +21,7 @@ class PostForm extends Form {
   ];
 
   schema = Joi.object().keys({
-    file: Joi.required(),
+    // file: Joi.required(),
     tags: Joi.string()
       .required()
       .custom(this.tagsValidator, "Check number of tags"),
@@ -51,14 +51,9 @@ class PostForm extends Form {
           encType="multipart/form-data"
           onSubmit={this.handleSubmit}
         >
-          {this.renderInput("file", "File", "file", { accept: "image/*" })}
+          {this.renderFileInput("file", "File", { accept: "image/*" })}
           {this.renderInput("source", "Source")}
-          {this.renderFieldSet(
-            "rating",
-            "Rating",
-            this.ratings,
-            this.ratings[1].value
-          )}
+          {this.renderFieldSet("rating", "Rating", this.ratings)}
           {this.renderTextArea("tags", "Tags")}
           {this.renderButton("Upload")}
         </form>
