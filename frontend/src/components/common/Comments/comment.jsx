@@ -1,4 +1,5 @@
 import React from "react";
+import "./comment.css";
 
 const Comment = ({ id, body, score, author }) => {
   return (

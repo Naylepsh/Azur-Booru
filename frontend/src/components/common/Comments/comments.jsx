@@ -1,6 +1,7 @@
 import React from "react";
-import Comment from "../common/comment";
-import CommentPrompt from "../CommentPrompt/commentPrompt";
+import Comment from "./comment";
+import CommentPrompt from "./commentPrompt";
+import "./comments.css";
 
 const Comments = ({ comments, onSubmit }) => {
   return (
