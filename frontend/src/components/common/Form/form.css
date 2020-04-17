@@ -1,0 +1,42 @@
+form {
+  width: 100%;
+}
+
+.form-entry > input,
+textarea {
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.form-entry > label,
+fieldset > legend {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 2px;
+}
+
+fieldset {
+  border: none;
+}
+
+fieldset > input {
+  width: 0;
+}
+
+fieldset > label {
+  display: inline;
+  font-weight: normal;
+  margin-right: 10px;
+}
+
+form input {
+  padding: 5px;
+  border-style: solid;
+  border-radius: 4px;
+}
+
+form input {
+  border-color: lightgray;
+  border-width: 1px;
+}

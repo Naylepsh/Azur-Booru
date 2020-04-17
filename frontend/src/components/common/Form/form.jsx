@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Joi from "@hapi/joi";
-import Input from "./input";
-import Select from "./select";
+import Input from "./Elements/input";
+import "./form.css";
 
 class Form extends Component {
   state = {
@@ -62,20 +62,6 @@ class Form extends Component {
         name={name}
         value={data[name]}
         onChange={this.handleChange}
-        error={errors[name]}
-      />
-    );
-  };
-
-  renderSelect = (name, label, options) => {
-    const { data, errors } = this.state;
-    return (
-      <Select
-        name={name}
-        label={label}
-        options={options}
-        onChange={this.handleChange}
-        value={data[name]}
         error={errors[name]}
       />
     );
