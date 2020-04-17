@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import Joi from "@hapi/joi";
 import Input from "./Elements/input";
 import TextArea from "./Elements/textArea";
-import "./form.css";
 import RadioFields from "./Elements/radioFields";
+import "./form.css";
 
 class Form extends Component {
   state = {
@@ -55,23 +55,21 @@ class Form extends Component {
     this.setState({ data, errors });
   };
 
-  /* Dirty workaround for file upload.
-   * TODO: Find a better solution that's DRY and allows file validation and errors messages
-   */
   handleFileChange = (event, name) => {
-    const data = { ...this.state.data };
-    data[name] = event.target.files[0];
-    this.setState({ data });
-    console.log(this.state);
+    const currentTarget = { name, value: event.target.files[0] };
+    this.handleChange({ currentTarget });
   };
 
   /*
-   * Passing name to renderInput mess up file upload.
-   * Browser will yell "An attempt was made to use an object that is not, or is no longer, usable"
-   * Hence why "" is used.
+   * Passing name to renderInput will mess up file upload.
+   * That's because value={data.file} will return an object, which cannot be a html value.
+   * Hence why such a ridiculous name is used instead.
+   *
+   * This onChange will override default renderInput's onChange
+   * as long as {...rest} passed after default onChange
    */
   renderFileInput = (name, label, rest = {}) => {
-    return this.renderInput("", label, "file", {
+    return this.renderInput("x-placeholder-name", label, "file", {
       ...rest,
       onChange: (event) => this.handleFileChange(event, name),
     });

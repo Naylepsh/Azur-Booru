@@ -21,7 +21,7 @@ class PostForm extends Form {
   ];
 
   schema = Joi.object().keys({
-    // file: Joi.required(),
+    file: Joi.required(),
     tags: Joi.string()
       .required()
       .custom(this.tagsValidator, "Check number of tags"),
