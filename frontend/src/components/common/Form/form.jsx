@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Joi from "@hapi/joi";
 import Input from "./Elements/input";
 import "./form.css";
+import FieldSet from "./Elements/fieldset";
 
 class Form extends Component {
   state = {
@@ -66,6 +67,16 @@ class Form extends Component {
         onChange={this.handleChange}
         error={errors[name]}
         {...rest}
+      />
+    );
+  };
+
+  renderFieldSet = (legendLabel, items, defaultValue) => {
+    return (
+      <FieldSet
+        legendLabel={legendLabel}
+        items={items}
+        defaultValue={defaultValue}
       />
     );
   };

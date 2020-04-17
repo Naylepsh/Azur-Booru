@@ -1,0 +1,9 @@
+.post-form {
+  margin: auto;
+  margin-top: 25px;
+  max-width: 500px;
+}
+
+fieldset label {
+  margin-left: 10px;
+}

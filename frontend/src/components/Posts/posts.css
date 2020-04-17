@@ -55,13 +55,6 @@ body {
   text-align: center;
 }
 
-/*** FORMS  ***/
-/* Post form */
-.post-form {
-  margin: auto;
-  max-width: 500px;
-}
-
 .nav-bar {
   background: rgba(0, 0, 0, 0.9);
 }

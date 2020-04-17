@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Joi from "@hapi/joi";
 import Form from "../common/Form/form";
+import "./postForm.css";
 
 class PostForm extends Form {
   state = {
@@ -12,6 +13,12 @@ class PostForm extends Form {
     },
     errors: {},
   };
+
+  ratings = [
+    { label: "Explicit", value: "explicit" },
+    { label: "Questionable", value: "questionable" },
+    { label: "Safe", value: "safe" },
+  ];
 
   schema = Joi.object().keys({
     file: Joi.required(),
@@ -25,7 +32,6 @@ class PostForm extends Form {
   };
 
   render() {
-    const accept = "image/*";
     return (
       <div className="container">
         <form
@@ -35,6 +41,7 @@ class PostForm extends Form {
         >
           {this.renderInput("file", "File", "file", { accept: "image/*" })}
           {this.renderInput("source", "Source")}
+          {this.renderFieldSet("Rating", this.ratings, this.ratings[1].value)}
           {this.renderButton("Upload")}
         </form>
       </div>
