@@ -3,8 +3,8 @@ import { Route, Switch } from "react-router-dom";
 import "./App.css";
 import NavBar from "./components/Navbar/navbar";
 import Landing from "./components/landing";
-import Posts from "./components/posts";
-import Post from "./components/post";
+import Posts from "./components/Posts/posts";
+import Post from "./components/Posts/post";
 
 function App() {
   return (

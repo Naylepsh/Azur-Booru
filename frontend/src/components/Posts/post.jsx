@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import queryString from "query-string";
-import SearchBar from "./searchBar";
-import PostSidebar from "./postSidebar";
-import Comments from "./common/Comments/comments";
-import { getPost } from "../services/postService";
-import { handleTagToggle, handleQueryChange } from "../utils/tagQueryHandlers";
-import "../css/posts.css";
+import SearchBar from "../searchBar";
+import PostSidebar from "../postSidebar";
+import Comments from "../common/Comments/comments";
+import { getPost } from "../../services/postService";
+import {
+  handleTagToggle,
+  handleQueryChange,
+} from "../../utils/tagQueryHandlers";
+import "./posts.css";
 
 class Post extends Component {
   state = {
