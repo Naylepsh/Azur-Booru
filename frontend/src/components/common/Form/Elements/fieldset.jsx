@@ -18,23 +18,25 @@ class FieldSet extends Component {
   render() {
     const { legendLabel, items } = this.props;
     return (
-      <fieldset className="form-entry">
-        <legend>{legendLabel}</legend>
-        {items.map((item) => {
-          return (
-            <div key={item.label}>
-              <input
-                id={item.label}
-                type="radio"
-                value={item.value}
-                checked={item.value === this.state.currentlySelected}
-                onChange={this.handleChange}
-              />
-              <label htmlFor={item.label}>{item.label}</label>
-            </div>
-          );
-        })}
-      </fieldset>
+      <div className="form-entry">
+        <fieldset>
+          <legend>{legendLabel}</legend>
+          {items.map((item) => {
+            return (
+              <div key={item.label}>
+                <input
+                  id={item.label}
+                  type="radio"
+                  value={item.value}
+                  checked={item.value === this.state.currentlySelected}
+                  onChange={this.handleChange}
+                />
+                <label htmlFor={item.label}>{item.label}</label>
+              </div>
+            );
+          })}
+        </fieldset>
+      </div>
     );
   }
 }

@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import Joi from "@hapi/joi";
 import Input from "./Elements/input";
-import "./form.css";
 import FieldSet from "./Elements/fieldset";
+import TextArea from "./Elements/textarea";
+import "./form.css";
 
 class Form extends Component {
   state = {
@@ -79,6 +80,10 @@ class Form extends Component {
         defaultValue={defaultValue}
       />
     );
+  };
+
+  renderTextArea = (label) => {
+    return <TextArea label={label} />;
   };
 
   renderButton = (label) => {

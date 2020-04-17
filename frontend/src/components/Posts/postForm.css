@@ -4,6 +4,10 @@
   max-width: 500px;
 }
 
+.post-form > div {
+  margin-bottom: 5px;
+}
+
 fieldset label {
   margin-left: 10px;
 }

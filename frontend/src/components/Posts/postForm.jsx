@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Joi from "@hapi/joi";
 import Form from "../common/Form/form";
 import "./postForm.css";
@@ -42,6 +42,7 @@ class PostForm extends Form {
           {this.renderInput("file", "File", "file", { accept: "image/*" })}
           {this.renderInput("source", "Source")}
           {this.renderFieldSet("Rating", this.ratings, this.ratings[1].value)}
+          {this.renderTextArea("Tags")}
           {this.renderButton("Upload")}
         </form>
       </div>
