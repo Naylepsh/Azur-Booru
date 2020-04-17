@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Joi from "@hapi/joi";
 import Input from "./Elements/input";
-import TextArea from "./Elements/textarea";
+import TextArea from "./Elements/textArea";
 import "./form.css";
 import RadioFields from "./Elements/radioFields";
 
@@ -58,6 +58,7 @@ class Form extends Component {
 
   renderInput = (name, label, type = "text", rest = {}) => {
     const { data, errors } = this.state;
+
     return (
       <Input
         type={type}
@@ -86,8 +87,18 @@ class Form extends Component {
     );
   };
 
-  renderTextArea = (label) => {
-    return <TextArea label={label} />;
+  renderTextArea = (name, label) => {
+    const { data, errors } = this.state;
+
+    return (
+      <TextArea
+        label={label}
+        name={name}
+        value={data[name]}
+        onChange={this.handleChange}
+        error={errors[name]}
+      />
+    );
   };
 
   renderButton = (label) => {

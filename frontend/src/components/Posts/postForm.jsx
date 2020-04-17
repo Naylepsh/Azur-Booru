@@ -22,10 +22,22 @@ class PostForm extends Form {
 
   schema = Joi.object().keys({
     file: Joi.required(),
-    tags: Joi.string().required(),
-    source: Joi.string(),
-    rating: Joi.string(),
+    tags: Joi.string()
+      .required()
+      .custom(this.tagsValidator, "Check number of tags"),
+    source: Joi.string().required(),
+    rating: Joi.string().required(),
   });
+
+  tagsValidator(value) {
+    const minimalNumberOfTags = 5;
+    const tags = value.split(" ");
+    if (tags.length < minimalNumberOfTags) {
+      throw new Error(`less than ${minimalNumberOfTags} tags`);
+    }
+
+    return value;
+  }
 
   doSubmit = () => {
     console.log("submitting");
@@ -47,7 +59,7 @@ class PostForm extends Form {
             this.ratings,
             this.ratings[1].value
           )}
-          {this.renderTextArea("Tags")}
+          {this.renderTextArea("tags", "Tags")}
           {this.renderButton("Upload")}
         </form>
       </div>

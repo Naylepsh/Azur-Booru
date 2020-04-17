@@ -7,20 +7,20 @@ const RadioFields = ({ label, name, error, items, ...rest }) => {
         <legend>{label}</legend>
         {items.map((item) => {
           return (
-            <div>
+            <div key={item.label}>
               <input
                 type="radio"
                 name={name}
-                id={item.name}
+                id={item.label}
                 {...rest}
                 className="form-control"
               />
-              <label htmlFor={item.name}>{item.label}</label>
-              {error && <div className="alert alert-danger">{error}</div>}
+              <label htmlFor={item.label}>{item.label}</label>
             </div>
           );
         })}
       </fieldset>
+      {error && <div className="alert alert-danger">{error}</div>}
     </div>
   );
 };
