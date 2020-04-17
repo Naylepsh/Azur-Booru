@@ -41,7 +41,12 @@ class PostForm extends Form {
         >
           {this.renderInput("file", "File", "file", { accept: "image/*" })}
           {this.renderInput("source", "Source")}
-          {this.renderFieldSet("Rating", this.ratings, this.ratings[1].value)}
+          {this.renderFieldSet(
+            "rating",
+            "Rating",
+            this.ratings,
+            this.ratings[1].value
+          )}
           {this.renderTextArea("Tags")}
           {this.renderButton("Upload")}
         </form>

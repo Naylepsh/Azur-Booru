@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import Joi from "@hapi/joi";
 import Input from "./Elements/input";
-import FieldSet from "./Elements/fieldset";
 import TextArea from "./Elements/textarea";
 import "./form.css";
+import RadioFields from "./Elements/radioFields";
 
 class Form extends Component {
   state = {
@@ -35,7 +35,6 @@ class Form extends Component {
   };
 
   handleSubmit = (event) => {
-    console.log("handling submittion");
     event.preventDefault();
 
     const errors = this.validate();
@@ -72,12 +71,17 @@ class Form extends Component {
     );
   };
 
-  renderFieldSet = (legendLabel, items, defaultValue) => {
+  renderFieldSet = (name, label, items) => {
+    const { data, errors } = this.state;
+
     return (
-      <FieldSet
-        legendLabel={legendLabel}
+      <RadioFields
+        label={label}
+        name={name}
+        selected={data[name]}
+        error={errors[name]}
+        onChange={this.handleChange}
         items={items}
-        defaultValue={defaultValue}
       />
     );
   };
