@@ -19,6 +19,7 @@ class Form extends Component {
     for (let item of error.details) {
       errors[item.path[0]] = item.message;
     }
+    console.log(errors);
     return errors;
   };
 
@@ -32,6 +33,7 @@ class Form extends Component {
   };
 
   handleSubmit = (event) => {
+    console.log("handling submittion");
     event.preventDefault();
 
     const errors = this.validate();
@@ -53,7 +55,7 @@ class Form extends Component {
     this.setState({ data, errors });
   };
 
-  renderInput = (name, label, type = "text") => {
+  renderInput = (name, label, type = "text", rest = {}) => {
     const { data, errors } = this.state;
     return (
       <Input
@@ -63,13 +65,18 @@ class Form extends Component {
         value={data[name]}
         onChange={this.handleChange}
         error={errors[name]}
+        {...rest}
       />
     );
   };
 
   renderButton = (label) => {
     return (
-      <button disabled={this.validate()} className="btn btn-primary">
+      <button
+        type="submit"
+        // disabled={this.validate()}
+        className="btn btn-primary"
+      >
         {label}
       </button>
     );

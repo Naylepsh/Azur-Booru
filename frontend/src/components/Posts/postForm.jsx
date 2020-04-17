@@ -25,14 +25,15 @@ class PostForm extends Form {
   };
 
   render() {
+    const accept = "image/*";
     return (
       <div className="container">
         <form
           className="post-form"
           encType="multipart/form-data"
-          onSubmit={this.doSubmit}
+          onSubmit={this.handleSubmit}
         >
-          {this.renderInput("source", "Source")}
+          {this.renderInput("file", "File", "file", { accept: "image/*" })}
           {this.renderInput("source", "Source")}
           {this.renderButton("Upload")}
         </form>
