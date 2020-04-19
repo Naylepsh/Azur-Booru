@@ -11,6 +11,7 @@ const TAGS_PER_PAGE = 15;
 const POST_BODY_ATTRIBUTES = ["source", "title", "tags", "rating"];
 
 exports.list = async (req, res) => {
+  // 5819ms
   const tagNames = miscUtils.distinctWordsInString(req.query.tags);
   const tagsInQuery = await Tag.findOrCreateMany(
     tagNames.map((name) => {
@@ -34,6 +35,7 @@ exports.list = async (req, res) => {
     (pageInfo.currentPage - 1) * POSTS_PER_PAGE,
     POSTS_PER_PAGE
   );
+
   const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);
 
   res.send({

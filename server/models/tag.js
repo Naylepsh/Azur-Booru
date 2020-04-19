@@ -56,10 +56,9 @@ tagSchema.statics.popularTagsOfPosts = async function (posts, tagsLimit) {
       posts.map((post) => post.tags.map((tag) => tag._id.toString()))
     )
   );
+
   if (tagIds) {
-    const tags = await Promise.all(
-      Array.from(tagIds).map((id) => this.findById(id))
-    );
+    const tags = await this.find().where("_id").in(tagIds);
     let occurences = tags.map((tag) => {
       return { name: tag.name, occurences: tag.posts.length };
     });
