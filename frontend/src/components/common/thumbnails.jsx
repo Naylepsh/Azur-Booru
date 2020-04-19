@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "./thumbnails.css";
 
 const getLinkToFullsize = (url, id) => {
   return `${url}/${id}`;
