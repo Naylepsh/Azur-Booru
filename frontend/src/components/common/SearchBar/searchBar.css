@@ -1,0 +1,31 @@
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+  max-width: 100%;
+}
+
+.search-bar > #search {
+  width: calc(100% - 100px);
+}
+
+.search-bar > button {
+  margin-top: 0;
+  margin-left: 5px;
+}
+
+@media only screen and (max-width: 576px) {
+  .search-bar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-bar > #search {
+    width: 100%;
+  }
+
+  .search-bar > button {
+    width: 100%;
+    margin-left: 0;
+  }
+}

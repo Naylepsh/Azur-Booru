@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import queryString from "query-string";
-import SearchBar from "../searchBar";
+import SearchBar from "../common/SearchBar/searchBar";
 import PostsSidebar from "../postsSidebar";
 import Thumbnails from "../common/thumbnails";
 import { getPosts } from "../../services/postService";

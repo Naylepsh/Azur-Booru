@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "../css/landing.css";
-import SearchBar from "./searchBar";
+import SearchBar from "./common/SearchBar/searchBar";
 
 class Landing extends Component {
   componentDidMount() {
