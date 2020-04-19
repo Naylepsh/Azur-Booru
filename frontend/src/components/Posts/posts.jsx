@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import queryString from "query-string";
 import SearchBar from "../common/SearchBar/searchBar";
 import PostsSidebar from "../postsSidebar";
-import Thumbnails from "../common/thumbnails";
+import Thumbnails from "../common/Thumbnails/thumbnails";
 import { getPosts } from "../../services/postService";
 import {
   handleTagToggle,

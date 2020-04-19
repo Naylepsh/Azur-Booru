@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import SearchBar from "./common/SearchBar/searchBar";
+import SearchBar from "../common/SearchBar/searchBar";
 import "./landing.css";
 
 class Landing extends Component {
