@@ -1,11 +1,11 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import "./App.css";
 import NavBar from "./components/Navbar/navbar";
 import Landing from "./components/landing";
 import Posts from "./components/Posts/posts";
 import Post from "./components/Posts/post";
 import PostForm from "./components/Posts/postForm";
+import "./App.css";
 
 function App() {
   return (

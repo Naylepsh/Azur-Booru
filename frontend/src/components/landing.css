@@ -27,10 +27,6 @@
   margin-top: 15px;
 }
 
-.mobile-menu {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
 @media only screen and (max-width: 768px) {
   .static-index {
     padding: 50px 0;
