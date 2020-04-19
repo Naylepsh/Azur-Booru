@@ -13,6 +13,7 @@ function App() {
       <NavBar />
       <Switch>
         <Route path="/posts/new" component={PostForm} />
+        <Route path="/posts/:id/edit" component={PostForm} />
         <Route path="/posts/:id" component={Post} />
         <Route path="/posts" component={Posts} />
         <Route path="/" component={Landing} />
