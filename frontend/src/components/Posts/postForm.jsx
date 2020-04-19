@@ -1,11 +1,13 @@
 import React from "react";
 import Joi from "@hapi/joi";
 import Form from "../common/Form/form";
+import { getPost } from "../../services/postService";
 import "./postForm.css";
 
 class PostForm extends Form {
   state = {
     data: {
+      _id: "",
       file: "",
       tags: "",
       source: "",
@@ -21,6 +23,7 @@ class PostForm extends Form {
   ];
 
   schema = Joi.object().keys({
+    _id: Joi.string(),
     file: Joi.required(),
     tags: Joi.string()
       .required()
@@ -28,6 +31,33 @@ class PostForm extends Form {
     source: Joi.string().required(),
     rating: Joi.string().required(),
   });
+
+  async componentDidMount() {
+    try {
+      const id = this.props.match.params.id;
+      if (!id) return;
+
+      const { data: post } = await getPost(id);
+      console.log(post);
+      this.setState({ data: this.mapToViewModel(post) });
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        return this.props.history.replace("/not-found");
+      }
+    }
+  }
+
+  mapToViewModel = (post) => {
+    const tags = post.tags.map((tag) => tag.name).join(" ");
+    const source = post.source ? post.source : "";
+    return {
+      _id: post._id,
+      file: "",
+      tags: tags,
+      source: source,
+      rating: post.rating,
+    };
+  };
 
   tagsValidator(value) {
     const minimalNumberOfTags = 5;
