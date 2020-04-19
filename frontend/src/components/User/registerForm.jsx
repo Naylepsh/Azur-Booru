@@ -1,5 +1,6 @@
 import React from "react";
 import Form from "../common/Form/form";
+import "./userForm.css";
 
 class RegisterForm extends Form {
   state = {
@@ -16,8 +17,7 @@ class RegisterForm extends Form {
 
   render() {
     return (
-      <div>
-        <h1>Register Form</h1>
+      <div className="container">
         <form onSubmit={this.handleSubmit}>
           {this.renderInput("username", "Username")}
           {this.renderInput("password", "Password", "password")}

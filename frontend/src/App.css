@@ -64,13 +64,6 @@ button {
   border-color: #0062d0;
 }
 
-/* user form */
-.user-form {
-  margin: auto;
-  margin-top: 40px;
-  max-width: 500px;
-}
-
 .pagination {
   margin-top: 50px;
   display: flex;
