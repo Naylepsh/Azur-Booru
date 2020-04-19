@@ -49,6 +49,16 @@ tagSchema.methods.cleanDeletedPostReferences = async function () {
   await this.save();
 };
 
+tagSchema.statics.getOccurences = function (tags) {
+  return tags.map((tag) => {
+    return { name: tag.name, occurences: tag.posts.length };
+  });
+};
+
+tagSchema.statics.sortByName = function (tags) {
+  return tags.sort((tag1, tag2) => tag1.name.localeCompare(tag2.name));
+};
+
 tagSchema.statics.popularTagsOfPosts = async function (posts, tagsLimit) {
   const tagIds = getUniqueTagsFromPosts(posts);
 

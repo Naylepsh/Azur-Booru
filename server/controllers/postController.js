@@ -113,6 +113,7 @@ exports.create = async (req, res) => {
 exports.show = async (req, res) => {
   const post = await Post.findById(req.params.id)
     .populate("author", "name")
+    .populate("tags")
     .populate({
       path: "comments",
       populate: { path: "author", model: "User" },
@@ -122,16 +123,10 @@ exports.show = async (req, res) => {
     throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
-  // const tags = await Promise.all(
-  //   post.tags.map(async (tag) => {
-  //     tag = await Tag.findById(tag._id);
-  //     return { name: tag.name, occurences: tag.posts.length };
-  //   })
-  // );
+  const sortedTags = Tag.sortByName(post.tags);
+  const tagsOccurences = Tag.getOccurences(sortedTags);
 
-  const tags = await Tag.find().where("_id").in(post.tags);
-
-  res.send({ post: post, tags: tags, user: req.user });
+  res.send({ post: post, tags: tagsOccurences, user: req.user });
 
   // res.render("posts/show", { post: post, tags: tags, user: req.user });
 };
