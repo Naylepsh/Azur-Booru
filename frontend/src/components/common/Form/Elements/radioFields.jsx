@@ -1,6 +1,6 @@
 import React from "react";
 
-const RadioFields = ({ label, name, error, items, ...rest }) => {
+const RadioFields = ({ label, name, error, items, selected, ...rest }) => {
   return (
     <div className="form-entry">
       <fieldset>
@@ -14,6 +14,7 @@ const RadioFields = ({ label, name, error, items, ...rest }) => {
                 id={item.label}
                 {...rest}
                 className="form-control"
+                checked={item.value === selected}
               />
               <label htmlFor={item.label}>{item.label}</label>
             </div>

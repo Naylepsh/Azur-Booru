@@ -37,9 +37,8 @@ class PostForm extends Form {
       const id = this.props.match.params.id;
       if (!id) return;
 
-      const { data: post } = await getPost(id);
-      console.log(post);
-      this.setState({ data: this.mapToViewModel(post) });
+      const { data } = await getPost(id);
+      this.setState({ data: this.mapToViewModel(data.post) });
     } catch (err) {
       if (err.response && err.response.status === 404) {
         return this.props.history.replace("/not-found");
