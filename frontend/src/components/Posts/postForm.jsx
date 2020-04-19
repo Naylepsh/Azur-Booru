@@ -24,7 +24,7 @@ class PostForm extends Form {
 
   schema = Joi.object().keys({
     _id: Joi.string(),
-    file: Joi.required(),
+    file: Joi.object().required(), // temporary solution -- TODO: give it custom validator for file checking
     tags: Joi.string()
       .required()
       .custom(this.tagsValidator, "Check number of tags"),
