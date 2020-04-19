@@ -11,8 +11,8 @@ const TAGS_PER_PAGE = 15;
 const POST_BODY_ATTRIBUTES = ["source", "title", "tags", "rating"];
 
 exports.list = async (req, res) => {
-  // 5819ms
   const tagNames = miscUtils.distinctWordsInString(req.query.tags);
+  // TODO: redo findOrCreatemany so that it creates items in bulk instead of doing it individually
   const tagsInQuery = await Tag.findOrCreateMany(
     tagNames.map((name) => {
       return { name };
@@ -122,12 +122,14 @@ exports.show = async (req, res) => {
     throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
-  const tags = await Promise.all(
-    post.tags.map(async (tag) => {
-      tag = await Tag.findById(tag._id);
-      return { name: tag.name, occurences: tag.posts.length };
-    })
-  );
+  // const tags = await Promise.all(
+  //   post.tags.map(async (tag) => {
+  //     tag = await Tag.findById(tag._id);
+  //     return { name: tag.name, occurences: tag.posts.length };
+  //   })
+  // );
+
+  const tags = await Tag.find().where("_id").in(post.tags);
 
   res.send({ post: post, tags: tags, user: req.user });
 

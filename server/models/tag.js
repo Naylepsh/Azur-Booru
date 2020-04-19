@@ -50,10 +50,12 @@ tagSchema.methods.cleanDeletedPostReferences = async function () {
 };
 
 tagSchema.statics.popularTagsOfPosts = async function (posts, tagsLimit) {
-  const tagIds = new Set(
-    [].concat.apply(
-      [],
-      posts.map((post) => post.tags.map((tag) => tag._id.toString()))
+  const tagIds = Array.from(
+    new Set(
+      [].concat.apply(
+        [],
+        posts.map((post) => post.tags.map((tag) => tag._id))
+      )
     )
   );
 
