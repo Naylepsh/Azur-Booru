@@ -135,17 +135,17 @@ class Navbar extends Component {
               role="menu"
             >
               <li>
-                <NavLink to="/logout" role="menuitem">
+                <NavLink to="users/logout" role="menuitem">
                   Logout
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/login" role="menuitem">
+                <NavLink to="users/login" role="menuitem">
                   Login
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/register" role="menuitem">
+                <NavLink to="users/register" role="menuitem">
                   Sign Up
                 </NavLink>
               </li>

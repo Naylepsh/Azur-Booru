@@ -17,7 +17,7 @@ function App() {
         <Route path="/posts/:id/edit" component={PostForm} />
         <Route path="/posts/:id" component={Post} />
         <Route path="/posts" component={Posts} />
-        <Route path="/user/register" component={RegisterForm} />
+        <Route path="/users/register" component={RegisterForm} />
         <Route path="/" component={Landing} />
       </Switch>
     </React.Fragment>

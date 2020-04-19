@@ -4,16 +4,20 @@ import "./landing.css";
 
 class Landing extends Component {
   componentDidMount() {
-    this.changeBackground();
+    this.changeBackground("landing-page-bg");
   }
 
-  changeBackground = () => {
-    document.body.className = "landing-page-bg";
+  componentWillUnmount() {
+    this.changeBackground("");
+  }
+
+  changeBackground = (className) => {
+    document.body.className = className;
   };
 
   render() {
     return (
-      <section class="static-index container">
+      <section className="static-index container">
         <h1>
           <a href="/posts">
             'Refreshed' take on classic boorus with Azur Lane theme
