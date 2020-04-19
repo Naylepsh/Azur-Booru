@@ -3,7 +3,7 @@ import Form from "../common/Form/form";
 import Joi from "@hapi/joi";
 import "./userForm.css";
 
-class RegisterForm extends Form {
+class LoginForm extends Form {
   state = {
     data: {
       username: "",
@@ -23,15 +23,15 @@ class RegisterForm extends Form {
 
   render() {
     return (
-      <div className="container">
+      <div>
         <form onSubmit={this.handleSubmit}>
           {this.renderInput("username", "Username")}
           {this.renderInput("password", "Password", "password")}
-          {this.renderButton("Register")}
+          {this.renderButton("Login")}
         </form>
       </div>
     );
   }
 }
 
-export default RegisterForm;
+export default LoginForm;
