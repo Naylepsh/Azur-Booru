@@ -50,14 +50,7 @@ tagSchema.methods.cleanDeletedPostReferences = async function () {
 };
 
 tagSchema.statics.popularTagsOfPosts = async function (posts, tagsLimit) {
-  const tagIds = Array.from(
-    new Set(
-      [].concat.apply(
-        [],
-        posts.map((post) => post.tags.map((tag) => tag._id))
-      )
-    )
-  );
+  const tagIds = getUniqueTagsFromPosts(posts);
 
   if (tagIds) {
     const tags = await this.find().where("_id").in(tagIds);
@@ -70,5 +63,16 @@ tagSchema.statics.popularTagsOfPosts = async function (posts, tagsLimit) {
     return occurences;
   }
 };
+
+function getUniqueTagsFromPosts(posts) {
+  return Array.from(
+    new Set(
+      [].concat.apply(
+        [],
+        posts.map((post) => post.tags.map((tag) => tag._id))
+      )
+    )
+  );
+}
 
 exports.Tag = mongoose.model("Tag", tagSchema);
