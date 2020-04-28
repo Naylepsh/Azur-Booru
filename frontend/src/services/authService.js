@@ -8,3 +8,7 @@ export function login(name, password) {
     password,
   });
 }
+
+export function logout() {
+  return http.get(`${apiEndpoint}/logout`);
+}
