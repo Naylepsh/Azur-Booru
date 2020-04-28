@@ -14,14 +14,20 @@ class RegisterForm extends Form {
   };
 
   schema = Joi.object().keys({
-    username: Joi.string().required().label("Username"),
+    username: Joi.string().min(5).required().label("Username"),
     password: Joi.string().min(5).required().label("Password"),
   });
 
   doSubmit = async () => {
-    console.log("submitting");
-    await register(this.state.data);
-    console.log("request sent");
+    try {
+      await register(this.state.data);
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        const errors = { ...this.state.errors };
+        errors.username = err.response.data.message;
+        this.setState({ errors });
+      }
+    }
   };
 
   render() {
