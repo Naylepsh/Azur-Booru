@@ -71,8 +71,7 @@ class PostForm extends Form {
   doSubmit = async () => {
     console.log("submitting");
     try {
-      const { data } = await uploadPost(this.state.data);
-      console.log(data);
+      await uploadPost(this.state.data);
     } catch (err) {
       if (err.response && err.response.status === 400) {
         console.log("400");

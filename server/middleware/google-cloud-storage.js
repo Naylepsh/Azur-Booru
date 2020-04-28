@@ -5,7 +5,6 @@ const { bucket } = require("../config");
 const { makeThumbnail } = require("../utils/misc");
 
 exports.uploadImageToGCS = async (req, res, next) => {
-  console.log("?", req.file, req.tags, req.body);
   req.filename = req.file.filename;
   const localFilePath = `${upload_path}/${req.file.filename}`;
   const URL = await copyFileToGCS(localFilePath, bucket.name);
