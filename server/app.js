@@ -24,7 +24,6 @@ mongoose.connect(config.db.URI, {
 });
 
 // App Config
-// app.set("view engine", "ejs");
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(__dirname + "/public"));
@@ -32,7 +31,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger("dev"));
 app.use(cors());
 app.use(methodOverride("_method"));
-// app.use(require("./middleware/auth").loadUser);
 require("./routes/index")(app);
 app.use(errorMiddleware);
 
