@@ -69,7 +69,7 @@ exports.login = async (req, res) => {
   const roleNames = await Role.getRoleNames(user.roles);
   storeRoles(res, roleNames);
 
-  res.redirect("/");
+  res.send({ token });
 };
 
 exports.logout = (req, res) => {
@@ -81,11 +81,12 @@ exports.logout = (req, res) => {
     }
   }
   res.user = null;
-  res.redirect("/");
+  res.send("Successfully logged out");
 };
 
 exports.profile = async (req, res) => {
-  const user = await User.findById(req.user._id).select("-password");
+  // TODO: DO NOT SEND PASSWORD!
+  const user = await User.findById(req.user._id);
   res.send(user);
 };
 

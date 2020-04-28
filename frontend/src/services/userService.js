@@ -8,3 +8,7 @@ export function register(user) {
     password: user.password,
   });
 }
+
+export function profile() {
+  return http.get(`${apiEndpoint}/profile`);
+}

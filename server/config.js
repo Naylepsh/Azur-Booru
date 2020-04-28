@@ -13,7 +13,7 @@ const dev = {
   cookies: {
     prefix: "AzurBooru_",
   },
-  requireAuth: false,
+  requireAuth: true,
 };
 
 const config = {

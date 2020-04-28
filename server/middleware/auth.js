@@ -34,7 +34,7 @@ exports.loadUser = function (req, res, next) {
  * Assumes that loadUser middleware is called before auth call
  */
 exports.authorizeUser = function (req, res, next) {
-  if (!config.requireAuth) next();
+  if (!config.requireAuth) return next();
   if (!req.user) {
     return sendError(res, {
       status: 401,
