@@ -30,7 +30,6 @@ exports.register = async (req, res) => {
     roles: [role._id],
   });
   await user.save();
-  res.redirect("/");
 };
 
 exports.loginForm = (req, res) => {
