@@ -1,7 +1,7 @@
 import React from "react";
 import Joi from "@hapi/joi";
 import Form from "../common/Form/form";
-import { getPost } from "../../services/postService";
+import { getPost, uploadPost } from "../../services/postService";
 import "./postForm.css";
 
 class PostForm extends Form {
@@ -68,8 +68,20 @@ class PostForm extends Form {
     return value;
   }
 
-  doSubmit = () => {
+  doSubmit = async () => {
     console.log("submitting");
+    try {
+      const { data } = await uploadPost(this.data);
+      console.log(data);
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        console.log("400");
+      } else if (err.response && err.response.status === 404) {
+        console.log("not found");
+      } else if (err.response && err.response.status === 401) {
+        console.log("unauthorized");
+      }
+    }
   };
 
   render() {

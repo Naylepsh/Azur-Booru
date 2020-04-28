@@ -64,12 +64,11 @@ exports.login = async (req, res) => {
     });
   }
 
-  const token = user.generateAuthToken();
-  res.cookie("jwt-token", token, { expire: 400000 + Date.now() });
+  const jwt = user.generateAuthToken();
   const roleNames = await Role.getRoleNames(user.roles);
   storeRoles(res, roleNames);
 
-  res.send({ token });
+  res.send({ jwt });
 };
 
 exports.logout = (req, res) => {

@@ -9,3 +9,9 @@ export function getPosts() {
 export function getPost(id) {
   return http.get(`${apiEndpoint}/${id}`);
 }
+
+export function uploadPost(post) {
+  const body = { ...post };
+  delete body._id;
+  return http.post(apiEndpoint, body);
+}

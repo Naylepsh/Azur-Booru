@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger("dev"));
 app.use(cors());
 app.use(methodOverride("_method"));
-app.use(require("./middleware/auth").loadUser);
+// app.use(require("./middleware/auth").loadUser);
 require("./routes/index")(app);
 app.use(errorMiddleware);
 

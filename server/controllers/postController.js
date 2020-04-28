@@ -61,6 +61,7 @@ exports.list = async (req, res) => {
 // };
 
 exports.create = async (req, res) => {
+  console.log("creating");
   req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
   req.body.post.tags = miscUtils.distinctWordsInString(req.body.post.tags);
   const { error } = validate(req.body.post);
