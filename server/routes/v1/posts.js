@@ -16,7 +16,7 @@ router
   .post(
     "/",
     authorizeUser,
-    storage.single("image"),
+    storage.single("file"),
     uploadImageToGCS,
     prepareThumbnail,
     uploadThumbnailToGCS,

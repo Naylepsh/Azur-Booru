@@ -25,11 +25,11 @@ mongoose.connect(config.db.URI, {
 
 // App Config
 app.use(express.json());
+app.use(cors());
 app.use(cookieParser());
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger("dev"));
-app.use(cors());
 app.use(methodOverride("_method"));
 require("./routes/index")(app);
 app.use(errorMiddleware);
