@@ -23,7 +23,7 @@ class PostForm extends Form {
   ];
 
   schema = Joi.object().keys({
-    _id: Joi.string(),
+    _id: Joi.string().allow(""),
     file: Joi.object().required(), // temporary solution -- TODO: give it custom validator for file checking
     tags: Joi.string()
       .required()

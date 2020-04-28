@@ -13,6 +13,7 @@ const RadioFields = ({ label, name, error, items, selected, ...rest }) => {
                 name={name}
                 id={item.label}
                 {...rest}
+                value={item.value}
                 className="form-control"
                 checked={item.value === selected}
               />
