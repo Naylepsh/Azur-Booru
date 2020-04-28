@@ -12,10 +12,10 @@ const RadioFields = ({ label, name, error, items, selected, ...rest }) => {
                 type="radio"
                 name={name}
                 id={item.label}
-                {...rest}
                 value={item.value}
                 className="form-control"
                 checked={item.value === selected}
+                {...rest}
               />
               <label htmlFor={item.label}>{item.label}</label>
             </div>
