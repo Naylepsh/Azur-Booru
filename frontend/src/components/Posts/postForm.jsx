@@ -84,9 +84,9 @@ class PostForm extends Form {
   };
 
   doSubmit = async () => {
-    console.log("submitting");
     try {
       await uploadPost(this.state.data);
+      this.props.history.push("/posts");
     } catch (err) {
       if (err.response && err.response.status === 400) {
         console.log("400");
