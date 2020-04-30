@@ -143,7 +143,7 @@ exports.show = async (req, res) => {
 // };
 
 exports.update = async (req, res) => {
-  req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
+  const body = miscUtils.pickAttributes(req.body, POST_BODY_ATTRIBUTES);
 
   // remove old tags
   let post = await Post.findById(req.params.id).populate("tags");
@@ -157,7 +157,7 @@ exports.update = async (req, res) => {
     await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
 
     // add new tags
-    let newPost = req.body.post;
+    let newPost = body;
     const tagNames = miscUtils.distinctWordsInString(newPost.tags);
     const newTags = await Tag.findOrCreateMany(
       tagNames.map((name) => {
