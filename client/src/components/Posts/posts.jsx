@@ -22,7 +22,7 @@ class Posts extends Component {
   };
 
   async componentDidMount() {
-    const { data } = await getPosts();
+    const { data } = await getPosts(this.props.location.search);
     let query = queryString.parse(this.props.location.search).tags;
     query = query ? query : "";
     const selectedTags = query.split();
