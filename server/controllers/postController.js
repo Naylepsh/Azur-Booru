@@ -61,9 +61,9 @@ exports.list = async (req, res) => {
 // };
 
 exports.create = async (req, res) => {
-  req.body.post = miscUtils.pickAttributes(req.body.post, POST_BODY_ATTRIBUTES);
-  req.body.post.tags = miscUtils.distinctWordsInString(req.body.post.tags);
-  const { error } = validate(req.body.post);
+  const body = miscUtils.pickAttributes(req.body, POST_BODY_ATTRIBUTES);
+  body.tags = miscUtils.distinctWordsInString(body.tags);
+  const { error } = validate(body);
   if (error) {
     return miscUtils.sendError(res, {
       status: 400,
@@ -76,7 +76,7 @@ exports.create = async (req, res) => {
   let post;
   try {
     const tags = await Tag.findOrCreateMany(
-      req.body.post.tags.map((name) => {
+      body.tags.map((name) => {
         return { name };
       }),
       session
@@ -88,9 +88,9 @@ exports.create = async (req, res) => {
         {
           imageLink: req.postImageURL,
           thumbnailLink: req.postThumbnailURL,
-          source: req.body.post.source,
+          source: req.body.source,
           tags: tagsIds,
-          rating: req.body.post.rating,
+          rating: req.body.rating,
           author: req.user._id,
           score: 0,
         },
