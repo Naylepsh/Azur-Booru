@@ -45,20 +45,7 @@ exports.list = async (req, res) => {
     tagsQuery: tagNames,
     user: req.user,
   });
-
-  // res.render("posts/index", {
-  //   posts,
-  //   tags,
-  //   pageInfo,
-  //   tagsQuery: tagNames,
-  //   user: req.user,
-  // });
 };
-
-// TODO: Port to front-end
-// exports.new = (req, res) => {
-//   res.render("posts/new", { user: req.user });
-// };
 
 exports.create = async (req, res) => {
   const body = miscUtils.pickAttributes(req.body, POST_BODY_ATTRIBUTES);
@@ -106,7 +93,6 @@ exports.create = async (req, res) => {
   } finally {
     session.endSession();
     res.send(post);
-    // res.redirect("/posts");
   }
 };
 
@@ -127,20 +113,7 @@ exports.show = async (req, res) => {
   const tagsOccurences = Tag.getOccurences(sortedTags);
 
   res.send({ post: post, tags: tagsOccurences, user: req.user });
-
-  // res.render("posts/show", { post: post, tags: tags, user: req.user });
 };
-
-// TODO: Port to front-end
-// exports.edit = async (req, res) => {
-//   const post = await Post.findById(req.params.id).populate("tags");
-//   if (!post) {
-//     throw new StatusError(404, `Post ${req.params.id} not found`);
-//   }
-
-//   const tagNames = post.tags.map((tag) => tag.name);
-//   res.render("posts/edit", { post, tags: tagNames, user: req.user });
-// };
 
 exports.update = async (req, res) => {
   const body = miscUtils.pickAttributes(req.body, POST_BODY_ATTRIBUTES);
@@ -179,7 +152,6 @@ exports.update = async (req, res) => {
     throw new StatusError(500, e.message);
   }
   res.send(post);
-  // res.redirect(`/posts/${req.params.id}`);
 };
 
 exports.destroy = async (req, res) => {
@@ -212,7 +184,6 @@ exports.destroy = async (req, res) => {
   } finally {
     session.endSession();
     res.send(post);
-    // res.redirect("/posts");
   }
 };
 
