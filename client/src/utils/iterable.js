@@ -7,3 +7,11 @@ export function toggleInArray(object, array) {
   }
   return array;
 }
+
+export function removeFromArrayIfExists(object, array) {
+  const index = array.indexOf(object);
+  if (index > -1) {
+    array.splice(index, 1);
+  }
+  return array;
+}

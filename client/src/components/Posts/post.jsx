@@ -9,6 +9,8 @@ import {
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
 import "./posts.css";
+import { toggleInArray, removeFromArrayIfExists } from "../../utils/iterable";
+import { profile } from "../../services/userService";
 
 class Post extends Component {
   state = {
@@ -40,6 +42,7 @@ class Post extends Component {
       score: post.score,
       rating: post.rating,
       comments: post.comments,
+      voters: post.voters,
     };
   };
 
@@ -71,8 +74,24 @@ class Post extends Component {
     console.log(value);
   };
 
-  handleVoteClick = (voteType) => {
-    toggleVote(this.state.post.id, voteType);
+  handleVoteClick = async (voteType) => {
+    const post = { ...this.state.post };
+    let upvoters = [...post.voters.up];
+    let downvoters = [...post.voters.down];
+    const { data: user } = await profile(); // TODO: make user global (store in App or something)
+    toggleVote(post.id, voteType);
+
+    if (voteType === "up") {
+      upvoters = toggleInArray(user._id, upvoters);
+      downvoters = removeFromArrayIfExists(user._id, downvoters);
+    } else if (voteType === "down") {
+      downvoters = toggleInArray(user._id, downvoters);
+      upvoters = removeFromArrayIfExists(user._id, upvoters);
+    }
+
+    post.voters = { up: upvoters, down: downvoters };
+    post.score = upvoters.length - downvoters.length;
+    this.setState({ post });
   };
 
   renderPostContent() {
