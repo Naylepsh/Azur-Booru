@@ -24,10 +24,13 @@ class PostForm extends Form {
 
   schema = Joi.object().keys({
     _id: Joi.string().allow(""),
-    file: Joi.object().required(), // temporary solution -- TODO: give it custom validator for file checking
+    file: Joi.object().custom(
+      (value) => this.fileValidator(value),
+      "Check file"
+    ),
     tags: Joi.string()
       .required()
-      .custom(this.tagsValidator, "Check number of tags"),
+      .custom((value) => this.tagsValidator(value), "Check number of tags"),
     source: Joi.string().required(),
     rating: Joi.string().required(),
   });
@@ -51,14 +54,14 @@ class PostForm extends Form {
     const source = post.source ? post.source : "";
     return {
       _id: post._id,
-      file: "",
+      file: {},
       tags: tags,
       source: source,
       rating: post.rating,
     };
   };
 
-  tagsValidator(value) {
+  tagsValidator = (value) => {
     const minimalNumberOfTags = 5;
     const tags = value.split(" ");
     if (tags.length < minimalNumberOfTags) {
@@ -66,7 +69,19 @@ class PostForm extends Form {
     }
 
     return value;
-  }
+  };
+
+  fileValidator = (value) => {
+    if (this.state.data._id) {
+      return value;
+    }
+
+    if (!value) {
+      throw new Error("File is required");
+    }
+
+    return value;
+  };
 
   doSubmit = async () => {
     console.log("submitting");
