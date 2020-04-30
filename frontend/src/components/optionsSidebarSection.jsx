@@ -2,8 +2,8 @@ import React from "react";
 import ToggableSidebarSection from "./common/toggableSidebarSection";
 import { deletePost } from "../services/postService";
 
-const del = (id) => {
-  deletePost(id);
+const del = async (id) => {
+  await deletePost(id);
   window.location = "/posts";
 };
 

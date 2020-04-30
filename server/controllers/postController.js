@@ -161,7 +161,7 @@ exports.destroy = async (req, res) => {
   }
 
   const isAuthor = authenticateAuthor(post, req.user);
-  const isAdmin = req.user.roles.admin;
+  const isAdmin = req.user.roles && req.user.roles.admin;
   if (!isAuthor && !isAdmin) {
     return miscUtils.sendError(res, { status: 403, message: "Access denied." });
   }
