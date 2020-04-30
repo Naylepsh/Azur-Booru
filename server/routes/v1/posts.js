@@ -24,12 +24,6 @@ router
   .get("/:id", asyncWrapper(Post.show))
   .put("/:id", authorizeUser, asyncWrapper(Post.update))
   .delete("/:id", authorizeUser, asyncWrapper(Post.destroy))
-  // storage.single() has to be there due to some XMLHttpRequest form shenanigans
-  .post(
-    "/:id/toggle-vote",
-    storage.single(),
-    authorizeUser,
-    asyncWrapper(Post.toggleVote)
-  );
+  .post("/:id/toggle-vote", authorizeUser, asyncWrapper(Post.toggleVote));
 
 module.exports = router;

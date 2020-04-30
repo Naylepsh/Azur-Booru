@@ -3,7 +3,7 @@ import queryString from "query-string";
 import SearchBar from "../common/SearchBar/searchBar";
 import PostSidebar from "../postSidebar";
 import Comments from "../common/Comments/comments";
-import { getPost } from "../../services/postService";
+import { getPost, toggleVote } from "../../services/postService";
 import {
   handleTagToggle,
   handleQueryChange,
@@ -71,16 +71,30 @@ class Post extends Component {
     console.log(value);
   };
 
+  handleVoteClick = (voteType) => {
+    toggleVote(this.state.post.id, voteType);
+  };
+
   renderPostContent() {
     return (
       <section className="post-image">
         <img src={this.state.post.imageLink} alt="post" />
         <menu className="post-menu">
           <li>
-            <button id="post-vote-up">Vote up</button>
+            <button
+              id="post-vote-up"
+              onClick={() => this.handleVoteClick("up")}
+            >
+              Vote up
+            </button>
           </li>
           <li>
-            <button id="post-vote-down">Vote down</button>
+            <button
+              id="post-vote-down"
+              onClick={() => this.handleVoteClick("down")}
+            >
+              Vote down
+            </button>
           </li>
           <li>
             <button id="post-favorite">Favorite</button>
