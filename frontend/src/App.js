@@ -15,7 +15,8 @@ function App() {
     <React.Fragment>
       <NavBar />
       <Switch>
-        <Route path="/posts/new" component={PostForm} />
+        {/* Random key as a way to force page reloading */}
+        <Route path="/posts/new" component={PostForm} key={Math.random()} />
         <Route path="/posts/:id/edit" component={PostForm} />
         <Route path="/posts/:id" component={Post} />
         <Route path="/posts" component={Posts} />

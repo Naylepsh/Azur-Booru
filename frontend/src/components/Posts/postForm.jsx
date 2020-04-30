@@ -106,7 +106,8 @@ class PostForm extends Form {
           encType="multipart/form-data"
           onSubmit={this.handleSubmit}
         >
-          {this.renderFileInput("file", "File", { accept: "image/*" })}
+          {!this.state.data._id &&
+            this.renderFileInput("file", "File", { accept: "image/*" })}
           {this.renderInput("source", "Source")}
           {this.renderFieldSet("rating", "Rating", this.ratings)}
           {this.renderTextArea("tags", "Tags")}
