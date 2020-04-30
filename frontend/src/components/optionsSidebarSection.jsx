@@ -1,5 +1,11 @@
 import React from "react";
 import ToggableSidebarSection from "./common/toggableSidebarSection";
+import { deletePost } from "../services/postService";
+
+const del = (id) => {
+  deletePost(id);
+  window.location = "/posts";
+};
 
 const renderItems = (id) => {
   return (
@@ -11,9 +17,9 @@ const renderItems = (id) => {
       </div>
       <div>
         <li className="sidebar-section-generic-content">
-          <form action={`/posts/${id}?_method=DELETE`} method="POST">
-            <button id="delete-button">Delete</button>
-          </form>
+          <button id="delete-button" onClick={() => del(id)}>
+            Delete
+          </button>
         </li>
       </div>
     </React.Fragment>

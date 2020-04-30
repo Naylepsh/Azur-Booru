@@ -25,3 +25,9 @@ export function uploadPost(post) {
     return http.post(`${apiEndpoint}`, data);
   }
 }
+
+export function deletePost(id) {
+  if (id) {
+    return http.delete(`${apiEndpoint}/${id}`);
+  }
+}
