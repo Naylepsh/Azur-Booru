@@ -13,13 +13,15 @@ export function getPost(id) {
 export function uploadPost(post) {
   const body = { ...post };
   delete body._id;
-  const data = new FormData();
-  for (const key in body) {
-    data.append(key, body[key]);
+
+  if (post._id) {
+    delete body.file;
+    return http.put(`${apiEndpoint}/${post._id}`, body);
+  } else {
+    const data = new FormData();
+    for (const key in body) {
+      data.append(key, body[key]);
+    }
+    return http.post(`${apiEndpoint}`, data);
   }
-  return http.post(apiEndpoint, data, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
 }
