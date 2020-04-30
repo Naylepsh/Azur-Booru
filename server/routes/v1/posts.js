@@ -12,7 +12,6 @@ const {
 
 router
   .get("/", asyncWrapper(Post.list))
-  // .get("/new", authorizeUser, Post.new)
   .post(
     "/",
     authorizeUser,
@@ -23,7 +22,6 @@ router
     asyncWrapper(Post.create)
   )
   .get("/:id", asyncWrapper(Post.show))
-  // .get("/:id/edit", authorizeUser, asyncWrapper(Post.edit))
   .put("/:id", authorizeUser, asyncWrapper(Post.update))
   .delete("/:id", authorizeUser, asyncWrapper(Post.destroy))
   // storage.single() has to be there due to some XMLHttpRequest form shenanigans
