@@ -4,13 +4,13 @@ import SearchBar from "../common/SearchBar/searchBar";
 import PostSidebar from "../postSidebar";
 import Comments from "../common/Comments/comments";
 import { getPost, toggleVote } from "../../services/postService";
+import { toggleInArray, removeFromArrayIfExists } from "../../utils/iterable";
+import { profile } from "../../services/userService";
 import {
   handleTagToggle,
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
 import "./posts.css";
-import { toggleInArray, removeFromArrayIfExists } from "../../utils/iterable";
-import { profile } from "../../services/userService";
 
 class Post extends Component {
   state = {

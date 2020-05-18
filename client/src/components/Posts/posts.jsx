@@ -9,6 +9,7 @@ import {
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
 import "./posts.css";
+import Pagination from "../common/Pagination/pagination";
 
 class Posts extends Component {
   state = {
@@ -78,6 +79,7 @@ class Posts extends Component {
         <div id="content">
           <Thumbnails thumbnails={thumbnails} url={url} />
         </div>
+        <Pagination />
       </div>
     );
   }
