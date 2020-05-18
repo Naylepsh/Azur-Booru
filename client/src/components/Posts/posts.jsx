@@ -67,7 +67,9 @@ class Posts extends Component {
   };
 
   render() {
-    const { query, tags, thumbnails, url, selectedTags } = this.state;
+    const { query, tags, thumbnails, url, selectedTags, pageInfo } = this.state;
+    const { lastPage } = pageInfo;
+
     return (
       <div className="container text-center">
         <SearchBar value={query} onChange={this.handleQueryChange} />
@@ -80,7 +82,7 @@ class Posts extends Component {
           <Thumbnails thumbnails={thumbnails} url={url} />
         </div>
         <Pagination
-          lastPage={this.state.pageInfo.lastPage}
+          lastPage={lastPage}
           path={"/posts"}
           query={this.props.location.search}
         />

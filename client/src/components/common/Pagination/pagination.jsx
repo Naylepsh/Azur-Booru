@@ -6,7 +6,6 @@ const default_page_offset = 5;
 class Pagination extends Component {
   state = {
     currentPage: "",
-    lastPage: "",
     pageOffset: "",
     path: "",
     query: "",
@@ -14,7 +13,8 @@ class Pagination extends Component {
 
   componentDidMount() {
     let currentPage;
-    let { path, query, lastPage, pageOffset } = this.props;
+    let { path, query, pageOffset } = this.props;
+    console.log(this.props);
 
     query = queryString.parse(query);
 
@@ -31,13 +31,8 @@ class Pagination extends Component {
       }
     }
 
-    if (!lastPage) {
-      lastPage = currentPage;
-    }
-
     this.setState({
       currentPage: currentPage,
-      lastPage,
       pageOffset,
       query,
       path,
@@ -50,10 +45,10 @@ class Pagination extends Component {
     return `${this.state.path}?${queryString.stringify(query)}`;
   };
 
-  createPageLink = (page) => {
+  createPageLink = (page, lastPage) => {
     return (
       page > 0 &&
-      page <= this.state.lastPage && (
+      page <= lastPage && (
         <a key={page} href={this.createHref(page)}>
           {page}
         </a>
@@ -62,6 +57,7 @@ class Pagination extends Component {
   };
 
   render() {
+    const { lastPage } = this.props;
     const { currentPage, pageOffset } = this.state;
     const previousPages = [...new Array(pageOffset).keys()].map(
       (i) => currentPage - pageOffset + i
@@ -72,9 +68,15 @@ class Pagination extends Component {
 
     return (
       <section className="pagination">
-        <span className="pages">{previousPages.map(this.createPageLink)}</span>
-        <span className="pages">{this.createPageLink(currentPage)}</span>
-        <span className="pages">{nextPages.map(this.createPageLink)}</span>
+        <span className="pages">
+          {previousPages.map((page) => this.createPageLink(page, lastPage))}
+        </span>
+        <span className="pages">
+          {this.createPageLink(currentPage, lastPage)}
+        </span>
+        <span className="pages">
+          {nextPages.map((page) => this.createPageLink(page, lastPage))}
+        </span>
       </section>
     );
   }
