@@ -79,7 +79,7 @@ class Posts extends Component {
         <div id="content">
           <Thumbnails thumbnails={thumbnails} url={url} />
         </div>
-        <Pagination />
+        <Pagination lastPage={5} />
       </div>
     );
   }

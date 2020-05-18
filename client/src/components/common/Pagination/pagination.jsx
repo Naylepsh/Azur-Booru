@@ -12,29 +12,24 @@ class Pagination extends Component {
 
   componentDidMount() {
     let currentPage;
-    let lastPage;
-    let pageOffset;
 
-    const { query } = this.props;
+    let { query, lastPage, pageOffset } = this.props;
+
+    if (!pageOffset) {
+      pageOffset = default_page_offset;
+    }
+
     if (!query) {
       currentPage = 1;
-      lastPage = currentPage;
-      pageOffset = default_page_offset;
     } else {
       let currentPage = queryString.parse(this.props.query).page;
       if (!currentPage) {
         currentPage = 1;
       }
+    }
 
-      lastPage = this.props.lastPage;
-      if (!lastPage) {
-        lastPage = currentPage;
-      }
-
-      pageOffset = this.props.pageOffset;
-      if (!pageOffset) {
-        pageOffset = default_page_offset;
-      }
+    if (!lastPage) {
+      lastPage = currentPage;
     }
 
     this.setState({ currentPage, lastPage, pageOffset });
@@ -46,7 +41,8 @@ class Pagination extends Component {
 
   createPageLink = (page) => {
     return (
-      page > 0 && (
+      page > 0 &&
+      page <= this.state.lastPage && (
         <a key={page} href={this.createHref(page)}>
           {page}
         </a>
@@ -66,6 +62,8 @@ class Pagination extends Component {
     return (
       <section className="pagination">
         <span className="pages">{previousPages.map(this.createPageLink)}</span>
+        <span className="pages">{this.createPageLink(currentPage)}</span>
+        <span className="pages">{nextPages.map(this.createPageLink)}</span>
       </section>
     );
   }
