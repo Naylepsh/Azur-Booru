@@ -16,7 +16,6 @@ class Pagination extends Component {
     let currentPage;
     let { path, query, lastPage, pageOffset } = this.props;
 
-    lastPage = 5;
     query = queryString.parse(query);
 
     if (!pageOffset) {
@@ -70,7 +69,6 @@ class Pagination extends Component {
     const nextPages = [...new Array(pageOffset).keys()].map(
       (i) => currentPage + i + 1
     );
-    console.log("current, offset", currentPage, pageOffset);
 
     return (
       <section className="pagination">

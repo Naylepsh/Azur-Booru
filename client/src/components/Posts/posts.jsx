@@ -80,7 +80,7 @@ class Posts extends Component {
           <Thumbnails thumbnails={thumbnails} url={url} />
         </div>
         <Pagination
-          lastPage={5}
+          lastPage={this.state.pageInfo.lastPage}
           path={"/posts"}
           query={this.props.location.search}
         />
