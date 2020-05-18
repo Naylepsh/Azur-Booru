@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import queryString from "query-string";
+import "./pagination.css";
 
 const default_page_offset = 5;
 
@@ -14,6 +15,7 @@ class Pagination extends Component {
   componentDidMount() {
     let currentPage;
     let { path, query, pageOffset } = this.props;
+    console.log(this.props);
 
     query = queryString.parse(query);
 
@@ -38,6 +40,15 @@ class Pagination extends Component {
     });
   }
 
+  getLinkClass = (pageNumber) => {
+    return (
+      "page " +
+      (pageNumber === this.state.currentPage
+        ? "active-page"
+        : "non-active-page")
+    );
+  };
+
   createHref = (pageNumber) => {
     const query = { ...this.state.query };
     query.page = pageNumber;
@@ -48,7 +59,11 @@ class Pagination extends Component {
     return (
       page > 0 &&
       page <= lastPage && (
-        <a key={page} href={this.createHref(page)}>
+        <a
+          key={page}
+          href={this.createHref(page)}
+          className={this.getLinkClass(page)}
+        >
           {page}
         </a>
       )

@@ -64,61 +64,6 @@ button {
   border-color: #0062d0;
 }
 
-.pagination {
-  margin-top: 50px;
-  display: flex;
-  justify-content: center;
-}
-
-.pages {
-  height: 3px;
-  background-color: black;
-}
-
-.pages > * {
-  line-height: 24px;
-  display: inline-block;
-}
-
-.page {
-  color: white;
-  background-color: black;
-  border-radius: 50%;
-  width: 40px;
-  position: relative;
-  top: -18px;
-  padding: 8px 8px;
-  margin: 0 8px;
-}
-
-.page:hover {
-  background-color: #005abf;
-}
-
-.page-arrow {
-  color: black;
-  font-size: 36px;
-  position: relative;
-  top: -13px;
-  margin: 0 -6px;
-}
-
-a.page-arrow:hover {
-  color: #005abf;
-}
-
-.skipped-pages {
-  color: gray;
-  font-size: 36px;
-  position: relative;
-  top: -22px;
-  margin: 0 5px;
-}
-
-#active-page {
-  background-color: #0062d0;
-}
-
 .hidden {
   display: none;
 }
