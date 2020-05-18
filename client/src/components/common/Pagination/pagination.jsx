@@ -6,7 +6,7 @@ const default_page_offset = 5;
 
 class Pagination extends Component {
   state = {
-    currentPage: "",
+    currentPage: 1,
     pageOffset: "",
     path: "",
     query: "",
@@ -15,7 +15,6 @@ class Pagination extends Component {
   componentDidMount() {
     let currentPage;
     let { path, query, pageOffset } = this.props;
-    console.log(this.props);
 
     query = queryString.parse(query);
 
@@ -74,21 +73,17 @@ class Pagination extends Component {
     const { lastPage } = this.props;
     const { currentPage, pageOffset } = this.state;
     const previousPages = [...new Array(pageOffset).keys()].map(
-      (i) => currentPage - pageOffset + i
+      (i) => Number(currentPage) - pageOffset + i
     );
     const nextPages = [...new Array(pageOffset).keys()].map(
-      (i) => currentPage + i + 1
+      (i) => Number(currentPage) + i + 1
     );
 
     return (
       <section className="pagination">
         <span className="pages">
           {previousPages.map((page) => this.createPageLink(page, lastPage))}
-        </span>
-        <span className="pages">
           {this.createPageLink(currentPage, lastPage)}
-        </span>
-        <span className="pages">
           {nextPages.map((page) => this.createPageLink(page, lastPage))}
         </span>
       </section>
