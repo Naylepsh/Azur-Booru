@@ -80,12 +80,12 @@ class Posts extends Component {
         />
         <div id="content">
           <Thumbnails thumbnails={thumbnails} url={url} />
+          <Pagination
+            lastPage={lastPage}
+            path={"/posts"}
+            query={this.props.location.search}
+          />
         </div>
-        <Pagination
-          lastPage={lastPage}
-          path={"/posts"}
-          query={this.props.location.search}
-        />
       </div>
     );
   }

@@ -10,6 +10,7 @@ class PostsSidebar extends Component {
       <aside className="sidebar">
         <TagsSidebarSection
           tags={tags}
+          url={"/posts"}
           selectedTags={selectedTags}
           onClick={handleTagToggle}
         />
