@@ -8,12 +8,16 @@ class Pagination extends Component {
     currentPage: "",
     lastPage: "",
     pageOffset: "",
+    path: "",
+    query: "",
   };
 
   componentDidMount() {
     let currentPage;
+    let { path, query, lastPage, pageOffset } = this.props;
 
-    let { query, lastPage, pageOffset } = this.props;
+    lastPage = 5;
+    query = queryString.parse(query);
 
     if (!pageOffset) {
       pageOffset = default_page_offset;
@@ -22,7 +26,7 @@ class Pagination extends Component {
     if (!query) {
       currentPage = 1;
     } else {
-      let currentPage = queryString.parse(this.props.query).page;
+      currentPage = query.page;
       if (!currentPage) {
         currentPage = 1;
       }
@@ -32,11 +36,19 @@ class Pagination extends Component {
       lastPage = currentPage;
     }
 
-    this.setState({ currentPage, lastPage, pageOffset });
+    this.setState({
+      currentPage: currentPage,
+      lastPage,
+      pageOffset,
+      query,
+      path,
+    });
   }
 
   createHref = (pageNumber) => {
-    return `/posts?page=${pageNumber}`;
+    const query = { ...this.state.query };
+    query.page = pageNumber;
+    return `${this.state.path}?${queryString.stringify(query)}`;
   };
 
   createPageLink = (page) => {
@@ -58,6 +70,7 @@ class Pagination extends Component {
     const nextPages = [...new Array(pageOffset).keys()].map(
       (i) => currentPage + i + 1
     );
+    console.log("current, offset", currentPage, pageOffset);
 
     return (
       <section className="pagination">
