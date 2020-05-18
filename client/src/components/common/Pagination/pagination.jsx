@@ -14,7 +14,6 @@ class Pagination extends Component {
   componentDidMount() {
     let currentPage;
     let { path, query, pageOffset } = this.props;
-    console.log(this.props);
 
     query = queryString.parse(query);
 
