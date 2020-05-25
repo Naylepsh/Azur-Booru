@@ -2,8 +2,8 @@ import http from "./httpService";
 
 const apiEndpoint = "http://localhost:3001/api/v1/comments";
 
-export function getComments() {
-  return http.get(apiEndpoint);
+export function getComments(query) {
+  return http.get(`${apiEndpoint}${query}`);
 }
 
 export function getComment(id) {

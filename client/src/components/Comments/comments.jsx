@@ -8,7 +8,8 @@ class Comments extends Component {
   };
 
   async componentDidMount() {
-    const { data } = await getComments();
+    const query = this.props.location.search;
+    const { data } = await getComments(query);
     const comments = this.mapToViewModel(data);
 
     this.setState({ comments });
