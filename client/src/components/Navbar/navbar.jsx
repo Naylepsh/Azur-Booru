@@ -134,21 +134,27 @@ class Navbar extends Component {
               aria-label="submenu"
               role="menu"
             >
-              <li>
-                <NavLink to="/users/logout" role="menuitem">
-                  Logout
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/users/login" role="menuitem">
-                  Login
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/users/register" role="menuitem">
-                  Sign Up
-                </NavLink>
-              </li>
+              {this.props.user && (
+                <li>
+                  <NavLink to="/users/logout" role="menuitem">
+                    Logout
+                  </NavLink>
+                </li>
+              )}
+              {!this.props.user && (
+                <React.Fragment>
+                  <li>
+                    <NavLink to="/users/login" role="menuitem">
+                      Login
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/users/register" role="menuitem">
+                      Sign Up
+                    </NavLink>
+                  </li>
+                </React.Fragment>
+              )}
             </ul>
           </li>
         </ul>
