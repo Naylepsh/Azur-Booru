@@ -1,6 +1,6 @@
 import React from "react";
-import ToggableSidebarSection from "./common/toggableSidebarSection";
-import { deletePost } from "../services/postService";
+import ToggableSidebarSection from "../common/Sidebars/toggableSidebarSection";
+import { deletePost } from "../../services/postService";
 
 const del = async (id) => {
   await deletePost(id);

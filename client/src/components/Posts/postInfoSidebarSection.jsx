@@ -1,5 +1,5 @@
 import React from "react";
-import ToggableSidebarSection from "./common/toggableSidebarSection";
+import ToggableSidebarSection from "../common/Sidebars/toggableSidebarSection";
 
 // TODO: can be later turned into common component?
 

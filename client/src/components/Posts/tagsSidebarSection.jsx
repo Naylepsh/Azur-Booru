@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ToggableSidebarSection from "./common/toggableSidebarSection";
+import ToggableSidebarSection from "../common/Sidebars/toggableSidebarSection";
 
 class TagsSidebarSection extends Component {
   getTagClass = (tagName) => {

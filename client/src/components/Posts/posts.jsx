@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import queryString from "query-string";
 import SearchBar from "../common/SearchBar/searchBar";
-import PostsSidebar from "../postsSidebar";
+import PostsSidebar from "./postsSidebar";
 import Thumbnails from "../common/Thumbnails/thumbnails";
 import Pagination from "../common/Pagination/pagination";
 import { getPosts } from "../../services/postService";

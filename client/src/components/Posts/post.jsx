@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import queryString from "query-string";
 import SearchBar from "../common/SearchBar/searchBar";
-import PostSidebar from "../postSidebar";
+import PostSidebar from "./postSidebar";
 import Comments from "../common/Comments/comments";
 import { getPost, toggleVote } from "../../services/postService";
 import { toggleInArray, removeFromArrayIfExists } from "../../utils/iterable";
