@@ -12,6 +12,7 @@ import CommentList from "./components/Comments/commentList";
 import CommentSearch from "./components/Comments/commentSearch";
 import auth from "./services/authService";
 import "./App.css";
+import ProtectedRoute from "./components/common/Routing/protectedRoute";
 
 class App extends Component {
   state = {
@@ -24,13 +25,19 @@ class App extends Component {
   }
 
   render() {
+    const { user } = this.state;
     return (
       <React.Fragment>
-        <NavBar user={this.state.user} />
+        <NavBar user={user} />
         <Switch>
           {/* Random key as a way to force page reloading */}
-          <Route path="/posts/new" component={PostForm} key={Math.random()} />
-          <Route path="/posts/:id/edit" component={PostForm} />
+          <ProtectedRoute
+            path="/posts/new"
+            component={PostForm}
+            key={Math.random()}
+            user={user}
+          />
+          <ProtectedRoute path="/posts/:id/edit" component={PostForm} />
           <Route path="/posts/:id" component={Post} />
           <Route path="/posts" component={Posts} />
           <Route path="/comments/search" component={CommentSearch} />
