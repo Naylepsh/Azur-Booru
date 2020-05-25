@@ -16,9 +16,19 @@ class CommentList extends Component {
   defaultPageNumber = 1;
 
   async componentDidMount() {
+    await this.loadComponentFromQuery();
+  }
+
+  // Reloads comments on query change.
+  async componentDidUpdate(props, state) {
+    if (props.location.search !== this.props.location.search) {
+      await this.loadComponentFromQuery();
+    }
+  }
+
+  async loadComponentFromQuery() {
+    const query = this.props.location.search;
     const { data } = await getComments(this.props.location.search);
-    let query = queryString.parse(this.props.location.search);
-    query = query ? query : "";
 
     this.setState({ ...this.mapToViewModel(data), query });
   }
