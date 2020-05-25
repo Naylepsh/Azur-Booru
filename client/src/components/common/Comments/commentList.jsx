@@ -1,9 +1,9 @@
 import React from "react";
 import Comment from "./comment";
 import CommentPrompt from "./commentPrompt";
-import "./comments.css";
+import "./commentList.css";
 
-const Comments = ({ comments, onSubmit }) => {
+const CommentList = ({ comments, onSubmit }) => {
   return (
     <section className="comments">
       <div className="comments-list">
@@ -23,4 +23,4 @@ const Comments = ({ comments, onSubmit }) => {
   );
 };
 
-export default Comments;
+export default CommentList;
