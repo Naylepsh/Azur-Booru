@@ -9,10 +9,29 @@ class Comments extends Component {
 
   async componentDidMount() {
     const { data } = await getComments();
-    const comments = data.comments;
+    const comments = this.mapToViewModel(data);
 
     this.setState({ comments });
   }
+
+  mapToViewModel = (data) => {
+    const { comments } = data;
+
+    return comments.map(this.mapSingleCommentToViewModel);
+  };
+
+  mapSingleCommentToViewModel = (comment) => {
+    return {
+      id: comment._id,
+      body: comment.body,
+      score: comment.score,
+      author: comment.author,
+      post: {
+        id: comment.post._id,
+        thumbnailLink: comment.post.thumbnailLink,
+      },
+    };
+  };
 
   commentPreview = (comment) => {
     return (
