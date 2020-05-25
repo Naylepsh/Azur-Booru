@@ -2,34 +2,34 @@ import React, { Component } from "react";
 import Comment from "./../common/Comments/comment";
 import { getComments } from "./../../services/commentService";
 import queryString from "query-string";
+import Pagination from "../common/Pagination/pagination";
 
 class Comments extends Component {
   state = {
     comments: [],
     currentPage: this.defaultPageNumber,
+    lastPage: this.defaultPageNumber,
+    query: "",
   };
 
   defaultPageNumber = 1;
 
   async componentDidMount() {
-    const query = queryString.parse(this.props.location.search);
+    const { data } = await getComments(this.props.location.search);
+    let query = queryString.parse(this.props.location.search);
+    query = query ? query : "";
 
-    let currentPage = query.page;
-    if (!currentPage) {
-      currentPage = this.defaultPageNumber;
-    }
-    query["page"] = currentPage;
-
-    const { data } = await getComments(queryString.stringify(query));
-    const comments = this.mapToViewModel(data);
-
-    this.setState({ comments, currentPage });
+    this.setState({ ...this.mapToViewModel(data), query });
   }
 
   mapToViewModel = (data) => {
-    const { comments } = data;
+    const { comments, pageInfo } = data;
 
-    return comments.map(this.mapSingleCommentToViewModel);
+    return {
+      comments: comments.map(this.mapSingleCommentToViewModel),
+      currentPage: pageInfo.currentPage,
+      lastPage: pageInfo.lastPage,
+    };
   };
 
   mapSingleCommentToViewModel = (comment) => {
@@ -59,7 +59,8 @@ class Comments extends Component {
   };
 
   render() {
-    const { comments } = this.state;
+    const { comments, query, lastPage } = this.state;
+    console.log(lastPage);
 
     return (
       <div className="container">
@@ -69,6 +70,7 @@ class Comments extends Component {
               <ul>{comments.map(this.commentPreview)}</ul>
             </div>
           )}
+          <Pagination path="/comments" query={query} lastPage={lastPage} />
         </section>
       </div>
     );
