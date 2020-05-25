@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import Comment from "./../common/Comments/comment";
-import { getComments } from "./../../services/commentService";
+import Comment from "../common/Comments/comment";
+import { getComments } from "../../services/commentService";
 import queryString from "query-string";
 import Pagination from "../common/Pagination/pagination";
+import "./commentList.css";
 
-class Comments extends Component {
+class CommentList extends Component {
   state = {
     comments: [],
     currentPage: this.defaultPageNumber,
@@ -77,4 +78,4 @@ class Comments extends Component {
   }
 }
 
-export default Comments;
+export default CommentList;

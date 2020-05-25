@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import queryString from "query-string";
 import SearchBar from "../common/SearchBar/searchBar";
 import PostSidebar from "../postSidebar";
-import CommentList from "../common/Comments/commentList";
+import Comments from "../common/Comments/comments";
 import { getPost, toggleVote } from "../../services/postService";
 import { toggleInArray, removeFromArrayIfExists } from "../../utils/iterable";
 import { profile } from "../../services/userService";
@@ -137,7 +137,7 @@ class Post extends Component {
         <div id="content">
           {this.renderPostContent()}
           {post.comments && (
-            <CommentList
+            <Comments
               comments={post.comments}
               onSubmit={this.handleCommentSubmit}
             />
