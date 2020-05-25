@@ -1,18 +1,29 @@
 import React, { Component } from "react";
 import Comment from "./../common/Comments/comment";
 import { getComments } from "./../../services/commentService";
+import queryString from "query-string";
 
 class Comments extends Component {
   state = {
     comments: [],
+    currentPage: this.defaultPageNumber,
   };
 
+  defaultPageNumber = 1;
+
   async componentDidMount() {
-    const query = this.props.location.search;
-    const { data } = await getComments(query);
+    const query = queryString.parse(this.props.location.search);
+
+    let currentPage = query.page;
+    if (!currentPage) {
+      currentPage = this.defaultPageNumber;
+    }
+    query["page"] = currentPage;
+
+    const { data } = await getComments(queryString.stringify(query));
     const comments = this.mapToViewModel(data);
 
-    this.setState({ comments });
+    this.setState({ comments, currentPage });
   }
 
   mapToViewModel = (data) => {
@@ -36,10 +47,10 @@ class Comments extends Component {
 
   commentPreview = (comment) => {
     return (
-      <div className="comment-preview">
+      <div key={comment.id} className="comment-preview">
         <div className="thumbnail">
           <a href={`/posts/${comment.post.id}`}>
-            <img src={comment.post.thumbnailLink}></img>
+            <img src={comment.post.thumbnailLink} alt={comment.id}></img>
           </a>
         </div>
         <Comment {...comment} />
