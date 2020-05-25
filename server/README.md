@@ -4,7 +4,7 @@ Azurbooru is an image board inspired by Danbooru and Gelbooru with Azur Lane rel
 
 ## Features
 
-- Currently only basic functionality such as image posting, tag and comment adding is available
+- Currently only basic functionality such as image posting, tag and commenting is available
 
 ## Installation
 
