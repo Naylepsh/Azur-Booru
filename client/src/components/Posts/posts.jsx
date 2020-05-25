@@ -3,13 +3,13 @@ import queryString from "query-string";
 import SearchBar from "../common/SearchBar/searchBar";
 import PostsSidebar from "../postsSidebar";
 import Thumbnails from "../common/Thumbnails/thumbnails";
+import Pagination from "../common/Pagination/pagination";
 import { getPosts } from "../../services/postService";
 import {
   handleTagToggle,
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
 import "./posts.css";
-import Pagination from "../common/Pagination/pagination";
 
 class Posts extends Component {
   state = {
@@ -71,7 +71,7 @@ class Posts extends Component {
     const { lastPage } = pageInfo;
 
     return (
-      <div className="container text-center">
+      <div className="container">
         <SearchBar value={query} onChange={this.handleQueryChange} />
         <PostsSidebar
           tags={tags}
