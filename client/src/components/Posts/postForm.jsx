@@ -38,7 +38,11 @@ class PostForm extends Form {
   async componentDidMount() {
     try {
       const id = this.props.match.params.id;
-      if (!id) return;
+      if (!id) {
+        document.title = "Upload Post";
+        return;
+      }
+      document.title = `Edit ${id}`;
 
       const { data } = await getPost(id);
       this.setState({ data: this.mapToViewModel(data.post) });

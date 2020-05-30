@@ -23,10 +23,13 @@ class Posts extends Component {
   };
 
   async componentDidMount() {
+    document.title = "Posts";
+
     const { data } = await getPosts(this.props.location.search);
     let query = queryString.parse(this.props.location.search).tags;
     query = query ? query : "";
     const selectedTags = query.split();
+
     this.setState({ ...this.mapToViewModel(data), query, selectedTags });
   }
 

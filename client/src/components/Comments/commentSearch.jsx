@@ -1,6 +1,8 @@
 import React from "react";
 
 const CommentSearch = () => {
+  document.title = "Search Comments";
+
   return (
     <div className="container">
       <form action="/comments" method="GET" className="comment-search-form">

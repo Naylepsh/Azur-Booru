@@ -16,6 +16,8 @@ class CommentList extends Component {
   defaultPageNumber = 1;
 
   async componentDidMount() {
+    document.title = "Comments";
+
     await this.loadComponentFromQuery();
   }
 

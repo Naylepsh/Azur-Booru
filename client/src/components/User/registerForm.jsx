@@ -1,8 +1,8 @@
 import React from "react";
-import Form from "../common/Form/form";
 import Joi from "@hapi/joi";
-import "./userForm.css";
+import Form from "../common/Form/form";
 import { register } from "../../services/userService";
+import "./userForm.css";
 
 class RegisterForm extends Form {
   state = {
@@ -17,6 +17,10 @@ class RegisterForm extends Form {
     username: Joi.string().min(5).required().label("Username"),
     password: Joi.string().min(5).required().label("Password"),
   });
+
+  componentDidMount() {
+    document.title = "Register";
+  }
 
   doSubmit = async () => {
     try {

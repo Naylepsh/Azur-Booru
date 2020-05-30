@@ -1,8 +1,8 @@
 import React from "react";
-import Form from "../common/Form/form";
 import Joi from "@hapi/joi";
-import "./userForm.css";
+import Form from "../common/Form/form";
 import { login } from "../../services/authService";
+import "./userForm.css";
 
 class LoginForm extends Form {
   state = {
@@ -17,6 +17,10 @@ class LoginForm extends Form {
     username: Joi.string().required().label("Username"),
     password: Joi.string().min(5).required().label("Password"),
   });
+
+  componentDidMount() {
+    document.title = "Login";
+  }
 
   doSubmit = async () => {
     try {
