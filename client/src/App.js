@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import NavBar from "./components/Navbar/navbar";
 import Landing from "./components/Landing/landing";
 import Posts from "./components/Posts/posts";
@@ -10,9 +10,10 @@ import LoginForm from "./components/User/loginForm";
 import Logout from "./components/User/logout";
 import CommentList from "./components/Comments/commentList";
 import CommentSearch from "./components/Comments/commentSearch";
+import ProtectedRoute from "./components/common/Routing/protectedRoute";
+import NotFound from "./components/common/NotFound/notFound";
 import auth from "./services/authService";
 import "./App.css";
-import ProtectedRoute from "./components/common/Routing/protectedRoute";
 
 class App extends Component {
   state = {
@@ -45,7 +46,9 @@ class App extends Component {
           <Route path="/users/register" component={RegisterForm} />
           <Route path="/users/login" component={LoginForm} />
           <Route path="/users/logout" component={Logout} />
-          <Route path="/" component={Landing} />
+          <Route path="/not-found" component={NotFound} />
+          <Route exact path="/" component={Landing} />
+          <Redirect to="/not-found" />
         </Switch>
       </React.Fragment>
     );
