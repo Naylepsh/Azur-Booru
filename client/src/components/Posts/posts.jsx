@@ -9,7 +9,7 @@ import {
   handleTagToggle,
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
-import handleInternalError from "./../../utils/internalErrorHandler";
+import { handleInternalError } from "./../../utils/responseErrorHandler";
 import "./posts.css";
 
 class Posts extends Component {

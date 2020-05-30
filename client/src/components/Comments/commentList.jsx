@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import Comment from "../common/Comments/comment";
-import { getComments } from "../../services/commentService";
-import queryString from "query-string";
 import Pagination from "../common/Pagination/pagination";
+import { getComments } from "../../services/commentService";
+import { handleInternalError } from "../../utils/responseErrorHandler";
 import "./commentList.css";
 
 class CommentList extends Component {
@@ -30,9 +30,13 @@ class CommentList extends Component {
 
   async loadComponentFromQuery() {
     const query = this.props.location.search;
-    const { data } = await getComments(this.props.location.search);
 
-    this.setState({ ...this.mapToViewModel(data), query });
+    try {
+      const { data } = await getComments(this.props.location.search);
+      this.setState({ ...this.mapToViewModel(data), query });
+    } catch (err) {
+      handleInternalError();
+    }
   }
 
   mapToViewModel = (data) => {

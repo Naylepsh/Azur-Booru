@@ -10,7 +10,10 @@ import {
   handleTagToggle,
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
-import handleInternalError from "./../../utils/internalErrorHandler";
+import {
+  handleInternalError,
+  handleNotFound,
+} from "../../utils/responseErrorHandler";
 import "./posts.css";
 
 class Post extends Component {
@@ -38,6 +41,10 @@ class Post extends Component {
         query,
       });
     } catch (err) {
+      if (err.response && err.response.status === 404) {
+        return handleNotFound();
+      }
+
       handleInternalError();
     }
   }
