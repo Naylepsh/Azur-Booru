@@ -11,7 +11,8 @@ import Logout from "./components/User/logout";
 import CommentList from "./components/Comments/commentList";
 import CommentSearch from "./components/Comments/commentSearch";
 import ProtectedRoute from "./components/common/Routing/protectedRoute";
-import NotFound from "./components/common/NotFound/notFound";
+import NotFound from "./components/common/Errors/notFound";
+import InternalError from "./components/common/Errors/internalError";
 import auth from "./services/authService";
 import "./App.css";
 
@@ -47,6 +48,7 @@ class App extends Component {
           <Route path="/users/login" component={LoginForm} />
           <Route path="/users/logout" component={Logout} />
           <Route path="/not-found" component={NotFound} />
+          <Route path="/internal-error" component={InternalError} />
           <Route exact path="/" component={Landing} />
           <Redirect to="/not-found" />
         </Switch>
