@@ -9,6 +9,7 @@ import {
   handleTagToggle,
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
+import handleInternalError from "./../../utils/internalErrorHandler";
 import "./posts.css";
 
 class Posts extends Component {
@@ -23,9 +24,9 @@ class Posts extends Component {
   };
 
   async componentDidMount() {
-    document.title = "Posts";
-
     try {
+      document.title = "Posts";
+
       const { data } = await getPosts(this.props.location.search);
       let query = queryString.parse(this.props.location.search).tags;
       query = query ? query : "";
@@ -33,8 +34,7 @@ class Posts extends Component {
 
       this.setState({ ...this.mapToViewModel(data), query, selectedTags });
     } catch (err) {
-      // handling errors like 'network error' that are not HTTP errors
-      window.location = "/internal-error";
+      handleInternalError();
     }
   }
 

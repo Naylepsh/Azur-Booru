@@ -10,6 +10,7 @@ import {
   handleTagToggle,
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
+import handleInternalError from "./../../utils/internalErrorHandler";
 import "./posts.css";
 
 class Post extends Component {
@@ -21,20 +22,24 @@ class Post extends Component {
   };
 
   async componentDidMount() {
-    const id = this.props.match.params.id;
-    document.title = id;
+    try {
+      const id = this.props.match.params.id;
+      document.title = id;
 
-    let query = queryString.parse(this.props.location.search).tags;
-    query = query ? query : "";
-    const selectedTags = query.split();
-    const { data } = await getPost(id);
+      let query = queryString.parse(this.props.location.search).tags;
+      query = query ? query : "";
+      const selectedTags = query.split();
+      const { data } = await getPost(id);
 
-    this.setState({
-      post: this.mapToViewModel(data.post),
-      tags: data.tags,
-      selectedTags,
-      query,
-    });
+      this.setState({
+        post: this.mapToViewModel(data.post),
+        tags: data.tags,
+        selectedTags,
+        query,
+      });
+    } catch (err) {
+      handleInternalError();
+    }
   }
 
   mapToViewModel = (post) => {
