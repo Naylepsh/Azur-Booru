@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import queryString from "query-string";
 import "./pagination.css";
 
-const default_page_offset = 5;
+const DEFAULT_PAGE_OFFSET = 5;
+const PAGE_FIRST = "<<";
+const PAGE_PREVIOUS = "<";
+const PAGE_NEXT = ">";
+const PAGE_LAST = ">>";
 
 class Pagination extends Component {
   state = {
@@ -19,7 +23,7 @@ class Pagination extends Component {
     query = queryString.parse(query);
 
     if (!pageOffset) {
-      pageOffset = default_page_offset;
+      pageOffset = DEFAULT_PAGE_OFFSET;
     }
 
     if (!query) {
@@ -39,13 +43,14 @@ class Pagination extends Component {
     });
   }
 
-  getLinkClass = (pageNumber) => {
-    return (
-      "page " +
-      (pageNumber === this.state.currentPage
-        ? "active-page"
-        : "non-active-page")
-    );
+  isWithinBoundaries(page) {
+    const { lastPage } = this.props;
+
+    return page > 0 && page <= lastPage;
+  }
+
+  getLinkClass = (isActive = false) => {
+    return "page " + (isActive ? "active-page" : "non-active-page");
   };
 
   createHref = (pageNumber) => {
@@ -54,24 +59,27 @@ class Pagination extends Component {
     return `${this.state.path}?${queryString.stringify(query)}`;
   };
 
-  createPageLink = (page, lastPage) => {
+  createPageLink = (page, pageName = null, options = {}) => {
     return (
-      page > 0 &&
-      page <= lastPage && (
+      this.isWithinBoundaries(page) && (
         <a
           key={page}
           href={this.createHref(page)}
-          className={this.getLinkClass(page)}
+          className={this.getLinkClass(options && options.isActive)}
         >
-          {page}
+          {pageName || page}
         </a>
       )
     );
   };
 
+  createPageArrow = (page, symbol) => {
+    return this.createPageLink(page, symbol);
+  };
+
   render() {
-    const { lastPage } = this.props;
     const { currentPage, pageOffset } = this.state;
+    const { lastPage } = this.props;
     const previousPages = [...new Array(pageOffset).keys()].map(
       (i) => Number(currentPage) - pageOffset + i
     );
@@ -82,9 +90,13 @@ class Pagination extends Component {
     return (
       <section className="pagination">
         <span className="pages">
-          {previousPages.map((page) => this.createPageLink(page, lastPage))}
-          {this.createPageLink(currentPage, lastPage)}
-          {nextPages.map((page) => this.createPageLink(page, lastPage))}
+          {this.createPageArrow(1, PAGE_FIRST)}
+          {this.createPageArrow(currentPage - 1, PAGE_PREVIOUS)}
+          {previousPages.map((page) => this.createPageLink(page))}
+          {this.createPageLink(currentPage, null, { isActive: true })}
+          {nextPages.map((page) => this.createPageLink(page))}
+          {this.createPageArrow(currentPage + 1, PAGE_NEXT)}
+          {this.createPageArrow(lastPage, PAGE_LAST)}
         </span>
       </section>
     );
