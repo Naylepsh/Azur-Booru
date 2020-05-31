@@ -3,7 +3,7 @@ import Comment from "./comment";
 import CommentPrompt from "./commentPrompt";
 import "./comment.css";
 
-const Comments = ({ comments, onSubmit }) => {
+const Comments = ({ comments, onSubmit, showCommentPrompt }) => {
   return (
     <section className="comments">
       <div className="comments-list">
@@ -18,7 +18,7 @@ const Comments = ({ comments, onSubmit }) => {
           ))}
         </ul>
       </div>
-      <CommentPrompt onSubmit={onSubmit} />
+      {showCommentPrompt && <CommentPrompt onSubmit={onSubmit} />}
     </section>
   );
 };

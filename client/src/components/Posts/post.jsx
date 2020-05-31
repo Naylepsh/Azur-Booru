@@ -171,6 +171,7 @@ class Post extends Component {
             <Comments
               comments={post.comments}
               onSubmit={this.handleCommentSubmit}
+              showCommentPrompt={user.isLoggedIn}
             />
           )}
         </div>
