@@ -10,7 +10,7 @@ export function getComment(id) {
   return http.get(`${apiEndpoint}/${id}`);
 }
 
-export function postComment(postId, userId, body) {
-  const data = { postId, userId, body };
+export function postComment(postId, authorId, body) {
+  const data = { postId, authorId, body };
   return http.post(`${apiEndpoint}`, data);
 }

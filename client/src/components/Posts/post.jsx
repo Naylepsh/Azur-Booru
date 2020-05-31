@@ -84,15 +84,14 @@ class Post extends Component {
   handleCommentSubmit = async (commentBody) => {
     try {
       const postId = this.state.post.id;
-      const userId = this.props.user.id;
+      const userId = this.props.user._id;
 
-      await postComment(postId, userId, commentBody);
+      const { data: comment } = await postComment(postId, userId, commentBody);
 
-      const { data } = getPost(postId);
-      const comments = data.post.comments;
+      comment.author = { name: "You" }; // temporary solution -- load name from /profile maybe?
       const post = { ...this.state.post };
-      post.comments = comments;
-      this.setState({ comments });
+      post.comments.push(comment);
+      this.setState({ post });
     } catch (err) {
       if (err.response && err.response.status === 404) {
         handleNotFound();

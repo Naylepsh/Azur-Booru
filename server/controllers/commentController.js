@@ -53,29 +53,32 @@ exports.list = async (req, res) => {
 // };
 
 exports.create = async (req, res) => {
-  let post = await Post.findById(req.body.postId);
+  const { postId, authorId, body } = req.body;
+  const post = await Post.findById(req.body.postId);
   if (!post) {
     throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
-  req.body.comment.author = req.user._id;
-  req.body.comment.score = 0;
-  req.body.comment.post = post._id;
+  const commentData = {
+    author: authorId,
+    post: postId,
+    score: 0,
+    body,
+  };
+
   const session = await mongoose.startSession();
   session.startTransaction();
-  let comment;
   try {
-    comment = await Comment.create(req.body.comment);
+    const comment = await Comment.create(commentData);
     post.comments.push(comment);
     await post.save();
     await session.commitTransaction();
+    res.send(comment);
   } catch (e) {
     await session.abortTransaction();
     throw new StatusError(500, e.message);
   } finally {
     session.endSession();
-    res.send(comment);
-    // res.redirect(`/posts/${req.body.postId}`);
   }
 };
 
