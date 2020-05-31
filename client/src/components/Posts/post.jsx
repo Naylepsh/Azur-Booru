@@ -182,6 +182,7 @@ class Post extends Component {
               comments={post.comments}
               onSubmit={this.handleCommentSubmit}
               showCommentPrompt={user.isLoggedIn}
+              userId={this.props.user && this.props.user._id}
             />
           )}
         </div>

@@ -3,7 +3,7 @@ import Comment from "./comment";
 import CommentPrompt from "./commentPrompt";
 import "./comment.css";
 
-const Comments = ({ comments, onSubmit, showCommentPrompt }) => {
+const Comments = ({ comments, onSubmit, showCommentPrompt, userId }) => {
   return (
     <section className="comments">
       <div className="comments-list">
@@ -14,6 +14,7 @@ const Comments = ({ comments, onSubmit, showCommentPrompt }) => {
               body={comment.body}
               score={comment.score}
               author={comment.author}
+              isUserAuthorized={userId === comment.author._id}
             />
           ))}
         </ul>
