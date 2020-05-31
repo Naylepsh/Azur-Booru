@@ -15,6 +15,7 @@ import {
   handleNotFound,
 } from "../../utils/responseErrorHandler";
 import "./posts.css";
+import { handleInternalError } from "./../../utils/responseErrorHandler";
 
 class Post extends Component {
   state = {
@@ -90,23 +91,32 @@ class Post extends Component {
   };
 
   handleVoteClick = async (voteType) => {
-    const post = { ...this.state.post };
-    let upvoters = [...post.voters.up];
-    let downvoters = [...post.voters.down];
-    const { user } = this.props;
-    toggleVote(post.id, voteType);
+    try {
+      const post = { ...this.state.post };
+      let upvoters = [...post.voters.up];
+      let downvoters = [...post.voters.down];
+      const { user } = this.props;
 
-    if (voteType === "up") {
-      upvoters = toggleInArray(user._id, upvoters);
-      downvoters = removeFromArrayIfExists(user._id, downvoters);
-    } else if (voteType === "down") {
-      downvoters = toggleInArray(user._id, downvoters);
-      upvoters = removeFromArrayIfExists(user._id, upvoters);
+      toggleVote(post.id, voteType);
+
+      if (voteType === "up") {
+        upvoters = toggleInArray(user._id, upvoters);
+        downvoters = removeFromArrayIfExists(user._id, downvoters);
+      } else if (voteType === "down") {
+        downvoters = toggleInArray(user._id, downvoters);
+        upvoters = removeFromArrayIfExists(user._id, upvoters);
+      }
+
+      post.voters = { up: upvoters, down: downvoters };
+      post.score = upvoters.length - downvoters.length;
+      this.setState({ post });
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        handleNotFound();
+      } else {
+        handleInternalError();
+      }
     }
-
-    post.voters = { up: upvoters, down: downvoters };
-    post.score = upvoters.length - downvoters.length;
-    this.setState({ post });
   };
 
   renderPostContent() {
