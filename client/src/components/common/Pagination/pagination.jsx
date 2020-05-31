@@ -63,7 +63,7 @@ class Pagination extends Component {
     return (
       this.isWithinBoundaries(page) && (
         <a
-          key={page}
+          key={pageName || page}
           href={this.createHref(page)}
           className={this.getLinkClass(options && options.isActive)}
         >
