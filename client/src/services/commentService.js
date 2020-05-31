@@ -9,3 +9,8 @@ export function getComments(query) {
 export function getComment(id) {
   return http.get(`${apiEndpoint}/${id}`);
 }
+
+export function postComment(postId, userId, body) {
+  const data = { postId, userId, body };
+  return http.post(`${apiEndpoint}`, data);
+}

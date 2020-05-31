@@ -27,9 +27,7 @@ export function uploadPost(post) {
 }
 
 export function deletePost(id) {
-  if (id) {
-    return http.delete(`${apiEndpoint}/${id}`);
-  }
+  return http.delete(`${apiEndpoint}/${id}`);
 }
 
 export function toggleVote(id, voteType) {

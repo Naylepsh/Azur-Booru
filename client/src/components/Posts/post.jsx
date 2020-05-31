@@ -14,6 +14,7 @@ import {
   handleNotFound,
 } from "../../utils/responseErrorHandler";
 import "./posts.css";
+import { postComment } from "./../../services/commentService";
 
 class Post extends Component {
   state = {
@@ -80,13 +81,23 @@ class Post extends Component {
     this.setState({ selectedTags, query });
   };
 
-  handleCommentSubmit = (value) => {
-    // const { postId } = this.props;
-    // get user
-    // create comment
-    // send post request to server
-    // update state
-    console.log(value);
+  handleCommentSubmit = async (commentBody) => {
+    try {
+      const postId = this.state.post.id;
+      const userId = this.props.user.id;
+
+      await postComment(postId, userId, commentBody);
+
+      const { data } = getPost(postId);
+      const comments = data.post.comments;
+      const post = { ...this.state.post };
+      post.comments = comments;
+      this.setState({ comments });
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        handleNotFound();
+      }
+    }
   };
 
   handleVoteClick = async (voteType) => {
