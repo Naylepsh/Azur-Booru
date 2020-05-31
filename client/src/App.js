@@ -40,7 +40,10 @@ class App extends Component {
             user={user}
           />
           <ProtectedRoute path="/posts/:id/edit" component={PostForm} />
-          <Route path="/posts/:id" component={Post} />
+          <Route
+            path="/posts/:id"
+            render={(props) => <Post {...props} user={user} />}
+          />
           <Route path="/posts" component={Posts} />
           <Route path="/comments/search" component={CommentSearch} />
           <Route path="/comments" component={CommentList} />

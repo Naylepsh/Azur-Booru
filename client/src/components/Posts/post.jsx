@@ -93,7 +93,7 @@ class Post extends Component {
     const post = { ...this.state.post };
     let upvoters = [...post.voters.up];
     let downvoters = [...post.voters.down];
-    const { data: user } = await profile(); // TODO: make user global (store in App or something)
+    const { user } = this.props;
     toggleVote(post.id, voteType);
 
     if (voteType === "up") {
