@@ -5,7 +5,6 @@ import PostSidebar from "./postSidebar";
 import Comments from "../common/Comments/comments";
 import { getPost, toggleVote } from "../../services/postService";
 import { toggleInArray, removeFromArrayIfExists } from "../../utils/iterable";
-import { profile } from "../../services/userService";
 import {
   handleTagToggle,
   handleQueryChange,
@@ -15,7 +14,6 @@ import {
   handleNotFound,
 } from "../../utils/responseErrorHandler";
 import "./posts.css";
-import { handleInternalError } from "./../../utils/responseErrorHandler";
 
 class Post extends Component {
   state = {
@@ -59,6 +57,7 @@ class Post extends Component {
       rating: post.rating,
       comments: post.comments,
       voters: post.voters,
+      author: { id: post.author.id, name: post.author.name },
     };
   };
 
@@ -150,6 +149,12 @@ class Post extends Component {
 
   render() {
     const { post, tags, selectedTags, query } = this.state;
+    const user = {
+      isLoggedIn: this.props.user != null,
+      isAuthor:
+        post.author && this.props.user && this.props.user.id === post.author.id,
+    };
+
     return (
       <div className="container">
         <SearchBar value={query} onChange={this.handleQueryChange} />
@@ -158,6 +163,7 @@ class Post extends Component {
           post={post}
           selectedTags={selectedTags}
           handleTagToggle={this.handleTagToggle}
+          user={user}
         />
         <div id="content">
           {this.renderPostContent()}

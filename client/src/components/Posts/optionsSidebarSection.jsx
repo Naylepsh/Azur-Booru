@@ -7,31 +7,35 @@ const del = async (id) => {
   window.location = "/posts";
 };
 
-const renderItems = (id) => {
+const renderItems = (id, user) => {
   return (
     <React.Fragment>
-      <div>
-        <li className="sidebar-section-generic-content">
-          <a href={`/posts/${id}/edit`}>Edit</a>
-        </li>
-      </div>
-      <div>
-        <li className="sidebar-section-generic-content">
-          <button id="delete-button" onClick={() => del(id)}>
-            Delete
-          </button>
-        </li>
-      </div>
+      {user && user.isLoggedIn && user.isAuthor && (
+        <React.Fragment>
+          <div>
+            <li className="sidebar-section-generic-content">
+              <a href={`/posts/${id}/edit`}>Edit</a>
+            </li>
+          </div>
+          <div>
+            <li className="sidebar-section-generic-content">
+              <button id="delete-button" onClick={() => del(id)}>
+                Delete
+              </button>
+            </li>
+          </div>
+        </React.Fragment>
+      )}
     </React.Fragment>
   );
 };
 
-const OptionsSidebarSection = ({ id }) => {
+const OptionsSidebarSection = ({ id, user }) => {
   return (
     <ToggableSidebarSection
       sectionClasses="sidebar-section-generic"
       name="Options"
-      renderItems={() => renderItems(id)}
+      renderItems={() => renderItems(id, user)}
     />
   );
 };

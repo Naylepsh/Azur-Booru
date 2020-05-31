@@ -6,7 +6,7 @@ import OptionsSidebarSection from "./optionsSidebarSection";
 class PostSidebar extends Component {
   state = {};
   render() {
-    const { tags, post, selectedTags, handleTagToggle } = this.props;
+    const { tags, post, selectedTags, handleTagToggle, user } = this.props;
     const { id, source, score, rating } = post;
     return (
       <aside className="sidebar">
@@ -22,7 +22,7 @@ class PostSidebar extends Component {
           score={score}
           rating={rating}
         />
-        <OptionsSidebarSection id={id} />
+        <OptionsSidebarSection id={id} user={user} />
       </aside>
     );
   }
