@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./comment.css";
-import { toggleVote, deleteComment } from "./../../../services/commentService";
+import { toggleVote } from "./../../../services/commentService";
 import { handleInternalError } from "./../../../utils/responseErrorHandler";
 
 const VOTE_NONE = "none";

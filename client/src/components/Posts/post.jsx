@@ -14,7 +14,6 @@ import {
   handleNotFound,
 } from "../../utils/responseErrorHandler";
 import "./posts.css";
-import { postComment, deleteComment } from "./../../services/commentService";
 
 class Post extends Component {
   state = {
