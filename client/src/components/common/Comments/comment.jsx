@@ -27,16 +27,14 @@ class Comment extends Component {
 
   sendVote = async (voteType) => {
     try {
-      const { id, userId } = this.props;
+      const { id } = this.props;
       let { score, vote: oldVote } = this.state;
-      let vote;
 
       // TODO:
       // since post uses similar voting mechanic,
       // perhaphs it would make sense to create seperate vote handler
       // that given oldVote, newVote and oldScore returns newScore
       if (oldVote === VOTE_NONE) {
-        vote = voteType;
         if (voteType === VOTE_UP) {
           score++;
         } else {
