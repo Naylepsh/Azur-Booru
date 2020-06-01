@@ -59,6 +59,7 @@ class CommentList extends Component {
         id: comment.post._id,
         thumbnailLink: comment.post.thumbnailLink,
       },
+      voters: comment.voters,
     };
   };
 
