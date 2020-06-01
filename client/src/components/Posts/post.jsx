@@ -88,7 +88,7 @@ class Post extends Component {
 
       const { data: comment } = await postComment(postId, userId, commentBody);
 
-      comment.author = { name: "You" }; // temporary solution -- load name from /profile maybe?
+      comment.author = { name: "You", _id: userId }; // temporary solution -- load name from /profile maybe?
       const post = { ...this.state.post };
       post.comments.push(comment);
       this.setState({ post });
