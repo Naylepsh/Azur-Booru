@@ -15,7 +15,9 @@ export function postComment(postId, authorId, body) {
   return http.post(`${apiEndpoint}`, data);
 }
 
-export function deleteComment(commentId) {}
+export function deleteComment(id) {
+  return http.delete(`${apiEndpoint}/${id}`);
+}
 
 export function toggleVote(commentId, voteType) {
   return http.post(`${apiEndpoint}/${commentId}/toggle-vote`, {

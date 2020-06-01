@@ -93,14 +93,14 @@ exports.show = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-  let post = await Post.findById(req.body.postId);
-  if (!post) {
-    throw new StatusError(404, `Post ${req.params.id} not found`);
-  }
-
   const comment = await Comment.findById(req.params.id);
   if (!comment) {
     throw new StatusError(404, `Comment ${req.params.id} not found`);
+  }
+
+  const post = await Post.findById(comment.post);
+  if (!post) {
+    throw new StatusError(404, `Post ${comment.post} not found`);
   }
 
   const session = await mongoose.startSession();

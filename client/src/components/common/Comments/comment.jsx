@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./comment.css";
-import { toggleVote } from "./../../../services/commentService";
+import { toggleVote, deleteComment } from "./../../../services/commentService";
 import { handleInternalError } from "./../../../utils/responseErrorHandler";
 
 const VOTE_NONE = "none";
@@ -66,11 +66,9 @@ class Comment extends Component {
     }
   };
 
-  deleteComment = (commentId, userId) => {};
-
   render() {
     const score = this.state.score;
-    const { body, author, userId } = this.props;
+    const { id, body, author, userId, onDelete } = this.props;
     const isUserAuthorized = userId === author._id;
     const userAvatar = "/assets/default-avatar.jpg";
 
@@ -105,17 +103,7 @@ class Comment extends Component {
               </button>
             </li>
             <li>
-              <form
-                action="/comments/<%= comment._id %>?_method=DELETE"
-                method="POST"
-              >
-                <input
-                  type="hidden"
-                  name="postId"
-                  value="<%= comment.post._id %>"
-                />
-                <button>Delete</button>
-              </form>
+              <button onClick={() => onDelete(id)}>Delete</button>
             </li>
           </menu>
         )}

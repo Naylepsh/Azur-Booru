@@ -14,7 +14,7 @@ import {
   handleNotFound,
 } from "../../utils/responseErrorHandler";
 import "./posts.css";
-import { postComment } from "./../../services/commentService";
+import { postComment, deleteComment } from "./../../services/commentService";
 
 class Post extends Component {
   state = {
@@ -96,6 +96,22 @@ class Post extends Component {
       if (err.response && err.response.status === 404) {
         handleNotFound();
       }
+    }
+  };
+
+  handleCommentDelete = async (commentId) => {
+    try {
+      await deleteComment(commentId);
+
+      const post = { ...this.state.post };
+      const comments = post.comments.filter(
+        (comment) => comment._id !== commentId
+      );
+      post.comments = comments;
+
+      this.setState({ post });
+    } catch (err) {
+      // do nothing atm
     }
   };
 
@@ -181,6 +197,7 @@ class Post extends Component {
             <Comments
               comments={post.comments}
               onSubmit={this.handleCommentSubmit}
+              onDelete={this.handleCommentDelete}
               showCommentPrompt={user.isLoggedIn}
               userId={this.props.user && this.props.user._id}
             />

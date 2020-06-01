@@ -3,7 +3,13 @@ import Comment from "./comment";
 import CommentPrompt from "./commentPrompt";
 import "./comment.css";
 
-const Comments = ({ comments, onSubmit, showCommentPrompt, userId }) => {
+const Comments = ({
+  comments,
+  onSubmit,
+  onDelete,
+  showCommentPrompt,
+  userId,
+}) => {
   return (
     <section className="comments">
       <div className="comments-list">
@@ -17,6 +23,7 @@ const Comments = ({ comments, onSubmit, showCommentPrompt, userId }) => {
               author={comment.author}
               voters={comment.voters}
               userId={userId}
+              onDelete={onDelete}
             />
           ))}
         </ul>
