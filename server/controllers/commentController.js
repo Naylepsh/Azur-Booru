@@ -53,7 +53,8 @@ exports.list = async (req, res) => {
 // };
 
 exports.create = async (req, res) => {
-  const { postId, authorId, body } = req.body;
+  const authorId = req.user._id;
+  const { postId, body } = req.body;
   const post = await Post.findById(req.body.postId);
   if (!post) {
     throw new StatusError(404, `Post ${req.params.id} not found`);
@@ -120,7 +121,8 @@ exports.delete = async (req, res) => {
 };
 
 exports.toggleVote = async (req, res) => {
-  const { voteType, userId } = req.body;
+  const voteType = req.body.voteType;
+  const userId = req.user._id;
   const comment = await Comment.findById(req.params.id);
   if (!comment) {
     throw new StatusError(404, `Comment ${req.params.id} not found`);

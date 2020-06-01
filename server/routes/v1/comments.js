@@ -3,14 +3,19 @@ const router = express.Router();
 const { storage } = require("../../utils/storage");
 const Comment = require("../../controllers/commentController");
 const { asyncWrapper } = require("../../middleware/route-wrappers");
+const { authorizeUser } = require("../../middleware/auth");
 
 router
   .get("/", asyncWrapper(Comment.list))
-  // .get("/search", Comment.search)
-  .post("/", asyncWrapper(Comment.create))
+  .post("/", authorizeUser, asyncWrapper(Comment.create))
   .get("/:id", asyncWrapper(Comment.show))
-  .delete("/:id", asyncWrapper(Comment.delete))
+  .delete("/:id", authorizeUser, asyncWrapper(Comment.delete))
   // storage.single() has to be there due to some XMLHttpRequest form shenanigans
-  .post("/:id/toggle-vote", storage.single(), asyncWrapper(Comment.toggleVote));
+  .post(
+    "/:id/toggle-vote",
+    authorizeUser,
+    storage.single(),
+    asyncWrapper(Comment.toggleVote)
+  );
 
 module.exports = router;

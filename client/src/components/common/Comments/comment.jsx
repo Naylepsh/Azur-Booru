@@ -31,8 +31,6 @@ class Comment extends Component {
       let { score, vote: oldVote } = this.state;
       let vote;
 
-      await toggleVote(id, userId, voteType);
-
       // TODO:
       // since post uses similar voting mechanic,
       // perhaphs it would make sense to create seperate vote handler
@@ -59,6 +57,8 @@ class Comment extends Component {
       }
 
       this.setState({ score, vote: voteType });
+
+      await toggleVote(id, voteType);
     } catch (err) {
       if (err.response && err.response.status === 404) {
         // missing comment error can be ignored
@@ -67,6 +67,8 @@ class Comment extends Component {
       }
     }
   };
+
+  deleteComment = (commentId, userId) => {};
 
   render() {
     const score = this.state.score;
