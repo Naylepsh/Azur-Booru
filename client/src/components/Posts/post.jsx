@@ -81,40 +81,6 @@ class Post extends Component {
     this.setState({ selectedTags, query });
   };
 
-  handleCommentSubmit = async (commentBody) => {
-    try {
-      const postId = this.state.post.id;
-      const userId = this.props.user._id;
-
-      const { data: comment } = await postComment(postId, userId, commentBody);
-
-      comment.author = { name: "You", _id: userId }; // temporary solution -- load name from /profile maybe?
-      const post = { ...this.state.post };
-      post.comments.push(comment);
-      this.setState({ post });
-    } catch (err) {
-      if (err.response && err.response.status === 404) {
-        handleNotFound();
-      }
-    }
-  };
-
-  handleCommentDelete = async (commentId) => {
-    try {
-      await deleteComment(commentId);
-
-      const post = { ...this.state.post };
-      const comments = post.comments.filter(
-        (comment) => comment._id !== commentId
-      );
-      post.comments = comments;
-
-      this.setState({ post });
-    } catch (err) {
-      // do nothing atm
-    }
-  };
-
   handleVoteClick = async (voteType) => {
     try {
       const post = { ...this.state.post };
@@ -196,10 +162,9 @@ class Post extends Component {
           {post.comments && (
             <Comments
               comments={post.comments}
-              onSubmit={this.handleCommentSubmit}
-              onDelete={this.handleCommentDelete}
               showCommentPrompt={user.isLoggedIn}
               userId={this.props.user && this.props.user._id}
+              postId={post.id}
             />
           )}
         </div>
