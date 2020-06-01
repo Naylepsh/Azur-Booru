@@ -14,3 +14,10 @@ export function postComment(postId, authorId, body) {
   const data = { postId, authorId, body };
   return http.post(`${apiEndpoint}`, data);
 }
+
+export function toggleVote(commentId, userId, voteType) {
+  return http.post(`${apiEndpoint}/${commentId}/toggle-vote`, {
+    voteType,
+    userId,
+  });
+}

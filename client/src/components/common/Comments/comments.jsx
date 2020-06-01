@@ -14,6 +14,7 @@ const Comments = ({ comments, onSubmit, showCommentPrompt, userId }) => {
               body={comment.body}
               score={comment.score}
               author={comment.author}
+              voters={comment.voters}
               userId={userId}
             />
           ))}
