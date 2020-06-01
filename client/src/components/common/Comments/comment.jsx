@@ -1,12 +1,15 @@
 import React from "react";
 import "./comment.css";
 
-const Comment = ({ id, body, score, author, isUserAuthorized }) => {
+const Comment = ({ id, body, score, author, userId }) => {
+  const isUserAuthorized = userId === author._id;
+  const userAvatar = "/assets/default-avatar.jpg";
+
   return (
     <li className="comment">
       <span className="hidden comment-id">{id}</span>
       <div className="comment-author-avatar">
-        <img src="/assets/default-avatar.jpg" alt={`${author.name}'s avatar`} />
+        <img src={userAvatar} alt={`${author.name}'s avatar`} />
       </div>
       <div className="comment-author-info">
         <a href="#">{author.name}</a>

@@ -14,7 +14,7 @@ const Comments = ({ comments, onSubmit, showCommentPrompt, userId }) => {
               body={comment.body}
               score={comment.score}
               author={comment.author}
-              isUserAuthorized={userId === comment.author._id}
+              userId={userId}
             />
           ))}
         </ul>
