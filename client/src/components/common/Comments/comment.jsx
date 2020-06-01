@@ -3,9 +3,9 @@ import "./comment.css";
 import { toggleVote } from "./../../../services/commentService";
 import { handleInternalError } from "./../../../utils/responseErrorHandler";
 
-const VOTE_NONE = 0;
-const VOTE_DOWN = -1;
-const VOTE_UP = 1;
+const VOTE_NONE = "none";
+const VOTE_DOWN = "down";
+const VOTE_UP = "up";
 
 class Comment extends Component {
   state = {
@@ -39,7 +39,11 @@ class Comment extends Component {
       // that given oldVote, newVote and oldScore returns newScore
       if (oldVote === VOTE_NONE) {
         vote = voteType;
-        score += voteType;
+        if (voteType === VOTE_UP) {
+          score++;
+        } else {
+          score--;
+        }
       } else if (oldVote === VOTE_DOWN) {
         if (voteType === VOTE_DOWN) {
           score += 1;

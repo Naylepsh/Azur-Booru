@@ -10,6 +10,7 @@ const Comments = ({ comments, onSubmit, showCommentPrompt, userId }) => {
         <ul>
           {comments.map((comment) => (
             <Comment
+              id={comment._id}
               key={comment._id}
               body={comment.body}
               score={comment.score}

@@ -120,20 +120,21 @@ exports.delete = async (req, res) => {
 };
 
 exports.toggleVote = async (req, res) => {
-  let comment = await Comment.findById(req.params.id);
+  const { voteType, userId } = req.body;
+  const comment = await Comment.findById(req.params.id);
   if (!comment) {
     throw new StatusError(404, `Comment ${req.params.id} not found`);
   }
 
-  if (req.body.voteType === "up") {
-    miscUtils.toggleInArray(req.user._id, comment.voters.up);
-    miscUtils.removeFromArrayIfExists(req.user._id, comment.voters.down);
-  } else if (req.body.voteType === "down") {
-    miscUtils.toggleInArray(req.user._id, comment.voters.down);
-    miscUtils.removeFromArrayIfExists(req.user._id, comment.voters.up);
+  if (voteType === "up") {
+    miscUtils.toggleInArray(userId, comment.voters.up);
+    miscUtils.removeFromArrayIfExists(userId, comment.voters.down);
+  } else if (voteType === "down") {
+    miscUtils.toggleInArray(userId, comment.voters.down);
+    miscUtils.removeFromArrayIfExists(userId, comment.voters.up);
   }
   comment.score = comment.voters.up.length - comment.voters.down.length;
   await comment.save();
 
-  res.end(comment.score.toString());
+  res.send(comment.score.toString());
 };
