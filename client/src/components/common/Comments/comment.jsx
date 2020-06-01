@@ -58,7 +58,7 @@ class Comment extends Component {
         }
       }
 
-      this.setState({ score, vote });
+      this.setState({ score, vote: voteType });
     } catch (err) {
       if (err.response && err.response.status === 404) {
         // missing comment error can be ignored
@@ -69,7 +69,8 @@ class Comment extends Component {
   };
 
   render() {
-    const { body, score, author, userId } = this.props;
+    const score = this.state.score;
+    const { body, author, userId } = this.props;
     const isUserAuthorized = userId === author._id;
     const userAvatar = "/assets/default-avatar.jpg";
 
