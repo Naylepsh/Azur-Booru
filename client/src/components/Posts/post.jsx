@@ -19,6 +19,7 @@ import VotingButtonDown from "../common/VotingButtons/votingButtonDown";
 
 const VOTE_UP = "up";
 const VOTE_DOWN = "down";
+const VOTE_NONE = "none";
 
 class Post extends Component {
   state = {
@@ -26,6 +27,7 @@ class Post extends Component {
     tags: [],
     selectedTags: [],
     query: "",
+    vote: "",
   };
 
   async componentDidMount() {
@@ -37,21 +39,36 @@ class Post extends Component {
       query = query ? query : "";
       const selectedTags = query.split();
       const { data } = await getPost(id);
+      const post = this.mapToViewModel(data.post);
+
+      const vote = this.getVote(post);
 
       this.setState({
-        post: this.mapToViewModel(data.post),
+        post,
         tags: data.tags,
         selectedTags,
         query,
+        vote,
       });
     } catch (err) {
       if (err.response && err.response.status === 404) {
         return handleNotFound();
       }
-
       handleInternalError();
     }
   }
+
+  getVote = (post) => {
+    const userId = this.props.user && this.props.user._id;
+
+    if (post.voters.up.includes(userId)) {
+      return VOTE_UP;
+    }
+    if (post.voters.down.includes(userId)) {
+      return VOTE_DOWN;
+    }
+    return VOTE_NONE;
+  };
 
   mapToViewModel = (post) => {
     return {
@@ -115,12 +132,20 @@ class Post extends Component {
   };
 
   renderPostContent() {
+    const vote = this.state.vote;
+
     return (
       <section className="post-image">
         <img src={this.state.post.imageLink} alt="post" />
         <menu className="post-menu">
-          <VotingButtonUp onClick={() => this.handleVoteClick(VOTE_UP)} />
-          <VotingButtonDown onClick={() => this.handleVoteClick(VOTE_DOWN)} />
+          <VotingButtonUp
+            isActive={vote === VOTE_UP}
+            onClick={() => this.handleVoteClick(VOTE_UP)}
+          />
+          <VotingButtonDown
+            isActive={vote === VOTE_DOWN}
+            onClick={() => this.handleVoteClick(VOTE_DOWN)}
+          />
         </menu>
       </section>
     );
