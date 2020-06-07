@@ -1,13 +1,10 @@
 import React, { Component } from "react";
-import "./comment.css";
-import { toggleVote } from "./../../../services/commentService";
-import { handleInternalError } from "./../../../utils/responseErrorHandler";
 import VotingButtonUp from "../VotingButtons/votingButtonUp";
 import VotingButtonDown from "../VotingButtons/votingButtonDown";
-
-const VOTE_NONE = "none";
-const VOTE_DOWN = "down";
-const VOTE_UP = "up";
+import { toggleVote } from "./../../../services/commentService";
+import { handleInternalError } from "./../../../utils/responseErrorHandler";
+import { VOTE_NONE, VOTE_DOWN, VOTE_UP, castVote } from "../../../utils/voting";
+import "./comment.css";
 
 class Comment extends Component {
   state = {
@@ -27,44 +24,14 @@ class Comment extends Component {
     this.setState({ score, vote });
   }
 
-  sendVote = async (voteType) => {
+  sendVote = async (newVote) => {
     try {
-      const { id } = this.props;
-      let { score, vote: oldVote } = this.state;
-      let vote;
-
-      // TODO:
-      // since post uses similar voting mechanic,
-      // perhaphs it would make sense to create seperate vote handler
-      // that given oldVote, newVote and oldScore returns newScore
-      if (oldVote === VOTE_NONE) {
-        if (voteType === VOTE_UP) {
-          score++;
-        } else {
-          score--;
-        }
-        vote = voteType;
-      } else if (oldVote === VOTE_DOWN) {
-        if (voteType === VOTE_DOWN) {
-          score += 1;
-          vote = VOTE_NONE;
-        } else {
-          score += 2;
-          vote = voteType;
-        }
-      } else if (oldVote === VOTE_UP) {
-        if (voteType === VOTE_UP) {
-          score -= 1;
-          vote = VOTE_NONE;
-        } else {
-          score -= 2;
-          vote = voteType;
-        }
-      }
+      const id = this.props.id;
+      const { score: oldScore, vote: oldVote } = this.state;
+      const { score, vote } = castVote(oldVote, newVote, oldScore);
 
       this.setState({ score, vote });
-
-      await toggleVote(id, voteType);
+      await toggleVote(id, newVote);
     } catch (err) {
       if (err.response && err.response.status === 404) {
         // missing comment error can be ignored
