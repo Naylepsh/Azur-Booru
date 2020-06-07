@@ -3,6 +3,8 @@ import queryString from "query-string";
 import SearchBar from "../common/SearchBar/searchBar";
 import PostSidebar from "./postSidebar";
 import Comments from "../common/Comments/comments";
+import VotingButtonUp from "../common/VotingButtons/votingButtonUp";
+import VotingButtonDown from "../common/VotingButtons/votingButtonDown";
 import { getPost, toggleVote } from "../../services/postService";
 import { toggleInArray, removeFromArrayIfExists } from "../../utils/iterable";
 import {
@@ -14,8 +16,6 @@ import {
   handleNotFound,
 } from "../../utils/responseErrorHandler";
 import "./posts.css";
-import VotingButtonUp from "../common/VotingButtons/votingButtonUp";
-import VotingButtonDown from "../common/VotingButtons/votingButtonDown";
 
 const VOTE_UP = "up";
 const VOTE_DOWN = "down";
@@ -33,16 +33,13 @@ class Post extends Component {
   async componentDidMount() {
     try {
       const id = this.props.match.params.id;
-      document.title = id;
-
-      let query = queryString.parse(this.props.location.search).tags;
-      query = query ? query : "";
-      const selectedTags = query.split();
+      const query = this.getTagQuery();
+      const selectedTags = this.parseTagsFromQuery(query);
       const { data } = await getPost(id);
       const post = this.mapToViewModel(data.post);
+      const vote = this.getUserPostVote(post);
 
-      const vote = this.getVote(post);
-
+      this.setPageTitle(id);
       this.setState({
         post,
         tags: data.tags,
@@ -58,7 +55,24 @@ class Post extends Component {
     }
   }
 
-  getVote = (post) => {
+  setPageTitle = (title) => {
+    document.title = title;
+  };
+
+  getTagQuery = () => {
+    let query = queryString.parse(this.props.location.search).tags;
+    query = query ? query : "";
+
+    return query;
+  };
+
+  parseTagsFromQuery = (query) => {
+    const selectedTags = query.split();
+
+    return selectedTags;
+  };
+
+  getUserPostVote = (post) => {
     const userId = this.props.user && this.props.user._id;
 
     if (post.voters.up.includes(userId)) {
@@ -87,7 +101,7 @@ class Post extends Component {
     return this.state.tags.map((tag) => tag.name);
   };
 
-  handleTagToggle = (tagName) => {
+  toggleTag = (tagName) => {
     const { query, selectedTags } = handleTagToggle(tagName, [
       ...this.state.selectedTags,
     ]);
@@ -95,14 +109,14 @@ class Post extends Component {
     this.setState({ selectedTags, query });
   };
 
-  handleQueryChange = ({ currentTarget: input }) => {
+  changeQuery = ({ currentTarget: input }) => {
     const query = input.value;
     const selectedTags = handleQueryChange(query, this.getTagNames());
 
     this.setState({ selectedTags, query });
   };
 
-  handleVoteClick = async (voteType) => {
+  vote = async (voteType) => {
     try {
       const post = { ...this.state.post };
       let upvoters = [...post.voters.up];
@@ -132,19 +146,17 @@ class Post extends Component {
   };
 
   renderPostContent() {
-    const vote = this.state.vote;
-
     return (
       <section className="post-image">
         <img src={this.state.post.imageLink} alt="post" />
         <menu className="post-menu">
           <VotingButtonUp
-            isActive={vote === VOTE_UP}
-            onClick={() => this.handleVoteClick(VOTE_UP)}
+            isActive={this.state.vote === VOTE_UP}
+            onClick={() => this.vote(VOTE_UP)}
           />
           <VotingButtonDown
-            isActive={vote === VOTE_DOWN}
-            onClick={() => this.handleVoteClick(VOTE_DOWN)}
+            isActive={this.state.vote === VOTE_DOWN}
+            onClick={() => this.vote(VOTE_DOWN)}
           />
         </menu>
       </section>
@@ -161,12 +173,12 @@ class Post extends Component {
 
     return (
       <div className="container">
-        <SearchBar value={query} onChange={this.handleQueryChange} />
+        <SearchBar value={query} onChange={this.changeQuery} />
         <PostSidebar
           tags={tags}
           post={post}
           selectedTags={selectedTags}
-          handleTagToggle={this.handleTagToggle}
+          handleTagToggle={this.toggleTag}
           user={user}
         />
         <div id="content">
