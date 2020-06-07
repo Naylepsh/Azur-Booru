@@ -53,7 +53,6 @@ class Comments extends Component {
     const { showCommentPrompt, userId } = this.props;
     const comments = this.state.comments;
 
-    console.log(comments);
     return (
       <section className="comments">
         <div className="comments-list">

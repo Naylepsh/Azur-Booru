@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import "./comment.css";
 import { toggleVote } from "./../../../services/commentService";
 import { handleInternalError } from "./../../../utils/responseErrorHandler";
+import VotingButtonUp from "../VotingButtons/votingButtonUp";
+import VotingButtonDown from "../VotingButtons/votingButtonDown";
 
 const VOTE_NONE = "none";
 const VOTE_DOWN = "down";
@@ -29,6 +31,7 @@ class Comment extends Component {
     try {
       const { id } = this.props;
       let { score, vote: oldVote } = this.state;
+      let vote;
 
       // TODO:
       // since post uses similar voting mechanic,
@@ -40,21 +43,26 @@ class Comment extends Component {
         } else {
           score--;
         }
+        vote = voteType;
       } else if (oldVote === VOTE_DOWN) {
         if (voteType === VOTE_DOWN) {
           score += 1;
+          vote = VOTE_NONE;
         } else {
           score += 2;
+          vote = voteType;
         }
       } else if (oldVote === VOTE_UP) {
         if (voteType === VOTE_UP) {
           score -= 1;
+          vote = VOTE_NONE;
         } else {
           score -= 2;
+          vote = voteType;
         }
       }
 
-      this.setState({ score, vote: voteType });
+      this.setState({ score, vote });
 
       await toggleVote(id, voteType);
     } catch (err) {
@@ -86,22 +94,8 @@ class Comment extends Component {
             <li>
               Score: <span className="comment-score">{score}</span>
             </li>
-            <li>
-              <button
-                className="comment-vote-up"
-                onClick={() => this.sendVote(VOTE_UP)}
-              >
-                Vote up
-              </button>
-            </li>
-            <li>
-              <button
-                className="comment-vote-down"
-                onClick={() => this.sendVote(VOTE_DOWN)}
-              >
-                Vote down
-              </button>
-            </li>
+            <VotingButtonUp onClick={() => this.sendVote(VOTE_UP)} />
+            <VotingButtonDown onClick={() => this.sendVote(VOTE_DOWN)} />
             <li>
               <button onClick={() => onDelete(id)}>Delete</button>
             </li>
