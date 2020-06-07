@@ -46,49 +46,62 @@ async function createDbQuery(tagNames) {
   return query;
 }
 
-exports.create = async (req, res) => {
-  const body = miscUtils.pickAttributes(req.body, POST_BODY_ATTRIBUTES);
-  body.tags = miscUtils.distinctWordsInString(body.tags);
-  const { error } = validate(body);
+function mapPostToViewModel(post, imageLink, thumbnailLink, authorId) {
+  const postModel = miscUtils.pickAttributes(post, POST_BODY_ATTRIBUTES);
+  postModel.tags = miscUtils.distinctWordsInString(postModel.tags);
+  postModel.score = 0;
+  postModel.imageLink = imageLink;
+  postModel.thumbnailLink = thumbnailLink;
+  postModel.author = authorId;
+
+  validatePost(postModel);
+
+  return postModel;
+}
+
+function validatePost(post) {
+  const { error } = validate(post);
   if (error) {
     throw new StatusError(400, error.details[0].message);
   }
+}
+
+async function createPostInDatabase(postModel, session) {
+  const tags = await Tag.findOrCreateMany(
+    postModel.tags.map((name) => {
+      return { name };
+    }),
+    session
+  );
+  postModel.tags = tags.map((tag) => tag._id);
+
+  const posts = await Post.create([postModel], { session });
+  post = posts[0];
+
+  await Promise.all(tags.map((tag) => tag.addPost(post._id)));
+  await session.commitTransaction();
+
+  return post;
+}
+
+exports.create = async (req, res) => {
+  const postModel = mapPostToViewModel(
+    req.body,
+    req.postImageURL,
+    req.postThumbnailURL,
+    req.user._id
+  );
 
   const session = await mongoose.startSession();
   session.startTransaction();
-  let post;
   try {
-    const tags = await Tag.findOrCreateMany(
-      body.tags.map((name) => {
-        return { name };
-      }),
-      session
-    );
-    const tagsIds = tags.map((tag) => tag._id);
-
-    const posts = await Post.create(
-      [
-        {
-          imageLink: req.postImageURL,
-          thumbnailLink: req.postThumbnailURL,
-          source: req.body.source,
-          tags: tagsIds,
-          rating: req.body.rating,
-          author: req.user._id,
-          score: 0,
-        },
-      ],
-      { session }
-    );
-    post = posts[0];
-    await Promise.all(tags.map((tag) => tag.addPost(post._id)));
-    await session.commitTransaction();
+    await createPostInDatabase(postModel, session);
   } catch (e) {
     await session.abortTransaction();
     throw new StatusError(500, e.message);
   } finally {
     session.endSession();
-    res.send(post);
+    res.send(postModel);
   }
 };
 

@@ -61,6 +61,10 @@ function validatePost(post) {
     source: Joi.any(),
     tags: Joi.array().min(MIN_TAGS).required(),
     rating: Joi.string().required(),
+    score: Joi.number().required(),
+    imageLink: Joi.string().required(),
+    thumbnailLink: Joi.string().required(),
+    author: Joi.required(),
   });
   return schema.validate(post);
 }
