@@ -19,21 +19,8 @@ module.exports = {
     });
   },
 
-  paginationInfo: ({
-    urlPrefix,
-    numberOfRecords,
-    query,
-    page,
-    recordsPerPage,
-  }) => {
+  paginationInfo: (numberOfRecords, page, recordsPerPage) => {
     return {
-      urlPrefix,
-      urlSuffix: query
-        ? "&" +
-          Object.entries(query)
-            .map(([name, value]) => name + "=" + value)
-            .join("&")
-        : "",
       currentPage: page ? parseInt(page) : 1,
       lastPage: Math.ceil(numberOfRecords / recordsPerPage),
     };

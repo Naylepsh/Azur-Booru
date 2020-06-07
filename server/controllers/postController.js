@@ -12,29 +12,17 @@ const POST_BODY_ATTRIBUTES = ["source", "title", "tags", "rating"];
 
 exports.list = async (req, res) => {
   const tagNames = miscUtils.distinctWordsInString(req.query.tags);
-  // TODO: redo findOrCreatemany so that it creates items in bulk instead of doing it individually
-  const tagsInQuery = await Tag.findOrCreateMany(
-    tagNames.map((name) => {
-      return { name };
-    })
-  );
-  const tagsIds = tagsInQuery.map((tag) => tag._id);
-
-  const query = tagsInQuery.length > 0 ? { tags: { $all: tagsIds } } : {};
+  const query = await createDbQuery(tagNames);
 
   const numberOfRecords = await Post.countDocuments(query);
-  const pageInfo = miscUtils.paginationInfo({
+  const pageInfo = miscUtils.paginationInfo(
     numberOfRecords,
-    query: miscUtils.pickAttributes(req.query, ["tags"]),
-    page: req.query.page,
-    recordsPerPage: POSTS_PER_PAGE,
-  });
-
-  const posts = await Post.paginate(
-    query,
-    (pageInfo.currentPage - 1) * POSTS_PER_PAGE,
+    req.query.page,
     POSTS_PER_PAGE
   );
+
+  const postsToSkip = (pageInfo.currentPage - 1) * POSTS_PER_PAGE;
+  const posts = await Post.paginate(query, postsToSkip, POSTS_PER_PAGE);
 
   const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);
 
@@ -42,10 +30,21 @@ exports.list = async (req, res) => {
     posts,
     tags,
     pageInfo,
-    tagsQuery: tagNames,
-    user: req.user,
   });
 };
+
+async function createDbQuery(tagNames) {
+  // TODO: redo findOrCreatemany so that it creates items in bulk instead of doing it individually
+  const tagsInQuery = await Tag.findOrCreateMany(
+    tagNames.map((name) => {
+      return { name };
+    })
+  );
+  const tagsIds = tagsInQuery.map((tag) => tag._id);
+  const query = tagsInQuery.length > 0 ? { tags: { $all: tagsIds } } : {};
+
+  return query;
+}
 
 exports.create = async (req, res) => {
   const body = miscUtils.pickAttributes(req.body, POST_BODY_ATTRIBUTES);
