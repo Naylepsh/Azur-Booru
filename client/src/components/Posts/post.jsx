@@ -14,6 +14,11 @@ import {
   handleNotFound,
 } from "../../utils/responseErrorHandler";
 import "./posts.css";
+import VotingButtonUp from "../common/VotingButtons/votingButtonUp";
+import VotingButtonDown from "../common/VotingButtons/votingButtonDown";
+
+const VOTE_UP = "up";
+const VOTE_DOWN = "down";
 
 class Post extends Component {
   state = {
@@ -89,10 +94,10 @@ class Post extends Component {
 
       toggleVote(post.id, voteType);
 
-      if (voteType === "up") {
+      if (voteType === VOTE_UP) {
         upvoters = toggleInArray(user._id, upvoters);
         downvoters = removeFromArrayIfExists(user._id, downvoters);
-      } else if (voteType === "down") {
+      } else if (voteType === VOTE_DOWN) {
         downvoters = toggleInArray(user._id, downvoters);
         upvoters = removeFromArrayIfExists(user._id, upvoters);
       }
@@ -114,25 +119,8 @@ class Post extends Component {
       <section className="post-image">
         <img src={this.state.post.imageLink} alt="post" />
         <menu className="post-menu">
-          <li>
-            <button
-              id="post-vote-up"
-              onClick={() => this.handleVoteClick("up")}
-            >
-              Vote up
-            </button>
-          </li>
-          <li>
-            <button
-              id="post-vote-down"
-              onClick={() => this.handleVoteClick("down")}
-            >
-              Vote down
-            </button>
-          </li>
-          <li>
-            <button id="post-favorite">Favorite</button>
-          </li>
+          <VotingButtonUp onClick={() => this.handleVoteClick(VOTE_UP)} />
+          <VotingButtonDown onClick={() => this.handleVoteClick(VOTE_DOWN)} />
         </menu>
       </section>
     );
