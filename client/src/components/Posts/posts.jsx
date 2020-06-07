@@ -9,7 +9,7 @@ import {
   handleTagToggle,
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
-import { handleInternalError } from "./../../utils/responseErrorHandler";
+import { handleHttpError } from "./../../utils/responseErrorHandler";
 import "./posts.css";
 
 class Posts extends Component {
@@ -34,7 +34,7 @@ class Posts extends Component {
 
       this.setState({ ...this.mapToViewModel(data), query, selectedTags });
     } catch (err) {
-      handleInternalError();
+      handleHttpError(err);
     }
   }
 

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import VotingButtonUp from "../VotingButtons/votingButtonUp";
 import VotingButtonDown from "../VotingButtons/votingButtonDown";
 import { toggleVote } from "./../../../services/commentService";
-import { handleInternalError } from "./../../../utils/responseErrorHandler";
+import { handleHttpError } from "./../../../utils/responseErrorHandler";
 import { VOTE_NONE, VOTE_DOWN, VOTE_UP, castVote } from "../../../utils/voting";
 import "./comment.css";
 
@@ -33,11 +33,7 @@ class Comment extends Component {
       this.setState({ score, vote });
       await toggleVote(id, newVote);
     } catch (err) {
-      if (err.response && err.response.status === 404) {
-        // missing comment error can be ignored
-      } else {
-        handleInternalError();
-      }
+      handleHttpError(err);
     }
   };
 

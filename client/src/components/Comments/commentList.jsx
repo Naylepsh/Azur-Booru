@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Comment from "../common/Comments/comment";
 import Pagination from "../common/Pagination/pagination";
 import { getComments } from "../../services/commentService";
-import { handleInternalError } from "../../utils/responseErrorHandler";
+import { handleHttpError } from "../../utils/responseErrorHandler";
 import "./commentList.css";
 
 class CommentList extends Component {
@@ -35,7 +35,7 @@ class CommentList extends Component {
       const { data } = await getComments(this.props.location.search);
       this.setState({ ...this.mapToViewModel(data), query });
     } catch (err) {
-      handleInternalError();
+      handleHttpError(err);
     }
   }
 

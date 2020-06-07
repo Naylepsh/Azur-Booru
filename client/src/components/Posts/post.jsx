@@ -11,10 +11,7 @@ import {
   handleTagToggle,
   handleQueryChange,
 } from "../../utils/tagQueryHandlers";
-import {
-  handleInternalError,
-  handleNotFound,
-} from "../../utils/responseErrorHandler";
+import { handleHttpError } from "../../utils/responseErrorHandler";
 import "./posts.css";
 
 class Post extends Component {
@@ -44,10 +41,7 @@ class Post extends Component {
         vote,
       });
     } catch (err) {
-      if (err.response && err.response.status === 404) {
-        return handleNotFound();
-      }
-      handleInternalError();
+      handleHttpError(err);
     }
   }
 
@@ -122,11 +116,7 @@ class Post extends Component {
       toggleVote(post.id, newVote);
       this.setState({ post, vote });
     } catch (err) {
-      if (err.response && err.response.status === 404) {
-        handleNotFound();
-      } else {
-        handleInternalError();
-      }
+      handleHttpError(err);
     }
   };
 

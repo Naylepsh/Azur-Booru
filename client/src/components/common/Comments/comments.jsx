@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import Comment from "./comment";
 import CommentPrompt from "./commentPrompt";
-import "./comment.css";
 import { postComment, deleteComment } from "./../../../services/commentService";
-import { handleNotFound } from "../../../utils/responseErrorHandler";
+import { handleHttpError } from "./../../../utils/responseErrorHandler";
+import "./comment.css";
 
 class Comments extends Component {
   state = {
@@ -28,9 +28,7 @@ class Comments extends Component {
       comments.push(comment);
       this.setState({ comments });
     } catch (err) {
-      if (err.response && err.response.status === 404) {
-        handleNotFound();
-      }
+      handleHttpError();
     }
   };
 
