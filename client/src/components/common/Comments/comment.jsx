@@ -94,8 +94,14 @@ class Comment extends Component {
             <li>
               Score: <span className="comment-score">{score}</span>
             </li>
-            <VotingButtonUp onClick={() => this.sendVote(VOTE_UP)} />
-            <VotingButtonDown onClick={() => this.sendVote(VOTE_DOWN)} />
+            <VotingButtonUp
+              isActive={this.state.vote === VOTE_UP}
+              onClick={() => this.sendVote(VOTE_UP)}
+            />
+            <VotingButtonDown
+              isActive={this.state.vote === VOTE_DOWN}
+              onClick={() => this.sendVote(VOTE_DOWN)}
+            />
             <li>
               <button onClick={() => onDelete(id)}>Delete</button>
             </li>

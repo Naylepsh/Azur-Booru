@@ -1,4 +1,5 @@
 import React from "react";
+import "./votingButton.css";
 
 const getClassName = (isActive) => {
   return isActive ? "voting-button active" : "voting-button";
