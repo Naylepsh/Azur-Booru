@@ -18,10 +18,10 @@ class Posts extends Component {
     tags: [],
     thumbnails: [],
     pageInfo: {},
-    url: "/posts",
     query: "",
     selectedTags: [],
   };
+  url = "/posts";
 
   async componentDidMount() {
     try {
@@ -43,7 +43,6 @@ class Posts extends Component {
       thumbnails: data.posts.map(this.getThumbnailInfoFromPost),
       posts: data.posts,
       tags: data.tags,
-      tagsQuery: data.tagsQuery,
       pageInfo: data.pageInfo,
     };
   };
@@ -75,7 +74,7 @@ class Posts extends Component {
   };
 
   render() {
-    const { query, tags, thumbnails, url, selectedTags, pageInfo } = this.state;
+    const { query, tags, thumbnails, selectedTags, pageInfo } = this.state;
     const { lastPage } = pageInfo;
 
     return (
@@ -87,10 +86,10 @@ class Posts extends Component {
           handleTagToggle={this.handleTagToggle}
         />
         <div id="content">
-          <Thumbnails thumbnails={thumbnails} url={url} />
+          <Thumbnails thumbnails={thumbnails} path={this.url} />
           <Pagination
             lastPage={lastPage}
-            path={"/posts"}
+            path={this.url}
             query={this.props.location.search}
           />
         </div>
