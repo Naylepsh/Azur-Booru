@@ -52,10 +52,7 @@ exports.create = async (req, res) => {
   body.tags = miscUtils.distinctWordsInString(body.tags);
   const { error } = validate(body);
   if (error) {
-    return miscUtils.sendError(res, {
-      status: 400,
-      message: error.details[0].message,
-    });
+    throw new StatusError(400, error.details[0].message);
   }
 
   const session = await mongoose.startSession();
@@ -163,7 +160,7 @@ exports.destroy = async (req, res) => {
   const isAuthor = authenticateAuthor(post, req.user);
   const isAdmin = req.user.roles && req.user.roles.admin;
   if (!isAuthor && !isAdmin) {
-    return miscUtils.sendError(res, { status: 403, message: "Access denied." });
+    throw new StatusError(403, "Access denied");
   }
 
   const session = await mongoose.startSession();
