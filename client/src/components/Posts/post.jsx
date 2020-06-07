@@ -6,7 +6,7 @@ import Comments from "../common/Comments/comments";
 import VotingButtonUp from "../common/VotingButtons/votingButtonUp";
 import VotingButtonDown from "../common/VotingButtons/votingButtonDown";
 import { getPost, toggleVote } from "../../services/postService";
-import { toggleInArray, removeFromArrayIfExists } from "../../utils/iterable";
+import { VOTE_NONE, VOTE_DOWN, VOTE_UP, castVote } from "../../utils/voting";
 import {
   handleTagToggle,
   handleQueryChange,
@@ -16,10 +16,6 @@ import {
   handleNotFound,
 } from "../../utils/responseErrorHandler";
 import "./posts.css";
-
-const VOTE_UP = "up";
-const VOTE_DOWN = "down";
-const VOTE_NONE = "none";
 
 class Post extends Component {
   state = {
@@ -37,7 +33,7 @@ class Post extends Component {
       const selectedTags = this.parseTagsFromQuery(query);
       const { data } = await getPost(id);
       const post = this.mapToViewModel(data.post);
-      const vote = this.getUserPostVote(post);
+      const vote = this.getUserPostVote(data.post);
 
       this.setPageTitle(id);
       this.setState({
@@ -116,26 +112,15 @@ class Post extends Component {
     this.setState({ selectedTags, query });
   };
 
-  vote = async (voteType) => {
+  vote = async (newVote) => {
     try {
+      const oldVote = this.state.vote;
       const post = { ...this.state.post };
-      let upvoters = [...post.voters.up];
-      let downvoters = [...post.voters.down];
-      const { user } = this.props;
+      const { score, vote } = castVote(oldVote, newVote, post.score);
+      post.score = score;
 
-      toggleVote(post.id, voteType);
-
-      if (voteType === VOTE_UP) {
-        upvoters = toggleInArray(user._id, upvoters);
-        downvoters = removeFromArrayIfExists(user._id, downvoters);
-      } else if (voteType === VOTE_DOWN) {
-        downvoters = toggleInArray(user._id, downvoters);
-        upvoters = removeFromArrayIfExists(user._id, upvoters);
-      }
-
-      post.voters = { up: upvoters, down: downvoters };
-      post.score = upvoters.length - downvoters.length;
-      this.setState({ post });
+      toggleVote(post.id, newVote);
+      this.setState({ post, vote });
     } catch (err) {
       if (err.response && err.response.status === 404) {
         handleNotFound();
