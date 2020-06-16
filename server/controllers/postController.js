@@ -12,9 +12,7 @@ const TAGS_PER_PAGE = 15;
 const POST_BODY_ATTRIBUTES = ["source", "title", "tags", "rating"];
 
 exports.list = async (req, res) => {
-  const tagNames = miscUtils.distinctWordsInString(req.query.tags);
-  const query = await createDbQuery(tagNames);
-
+  const query = await createRelatedTagsDbQueryFromUrlQuery(req.query.tags);
   const numberOfRecords = await Post.countDocuments(query);
   const pageInfo = paginationInfo(
     numberOfRecords,
@@ -34,7 +32,14 @@ exports.list = async (req, res) => {
   });
 };
 
-async function createDbQuery(tagNames) {
+async function createRelatedTagsDbQueryFromUrlQuery(tagsQuery) {
+  const tagNames = miscUtils.distinctWordsInString(tagsQuery);
+  const dbQuery = await createRelatedTagsDbQueryFromTagNames(tagNames);
+
+  return dbQuery;
+}
+
+async function createRelatedTagsDbQueryFromTagNames(tagNames) {
   // TODO: redo findOrCreatemany so that it creates items in bulk instead of doing it individually
   const tagsInQuery = await Tag.findOrCreateMany(
     tagNames.map((name) => {
