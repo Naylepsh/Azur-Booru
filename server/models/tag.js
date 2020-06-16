@@ -28,12 +28,16 @@ tagSchema.statics.findOrCreate = async function (tagObject, session) {
   return tag;
 };
 
-tagSchema.statics.findOrCreateManyByName = async function (tagNames) {
-  const tagsFound = await this.find({ name: { $in: tagNames } });
+tagSchema.statics.findManyByName = function (tagNames) {
+  return this.find({ name: { $in: tagNames } });
+};
+
+tagSchema.statics.findOrCreateManyByName = async function (tagNames, session) {
+  const tagsFound = await this.findManyByName(tagNames);
   const tagNamesFound = tagsFound.map((tag) => tag.name);
   const tagsNotFound = prepareObjectsForMissingTags(tagNames, tagNamesFound);
 
-  const newTags = await this.insertMany(tagsNotFound);
+  const newTags = await this.insertMany(tagsNotFound, { session });
 
   return tagsFound.concat(newTags);
 };

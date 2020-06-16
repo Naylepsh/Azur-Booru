@@ -15,7 +15,8 @@ exports.list = async (req, res) => {
   const containsTagsQuery = await createContainsTagsDbQueryFromUrlQuery(
     req.query.tags
   );
-  const pageInfo = createPostPaginationDetails(containsTagsQuery);
+  const currentPage = req.query.page;
+  const pageInfo = createPostPaginationDetails(containsTagsQuery, currentPage);
 
   const posts = await getPostPage(containsTagsQuery, pageInfo);
   const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);
@@ -35,20 +36,16 @@ async function createContainsTagsDbQueryFromUrlQuery(tagsQuery) {
 }
 
 async function createRelatedTagsDbQueryFromTagNames(tagNames) {
-  const tagsInQuery = await Tag.findOrCreateManyByName(tagNames);
+  const tagsInQuery = await Tag.findManyByName(tagNames);
   const tagsIds = tagsInQuery.map((tag) => tag._id);
   const query = tagsInQuery.length > 0 ? { tags: { $all: tagsIds } } : {};
 
   return query;
 }
 
-async function createPostPaginationDetails(query) {
+async function createPostPaginationDetails(query, currentPage) {
   const numberOfRecords = await Post.countDocuments(query);
-  const pageInfo = paginationInfo(
-    numberOfRecords,
-    req.query.page,
-    POSTS_PER_PAGE
-  );
+  const pageInfo = paginationInfo(numberOfRecords, currentPage, POSTS_PER_PAGE);
 
   return pageInfo;
 }
@@ -81,12 +78,7 @@ function validatePost(post) {
 }
 
 async function createPostInDatabase(postModel, session) {
-  const tags = await Tag.findOrCreateMany(
-    postModel.tags.map((name) => {
-      return { name };
-    }),
-    session
-  );
+  const tags = await Tag.findOrCreateManyByName(postModel.tags, session);
   postModel.tags = tags.map((tag) => tag._id);
 
   const posts = await Post.create([postModel], { session });
@@ -155,12 +147,7 @@ exports.update = async (req, res) => {
     // add new tags
     let newPost = body;
     const tagNames = miscUtils.distinctWordsInString(newPost.tags);
-    const newTags = await Tag.findOrCreateMany(
-      tagNames.map((name) => {
-        return { name };
-      }),
-      session
-    );
+    const newTags = await Tag.findOrCreateManyByName(tagNames, session);
     await Promise.all(newTags.map((tag) => tag.addPost(post._id)));
     newPost.tags = newTags.map((tag) => tag._id);
 
