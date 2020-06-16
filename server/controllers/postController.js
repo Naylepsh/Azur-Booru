@@ -16,16 +16,15 @@ exports.list = async (req, res) => {
     req.query.tags
   );
   const currentPage = req.query.page;
-  const pageInfo = createPostPaginationDetails(containsTagsQuery, currentPage);
+  const pageInfo = await createPostPaginationDetails(
+    containsTagsQuery,
+    currentPage
+  );
 
   const posts = await getPostPage(containsTagsQuery, pageInfo);
   const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);
 
-  res.send({
-    posts,
-    tags,
-    pageInfo,
-  });
+  res.send({ posts, tags, pageInfo });
 };
 
 async function createContainsTagsDbQueryFromUrlQuery(tagsQuery) {
