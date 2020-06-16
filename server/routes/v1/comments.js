@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { storage } = require("../../utils/storage");
 const Comment = require("../../controllers/commentController");
-const { asyncWrapper } = require("../../middleware/route-wrappers");
+const asyncWrapper = require("../../middleware/asyncWrapper");
 const { authorizeUser } = require("../../middleware/auth");
 
 router

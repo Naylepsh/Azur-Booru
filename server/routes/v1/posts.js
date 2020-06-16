@@ -3,7 +3,7 @@ const router = express.Router();
 const { storage } = require("../../utils/storage");
 const Post = require("../../controllers/postController");
 const { authorizeUser } = require("../../middleware/auth");
-const { asyncWrapper } = require("../../middleware/route-wrappers");
+const asyncWrapper = require("../../middleware/asyncWrapper");
 const {
   uploadImageToGCS,
   prepareThumbnail,
