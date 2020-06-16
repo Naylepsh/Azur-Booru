@@ -12,17 +12,12 @@ const TAGS_PER_PAGE = 15;
 const POST_BODY_ATTRIBUTES = ["source", "title", "tags", "rating"];
 
 exports.list = async (req, res) => {
-  const query = await createRelatedTagsDbQueryFromUrlQuery(req.query.tags);
-  const numberOfRecords = await Post.countDocuments(query);
-  const pageInfo = paginationInfo(
-    numberOfRecords,
-    req.query.page,
-    POSTS_PER_PAGE
+  const containsTagsQuery = await createContainsTagsDbQueryFromUrlQuery(
+    req.query.tags
   );
+  const pageInfo = createPostPaginationDetails(containsTagsQuery);
 
-  const postsToSkip = (pageInfo.currentPage - 1) * POSTS_PER_PAGE;
-  const posts = await Post.paginate(query, postsToSkip, POSTS_PER_PAGE);
-
+  const posts = await getPostPage(containsTagsQuery, pageInfo);
   const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);
 
   res.send({
@@ -32,7 +27,7 @@ exports.list = async (req, res) => {
   });
 };
 
-async function createRelatedTagsDbQueryFromUrlQuery(tagsQuery) {
+async function createContainsTagsDbQueryFromUrlQuery(tagsQuery) {
   const tagNames = miscUtils.distinctWordsInString(tagsQuery);
   const dbQuery = await createRelatedTagsDbQueryFromTagNames(tagNames);
 
@@ -50,6 +45,24 @@ async function createRelatedTagsDbQueryFromTagNames(tagNames) {
   const query = tagsInQuery.length > 0 ? { tags: { $all: tagsIds } } : {};
 
   return query;
+}
+
+async function createPostPaginationDetails(query) {
+  const numberOfRecords = await Post.countDocuments(query);
+  const pageInfo = paginationInfo(
+    numberOfRecords,
+    req.query.page,
+    POSTS_PER_PAGE
+  );
+
+  return pageInfo;
+}
+
+async function getPostPage(query, pageInfo) {
+  const postsToSkip = (pageInfo.currentPage - 1) * POSTS_PER_PAGE;
+  const posts = await Post.paginate(query, postsToSkip, POSTS_PER_PAGE);
+
+  return posts;
 }
 
 function mapPostToViewModel(post, imageLink, thumbnailLink, authorId) {
