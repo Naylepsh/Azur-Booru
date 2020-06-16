@@ -16,8 +16,22 @@ const dev = {
   requireAuth: true,
 };
 
+const test = {
+  app: {
+    port: 3002,
+  },
+  db: {
+    URI: process.env.MONGODB_URI,
+  },
+  cookies: {
+    prefix: "AzurBooru_",
+  },
+  requireAuth: true,
+};
+
 const config = {
   dev,
+  test,
 };
 
 module.exports = config[env];
