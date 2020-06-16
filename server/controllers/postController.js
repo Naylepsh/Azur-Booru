@@ -35,12 +35,7 @@ async function createContainsTagsDbQueryFromUrlQuery(tagsQuery) {
 }
 
 async function createRelatedTagsDbQueryFromTagNames(tagNames) {
-  // TODO: redo findOrCreatemany so that it creates items in bulk instead of doing it individually
-  const tagsInQuery = await Tag.findOrCreateMany(
-    tagNames.map((name) => {
-      return { name };
-    })
-  );
+  const tagsInQuery = await Tag.findOrCreateManyByName(tagNames);
   const tagsIds = tagsInQuery.map((tag) => tag._id);
   const query = tagsInQuery.length > 0 ? { tags: { $all: tagsIds } } : {};
 

@@ -28,11 +28,26 @@ tagSchema.statics.findOrCreate = async function (tagObject, session) {
   return tag;
 };
 
-tagSchema.statics.findOrCreateMany = async function (tagObjects, session) {
-  return await Promise.all(
-    tagObjects.map((tagObject) => this.findOrCreate(tagObject, session))
-  );
+tagSchema.statics.findOrCreateManyByName = async function (tagNames) {
+  const tagsFound = await this.find({ name: { $in: tagNames } });
+  const tagNamesFound = tagsFound.map((tag) => tag.name);
+  const tagsNotFound = prepareObjectsForMissingTags(tagNames, tagNamesFound);
+
+  const newTags = await this.insertMany(tagsNotFound);
+
+  return tagsFound.concat(newTags);
 };
+
+function prepareObjectsForMissingTags(allTagNames, tagNamesFound) {
+  const tagsNotFound = [];
+  for (const tagName of allTagNames) {
+    if (!tagNamesFound.includes(tagName)) {
+      tagsNotFound.push({ name: tagName });
+    }
+  }
+
+  return tagsNotFound;
+}
 
 tagSchema.methods.addPost = async function (postId) {
   this.posts.push(postId);
