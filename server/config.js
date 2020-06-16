@@ -21,7 +21,7 @@ const test = {
     port: 3002,
   },
   db: {
-    URI: process.env.MONGODB_URI,
+    URI: process.env.MONGODB_TEST_URI,
   },
   cookies: {
     prefix: "AzurBooru_",
