@@ -1,4 +1,5 @@
 const env = process.env.NODE_ENV;
+require("dotenv").config();
 
 const dev = {
   app: {

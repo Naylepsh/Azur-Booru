@@ -1,4 +1,4 @@
-require("dotenv").config();
+// require("dotenv").config(); // moved to config.js, commenting out in case of future removal of this line from config.js
 const config = require("./config");
 const express = require("express");
 const app = express();
