@@ -7,17 +7,17 @@ let server;
 
 describe("api/v1/posts", () => {
   let post;
+  const tagNames = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((name) => {
+    return { name };
+  });
+  const rating = "safe";
+  const score = 0;
+  const imageLink = "link/to/image";
+  const thumbnailLink = "link/to/thumbnail";
+  const author = mongoose.Types.ObjectId();
 
   seedDb = async () => {
-    const tagNames = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((name) => {
-      return { name };
-    });
     const tags = await Tag.insertMany(tagNames);
-    const rating = "safe";
-    const score = 0;
-    const imageLink = "link/to/image";
-    const thumbnailLink = "link/to/thumbnail";
-    const author = mongoose.Types.ObjectId();
     post = await Post.create({
       tags,
       rating,
