@@ -1,6 +1,4 @@
-const { sendError, pickAttributes } = require("../utils/misc");
 const jwt = require("jsonwebtoken");
-const { ROLES } = require("../models/role");
 const config = require("../config");
 
 exports.authorizeUser = function (req, res, next) {

@@ -9,6 +9,7 @@ const {
   prepareThumbnail,
   uploadThumbnailToGCS,
 } = require("../../middleware/google-cloud-storage");
+const validateObjectId = require("../../middleware/validateObjectId");
 
 router
   .get("/", asyncWrapper(Post.list))
@@ -21,9 +22,14 @@ router
     uploadThumbnailToGCS,
     asyncWrapper(Post.create)
   )
-  .get("/:id", asyncWrapper(Post.show))
-  .put("/:id", authorizeUser, asyncWrapper(Post.update))
-  .delete("/:id", authorizeUser, asyncWrapper(Post.destroy))
-  .post("/:id/toggle-vote", authorizeUser, asyncWrapper(Post.toggleVote));
+  .get("/:id", validateObjectId, asyncWrapper(Post.show))
+  .put("/:id", validateObjectId, authorizeUser, asyncWrapper(Post.update))
+  .delete("/:id", validateObjectId, authorizeUser, asyncWrapper(Post.destroy))
+  .post(
+    "/:id/toggle-vote",
+    validateObjectId,
+    authorizeUser,
+    asyncWrapper(Post.toggleVote)
+  );
 
 module.exports = router;
