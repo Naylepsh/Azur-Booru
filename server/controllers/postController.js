@@ -3,6 +3,7 @@ const { Tag } = require("../models/tag");
 const { Comment } = require("../models/comment");
 const { User } = require("../models/user");
 const { StatusError } = require("../utils/errors");
+const { paginationInfo } = require("../utils/pagination");
 const miscUtils = require("../utils/misc");
 const mongoose = require("mongoose");
 
@@ -15,7 +16,7 @@ exports.list = async (req, res) => {
   const query = await createDbQuery(tagNames);
 
   const numberOfRecords = await Post.countDocuments(query);
-  const pageInfo = miscUtils.paginationInfo(
+  const pageInfo = paginationInfo(
     numberOfRecords,
     req.query.page,
     POSTS_PER_PAGE

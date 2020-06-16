@@ -4,6 +4,7 @@ const { User } = require("../models/user");
 const { StatusError } = require("../utils/errors");
 const miscUtils = require("../utils/misc");
 const mongoose = require("mongoose");
+const { paginationInfo } = require("../utils/pagination");
 
 const COMMENTS_PER_PAGE = 10;
 
@@ -18,7 +19,7 @@ exports.list = async (req, res) => {
     mainQuery.author = author ? author._id : null; // workaround for when such user doesnt exist
   }
   const numberOfRecords = await Comment.countDocuments();
-  const pageInfo = miscUtils.paginationInfo({
+  const pageInfo = paginationInfo({
     numberOfRecords,
     query: req.query,
     page: req.query.page,

@@ -11,21 +11,6 @@ module.exports = {
     await thumbnail.writeAsync(pathToThumbnail);
   },
 
-  removeFile: (pathToFile) => {
-    fs.unlink(pathToFile, (err) => {
-      if (err) {
-        console.error(err);
-      }
-    });
-  },
-
-  paginationInfo: (numberOfRecords, page, recordsPerPage) => {
-    return {
-      currentPage: page ? parseInt(page) : 1,
-      lastPage: Math.ceil(numberOfRecords / recordsPerPage),
-    };
-  },
-
   distinctWordsInString: (str) => {
     if (!str) return [];
     const words = str

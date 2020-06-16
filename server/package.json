@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "set NODE_ENV=dev&& set DEBUG=booru_clone:*&& nodemon ./bin/www",
-    "test": "jest"
+    "test": "jest --watchAll"
   },
   "author": "Naylepsh",
   "license": "ISC",

@@ -1,4 +1,4 @@
-const miscUtils = require("../utils/misc");
+const miscUtils = require("../../utils/misc");
 
 describe("pickAttributes", () => {
   it("should pick all attributes", () => {
