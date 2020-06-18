@@ -26,8 +26,8 @@ describe(apiEndpoint, () => {
 
   afterEach(async () => {
     await server.close();
-    await Post.deleteMany({});
-    await Tag.deleteMany({});
+    await Post.remove({});
+    await Tag.remove({});
   });
 
   describe("GET /", () => {
@@ -99,6 +99,9 @@ describe(apiEndpoint, () => {
       token = new User().generateAuthToken();
       id = post._id;
       updatedPost = createPostModel();
+
+      const posts = await Post.find({});
+      expect(posts.length).toBe(1);
     });
 
     it("should return 401 if user is not logged in", async () => {
@@ -118,6 +121,7 @@ describe(apiEndpoint, () => {
     });
 
     sendUpdateRequest = async () => {
+      console.log(id);
       return await request(server)
         .put(`${apiEndpoint}/${id}`)
         .set("x-auth-token", token)
@@ -130,14 +134,6 @@ describe(apiEndpoint, () => {
       const res = await sendUpdateRequest();
 
       expect(res.status).toBe(404);
-    });
-
-    it("should return 200 if no tags were passed", async () => {
-      delete updatedPost.tags;
-
-      const res = await sendUpdateRequest();
-
-      expect(res.status).toBe(200);
     });
 
     it("should return 400 if less than 5 tags were passed", async () => {
@@ -157,14 +153,14 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 400 if invalid rating was passed", async () => {
-      delete post.rating;
+      updatedPost.rating = "rating";
 
       const res = await sendUpdateRequest();
 
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(400);
     });
 
-    it("should return updated post if post was valid");
-    it("should update post in database if post was valid");
+    // it("should return updated post if post was valid");
+    // it("should update post in database if post was valid");
   });
 });

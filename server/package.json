@@ -5,7 +5,7 @@
   "main": "./bin/www",
   "scripts": {
     "start": "set NODE_ENV=dev&& set DEBUG=booru_clone:*&& nodemon ./bin/www",
-    "test": "set NODE_ENV=test&& jest --watchAll --verbose"
+    "test": "set NODE_ENV=test&& jest --watchAll --verbose --runInBand --detectOpenHandles"
   },
   "author": "Naylepsh",
   "license": "ISC",

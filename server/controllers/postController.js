@@ -81,9 +81,9 @@ exports.create = async (req, res) => {
   session.startTransaction();
   try {
     await createPostInDatabase(postModel, session);
-  } catch (e) {
+  } catch (error) {
     await session.abortTransaction();
-    throw new StatusError(500, e.message);
+    throw new StatusError(500, error.message);
   } finally {
     session.endSession();
     res.send(postModel);
@@ -98,7 +98,6 @@ function mapPostToViewModel(post, imageLink, thumbnailLink, authorId) {
   postModel.thumbnailLink = thumbnailLink;
   postModel.author = authorId;
 
-  console.log("model", postModel);
   validatePost(postModel);
 
   return postModel;
@@ -136,19 +135,17 @@ exports.update = async (req, res) => {
     throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
-  const tags = req.body.tags ? req.body.tags : post.tags.map((tag) => tag.name);
-  const postCopy = { ...post._doc };
-  postCopy.tags = tags;
-  const postModel = mapPostToViewModel(
-    postCopy,
-    post.imageLink,
-    post.thumbnailLink,
-    req.user._id
-  );
-
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
+    const postModel = mapPostToViewModel(
+      req.body,
+      post.imageLink,
+      post.thumbnailLink,
+      req.user._id
+    );
+    console.log("model", postModel);
+
     if (req.body.tags) {
       // remove old tag references to this post
       await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
@@ -167,9 +164,13 @@ exports.update = async (req, res) => {
     }
     post.save();
     await session.commitTransaction();
-  } catch (e) {
+  } catch (error) {
     await session.abortTransaction();
-    throw new StatusError(500, e.message);
+    if (error instanceof StatusError) {
+      throw error;
+    } else {
+      throw new StatusError(500, error.message);
+    }
   }
   res.send(post);
 };
@@ -198,9 +199,9 @@ exports.destroy = async (req, res) => {
     await Post.findByIdAndRemove(post._id);
 
     await session.commitTransaction();
-  } catch (e) {
+  } catch (error) {
     await session.abortTransaction();
-    throw new StatusError(500, e.message);
+    throw new StatusError(500, error.message);
   } finally {
     session.endSession();
     res.send(post);
