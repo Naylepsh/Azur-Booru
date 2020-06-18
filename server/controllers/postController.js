@@ -144,7 +144,6 @@ exports.update = async (req, res) => {
       post.thumbnailLink,
       req.user._id
     );
-    console.log("model", postModel);
 
     if (req.body.tags) {
       // remove old tag references to this post

@@ -44,7 +44,9 @@ describe(apiEndpoint, () => {
 
   seedDb = async () => {
     tags = await Tag.insertMany(tagNames);
-    post = await Post.create(createPostModel());
+    post = createPostModel();
+    postInDb = await Post.create(createPostModel());
+    post._id = postInDb._id;
   };
 
   createPostModel = () => {
@@ -91,14 +93,13 @@ describe(apiEndpoint, () => {
 
   describe("PUT /:id", () => {
     let token;
-    let id;
     let updatedPost;
 
     beforeEach(async () => {
       await seedDb();
       token = new User().generateAuthToken();
-      id = post._id;
       updatedPost = createPostModel();
+      updatedPost._id = post._id;
 
       const posts = await Post.find({});
       expect(posts.length).toBe(1);
@@ -113,7 +114,7 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 404 if invalid id is passed", async () => {
-      id = 1;
+      updatedPost._id = 1;
 
       const res = await sendUpdateRequest();
 
@@ -121,7 +122,8 @@ describe(apiEndpoint, () => {
     });
 
     sendUpdateRequest = async () => {
-      console.log(id);
+      const id = updatedPost._id;
+
       return await request(server)
         .put(`${apiEndpoint}/${id}`)
         .set("x-auth-token", token)
@@ -129,7 +131,7 @@ describe(apiEndpoint, () => {
     };
 
     it("should return 404 if post was not found", async () => {
-      id = mongoose.Types.ObjectId();
+      updatedPost._id = mongoose.Types.ObjectId();
 
       const res = await sendUpdateRequest();
 
@@ -160,7 +162,19 @@ describe(apiEndpoint, () => {
       expect(res.status).toBe(400);
     });
 
-    // it("should return updated post if post was valid");
-    // it("should update post in database if post was valid");
+    it("should return updated post if post was valid", async () => {
+      const res = await sendUpdateRequest();
+
+      expect(res.status).toBe(200);
+      expectPostsToBeTheSame(res.body, updatedPost);
+    });
+
+    it("should update post in database if post was valid", async () => {
+      await sendUpdateRequest();
+
+      const postInDb = await Post.findById(updatedPost._id);
+
+      expectPostsToBeTheSame(postInDb, updatedPost);
+    });
   });
 });
