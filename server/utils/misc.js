@@ -20,6 +20,10 @@ module.exports = {
     return [...new Set(words)];
   },
 
+  distinctWordsInArray: (words) => {
+    return [...new Set(words)];
+  },
+
   sendError: (res, err, backupCode) => {
     res.status(err.status || backupCode).json({
       message: err.message,

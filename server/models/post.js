@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("@hapi/joi");
 
-const MIN_TAGS = 3;
+const MIN_TAGS = 5;
 
 const PostSchema = new mongoose.Schema({
   imageLink: String,

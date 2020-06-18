@@ -56,26 +56,6 @@ async function getPostPage(query, pageInfo) {
   return posts;
 }
 
-function mapPostToViewModel(post, imageLink, thumbnailLink, authorId) {
-  const postModel = miscUtils.pickAttributes(post, POST_BODY_ATTRIBUTES);
-  postModel.tags = miscUtils.distinctWordsInString(postModel.tags);
-  postModel.score = 0;
-  postModel.imageLink = imageLink;
-  postModel.thumbnailLink = thumbnailLink;
-  postModel.author = authorId;
-
-  validatePost(postModel);
-
-  return postModel;
-}
-
-function validatePost(post) {
-  const { error } = validate(post);
-  if (error) {
-    throw new StatusError(400, error.details[0].message);
-  }
-}
-
 async function createPostInDatabase(postModel, session) {
   const tags = await Tag.findOrCreateManyByName(postModel.tags, session);
   postModel.tags = tags.map((tag) => tag._id);
@@ -110,6 +90,27 @@ exports.create = async (req, res) => {
   }
 };
 
+function mapPostToViewModel(post, imageLink, thumbnailLink, authorId) {
+  const postModel = miscUtils.pickAttributes(post, POST_BODY_ATTRIBUTES);
+  postModel.tags = miscUtils.distinctWordsInArray(postModel.tags);
+  postModel.score = 0;
+  postModel.imageLink = imageLink;
+  postModel.thumbnailLink = thumbnailLink;
+  postModel.author = authorId;
+
+  console.log("model", postModel);
+  validatePost(postModel);
+
+  return postModel;
+}
+
+function validatePost(post) {
+  const { error } = validate(post);
+  if (error) {
+    throw new StatusError(400, error.details[0].message);
+  }
+}
+
 exports.show = async (req, res) => {
   const post = await Post.findById(req.params.id)
     .populate("author", "name")
@@ -130,29 +131,39 @@ exports.show = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  const body = miscUtils.pickAttributes(req.body, POST_BODY_ATTRIBUTES);
-
-  // remove old tags
   let post = await Post.findById(req.params.id).populate("tags");
   if (!post) {
     throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
+  const tags = req.body.tags ? req.body.tags : post.tags.map((tag) => tag.name);
+  const postCopy = { ...post._doc };
+  postCopy.tags = tags;
+  const postModel = mapPostToViewModel(
+    postCopy,
+    post.imageLink,
+    post.thumbnailLink,
+    req.user._id
+  );
+
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
+    if (req.body.tags) {
+      // remove old tag references to this post
+      await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
 
-    // add new tags
-    let newPost = body;
-    const tagNames = miscUtils.distinctWordsInString(newPost.tags);
-    const newTags = await Tag.findOrCreateManyByName(tagNames, session);
-    await Promise.all(newTags.map((tag) => tag.addPost(post._id)));
-    newPost.tags = newTags.map((tag) => tag._id);
+      // add new tags
+      const newTags = await Tag.findOrCreateManyByName(postModel.tags, session);
+      await Promise.all(newTags.map((tag) => tag.addPost(post._id)));
+      postModel.tags = newTags.map((tag) => tag._id);
+    } else {
+      postModel.tags = post.tags;
+    }
 
     // update post
-    for (const key in newPost) {
-      post[key] = newPost[key];
+    for (const key in postModel) {
+      post[key] = postModel[key];
     }
     post.save();
     await session.commitTransaction();

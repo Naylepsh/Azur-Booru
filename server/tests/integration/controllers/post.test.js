@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { Post } = require("../../../models/post");
 const { Tag } = require("../../../models/tag");
 const { User } = require("../../../models/user");
+const { update } = require("../../../controllers/postController");
 
 let server;
 const apiEndpoint = "/api/v1/posts";
@@ -10,7 +11,7 @@ const apiEndpoint = "/api/v1/posts";
 describe(apiEndpoint, () => {
   let post;
   let tags;
-  const tagNames = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((name) => {
+  let tagNames = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((name) => {
     return { name };
   });
   const rating = "safe";
@@ -91,10 +92,13 @@ describe(apiEndpoint, () => {
   describe("PUT /:id", () => {
     let token;
     let id;
+    let updatedPost;
 
     beforeEach(async () => {
+      await seedDb();
       token = new User().generateAuthToken();
       id = post._id;
+      updatedPost = createPostModel();
     });
 
     it("should return 401 if user is not logged in", async () => {
@@ -114,7 +118,6 @@ describe(apiEndpoint, () => {
     });
 
     sendUpdateRequest = async () => {
-      const updatedPost = createPostModel();
       return await request(server)
         .put(`${apiEndpoint}/${id}`)
         .set("x-auth-token", token)
@@ -129,9 +132,39 @@ describe(apiEndpoint, () => {
       expect(res.status).toBe(404);
     });
 
-    // it('should return 400 if less than 5 tags were passed')
-    // it('should return 400 if rating was not passed')
-    // it('should return updated post if post was valid')
-    // it('should update post in database if post was valid')
+    it("should return 200 if no tags were passed", async () => {
+      delete updatedPost.tags;
+
+      const res = await sendUpdateRequest();
+
+      expect(res.status).toBe(200);
+    });
+
+    it("should return 400 if less than 5 tags were passed", async () => {
+      updatedPost.tags = new Array(4).map((_, index) => index.toString());
+
+      const res = await sendUpdateRequest();
+
+      expect(res.status).toBe(400);
+    });
+
+    it("should return 400 if less than 5 unique tags were passed", async () => {
+      updatedPost.tags = new Array(4).map((_) => "tag");
+
+      const res = await sendUpdateRequest();
+
+      expect(res.status).toBe(400);
+    });
+
+    it("should return 400 if invalid rating was passed", async () => {
+      delete post.rating;
+
+      const res = await sendUpdateRequest();
+
+      expect(res.status).toBe(404);
+    });
+
+    it("should return updated post if post was valid");
+    it("should update post in database if post was valid");
   });
 });
