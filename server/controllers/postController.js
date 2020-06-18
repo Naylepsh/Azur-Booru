@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
-const POST_BODY_ATTRIBUTES = ["source", "title", "tags", "rating"];
+const POST_BODY_ATTRIBUTES = ["source", "tags", "rating"];
 
 exports.list = async (req, res) => {
   const containsTagsQuery = await createContainsTagsDbQueryFromUrlQuery(

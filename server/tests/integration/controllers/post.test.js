@@ -2,12 +2,14 @@ const request = require("supertest");
 const mongoose = require("mongoose");
 const { Post } = require("../../../models/post");
 const { Tag } = require("../../../models/tag");
+const { User } = require("../../../models/user");
 
 let server;
 const apiEndpoint = "/api/v1/posts";
 
 describe(apiEndpoint, () => {
   let post;
+  let tags;
   const tagNames = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((name) => {
     return { name };
   });
@@ -40,15 +42,12 @@ describe(apiEndpoint, () => {
   });
 
   seedDb = async () => {
-    const tags = await Tag.insertMany(tagNames);
-    post = await Post.create({
-      tags,
-      rating,
-      score,
-      imageLink,
-      thumbnailLink,
-      author,
-    });
+    tags = await Tag.insertMany(tagNames);
+    post = await Post.create(createPostModel());
+  };
+
+  createPostModel = () => {
+    return { tags, rating, score, imageLink, thumbnailLink, author };
   };
 
   expectPostsToBeTheSame = (expected, actual) => {
@@ -87,5 +86,52 @@ describe(apiEndpoint, () => {
 
       expect(res.status).toBe(404);
     });
+  });
+
+  describe("PUT /:id", () => {
+    let token;
+    let id;
+
+    beforeEach(async () => {
+      token = new User().generateAuthToken();
+      id = post._id;
+    });
+
+    it("should return 401 if user is not logged in", async () => {
+      token = "";
+
+      const res = await sendUpdateRequest();
+
+      expect(res.status).toBe(401);
+    });
+
+    it("should return 404 if invalid id is passed", async () => {
+      id = 1;
+
+      const res = await sendUpdateRequest();
+
+      expect(res.status).toBe(404);
+    });
+
+    sendUpdateRequest = async () => {
+      const updatedPost = createPostModel();
+      return await request(server)
+        .put(`${apiEndpoint}/${id}`)
+        .set("x-auth-token", token)
+        .send(updatedPost);
+    };
+
+    it("should return 404 if post was not found", async () => {
+      id = mongoose.Types.ObjectId();
+
+      const res = await sendUpdateRequest();
+
+      expect(res.status).toBe(404);
+    });
+
+    // it('should return 400 if less than 5 tags were passed')
+    // it('should return 400 if rating was not passed')
+    // it('should return updated post if post was valid')
+    // it('should update post in database if post was valid')
   });
 });
