@@ -187,7 +187,8 @@ exports.destroy = async (req, res) => {
     throw new StatusError(404, `Post ${req.params.id} not found`);
   }
 
-  const isAuthor = authenticateAuthor(post, req.user);
+  const isAuthor = await authenticateAuthor(post, req.user);
+  console.log(isAuthor);
   const isAdmin = req.user.roles && req.user.roles.admin;
   if (!isAuthor && !isAdmin) {
     throw new StatusError(403, "Access denied");

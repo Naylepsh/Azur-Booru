@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { Post } = require("../../../models/post");
 const { Tag } = require("../../../models/tag");
 const { User } = require("../../../models/user");
-const { update } = require("../../../controllers/postController");
+const { Role, ROLES } = require("../../../models/role");
 
 let server;
 const apiEndpoint = "/api/v1/posts";
@@ -18,16 +18,27 @@ describe(apiEndpoint, () => {
   const score = 0;
   const imageLink = "link/to/image";
   const thumbnailLink = "link/to/thumbnail";
-  const author = mongoose.Types.ObjectId();
+  let author;
 
-  beforeEach(() => {
+  let token;
+
+  beforeEach(async () => {
     server = require("../../../bin/www");
+    const user = new Role({ name: ROLES.user });
+    author = await User.create({
+      name: "user",
+      password: "password",
+      roles: [user],
+    });
+    token = author.generateAuthToken();
   });
 
   afterEach(async () => {
     await server.close();
     await Post.remove({});
     await Tag.remove({});
+    await User.remove({});
+    await Role.remove({});
   });
 
   describe("GET /", () => {
@@ -92,17 +103,12 @@ describe(apiEndpoint, () => {
   });
 
   describe("PUT /:id", () => {
-    let token;
     let updatedPost;
 
     beforeEach(async () => {
       await seedDb();
-      token = new User().generateAuthToken();
       updatedPost = createPostModel();
       updatedPost._id = post._id;
-
-      const posts = await Post.find({});
-      expect(posts.length).toBe(1);
     });
 
     it("should return 401 if user is not logged in", async () => {
@@ -121,10 +127,10 @@ describe(apiEndpoint, () => {
       expect(res.status).toBe(404);
     });
 
-    sendUpdateRequest = async () => {
+    sendUpdateRequest = () => {
       const id = updatedPost._id;
 
-      return await request(server)
+      return request(server)
         .put(`${apiEndpoint}/${id}`)
         .set("x-auth-token", token)
         .send(updatedPost);
@@ -175,6 +181,60 @@ describe(apiEndpoint, () => {
       const postInDb = await Post.findById(updatedPost._id);
 
       expectPostsToBeTheSame(postInDb, updatedPost);
+    });
+  });
+
+  describe("DELETE /:id", () => {
+    let id;
+
+    beforeEach(async () => {
+      await seedDb();
+      id = post._id;
+    });
+
+    sendDeleteRequest = () => {
+      return request(server)
+        .delete(`${apiEndpoint}/${id}`)
+        .set("x-auth-token", token);
+    };
+
+    it("should return 401 if user is not logged in", async () => {
+      token = "";
+
+      const res = await sendDeleteRequest();
+
+      expect(res.status).toBe(401);
+    });
+
+    it("should return 404 if invalid id was passed", async () => {
+      id = 1;
+
+      const res = await sendDeleteRequest();
+
+      expect(res.status).toBe(404);
+    });
+
+    it("should return 404 if post was not found", async () => {
+      id = mongoose.Types.ObjectId();
+
+      const res = await sendDeleteRequest();
+
+      expect(res.status).toBe(404);
+    });
+
+    it("should return 403 if user is not the post's author", async () => {
+      token = new User().generateAuthToken();
+
+      const res = await sendDeleteRequest();
+
+      expect(res.status).toBe(403);
+    });
+
+    it("should remove post from database if id was valid and user was it's author", async () => {
+      await sendDeleteRequest();
+
+      const postFromDb = await Post.findById(post._id);
+      expect(postFromDb).toBe(null);
     });
   });
 });
