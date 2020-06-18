@@ -56,19 +56,6 @@ async function getPostPage(query, pageInfo) {
   return posts;
 }
 
-async function createPostInDatabase(postModel, session) {
-  const tags = await Tag.findOrCreateManyByName(postModel.tags, session);
-  postModel.tags = tags.map((tag) => tag._id);
-
-  const posts = await Post.create([postModel], { session });
-  post = posts[0];
-
-  await Promise.all(tags.map((tag) => tag.addPost(post._id)));
-  await session.commitTransaction();
-
-  return post;
-}
-
 exports.create = async (req, res) => {
   const postModel = mapPostToViewModel(
     req.body,
@@ -81,6 +68,7 @@ exports.create = async (req, res) => {
   session.startTransaction();
   try {
     await createPostInDatabase(postModel, session);
+    await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
     throw new StatusError(500, error.message);
@@ -110,6 +98,22 @@ function validatePost(post) {
   }
 }
 
+async function createPostInDatabase(postModel, session) {
+  const tags = await Tag.findOrCreateManyByName(postModel.tags, session);
+  postModel.tags = tags.map((tag) => tag._id);
+
+  const posts = await Post.create([postModel], { session });
+  post = posts[0];
+
+  await attachPostToTags(tags, post);
+
+  return post;
+}
+
+function attachPostToTags(tags, post) {
+  return Promise.all(tags.map((tag) => tag.addPost(post._id)));
+}
+
 exports.show = async (req, res) => {
   const post = await Post.findById(req.params.id)
     .populate("author", "name")
@@ -130,7 +134,7 @@ exports.show = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  let post = await Post.findById(req.params.id).populate("tags");
+  const post = await Post.findById(req.params.id).populate("tags");
   if (!post) {
     throw new StatusError(404, `Post ${req.params.id} not found`);
   }
@@ -145,24 +149,15 @@ exports.update = async (req, res) => {
       req.user._id
     );
 
-    if (req.body.tags) {
-      // remove old tag references to this post
-      await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
+    await removeAllTagsFromPost(post);
+    const tags = await Tag.findOrCreateManyByName(postModel.tags, session);
+    postModel.tags = tags.map((tag) => tag._id);
+    await attachPostToTags(tags, post);
 
-      // add new tags
-      const newTags = await Tag.findOrCreateManyByName(postModel.tags, session);
-      await Promise.all(newTags.map((tag) => tag.addPost(post._id)));
-      postModel.tags = newTags.map((tag) => tag._id);
-    } else {
-      postModel.tags = post.tags;
-    }
-
-    // update post
-    for (const key in postModel) {
-      post[key] = postModel[key];
-    }
-    post.save();
+    await updatePost(post, postModel);
     await session.commitTransaction();
+
+    res.send(post);
   } catch (error) {
     await session.abortTransaction();
     if (error instanceof StatusError) {
@@ -170,9 +165,21 @@ exports.update = async (req, res) => {
     } else {
       throw new StatusError(500, error.message);
     }
+  } finally {
+    session.endSession();
   }
-  res.send(post);
 };
+
+async function updatePost(post, propertiesToUpdate) {
+  for (const key in propertiesToUpdate) {
+    post[key] = propertiesToUpdate[key];
+  }
+  await post.save();
+}
+
+async function removeAllTagsFromPost(post) {
+  await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
+}
 
 exports.destroy = async (req, res) => {
   const post = await Post.findById(req.params.id).populate("tags");
