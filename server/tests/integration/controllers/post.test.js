@@ -10,6 +10,7 @@ const apiEndpoint = "/api/v1/posts";
 
 describe(apiEndpoint, () => {
   let post;
+  let id;
   let tags;
   let tagNames = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((name) => {
     return { name };
@@ -24,6 +25,7 @@ describe(apiEndpoint, () => {
 
   beforeEach(async () => {
     server = require("../../../bin/www");
+
     const user = new Role({ name: ROLES.user });
     author = await User.create({
       name: "user",
@@ -31,26 +33,9 @@ describe(apiEndpoint, () => {
       roles: [user],
     });
     token = author.generateAuthToken();
-  });
 
-  afterEach(async () => {
-    await server.close();
-    await Post.remove({});
-    await Tag.remove({});
-    await User.remove({});
-    await Role.remove({});
-  });
-
-  describe("GET /", () => {
-    it("should list all posts", async () => {
-      await seedDb();
-
-      const res = await request(server).get(apiEndpoint);
-
-      expect(res.status).toBe(200);
-      expect(res.body.posts.length).toBe(1);
-      expectPostsToBeTheSame(post, res.body.posts[0]);
-    });
+    await seedDb();
+    id = post._id;
   });
 
   seedDb = async () => {
@@ -64,19 +49,26 @@ describe(apiEndpoint, () => {
     return { tags, rating, score, imageLink, thumbnailLink, author };
   };
 
-  expectPostsToBeTheSame = (expected, actual) => {
-    expect(actual._id.toString()).toBe(expected._id.toString());
-    expect(actual.rating).toBe(expected.rating);
-    expect(actual.score).toBe(expected.score);
-    expect(actual.imageLink).toBe(expected.imageLink);
-    expect(actual.thumbnailLink).toBe(expected.thumbnailLink);
-    expect(actual.tags.length).toBe(expected.tags.length);
-  };
+  afterEach(async () => {
+    await server.close();
+    await Post.remove({});
+    await Tag.remove({});
+    await User.remove({});
+    await Role.remove({});
+  });
+
+  describe("GET /", () => {
+    it("should list all posts", async () => {
+      const res = await request(server).get(apiEndpoint);
+
+      expect(res.status).toBe(200);
+      expect(res.body.posts.length).toBe(1);
+      expectPostsToBeTheSame(post, res.body.posts[0]);
+    });
+  });
 
   describe("GET /:id", () => {
     it("should return a post if valid id was passed", async () => {
-      await seedDb();
-
       const res = await request(server).get(
         `${apiEndpoint}/${post._id.toString()}`
       );
@@ -86,27 +78,22 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 404 if invalid id was passed", async () => {
-      const id = 1;
-
-      const res = await request(server).get(`${apiEndpoint}/${id}`);
-
-      expect(res.status).toBe(404);
+      await expectRequestToInvalidIdToReturn404(sendShowPostRequest);
     });
 
-    it("should return 404 if post was not found", async () => {
-      const id = mongoose.Types.ObjectId();
-
-      const res = await request(server).get(`${apiEndpoint}/${id}`);
-
-      expect(res.status).toBe(404);
+    it("should return 404 if post doesn't exist", async () => {
+      await expectRequestToNonExistingPostToReturn404(sendShowPostRequest);
     });
+
+    sendShowPostRequest = () => {
+      return request(server).get(`${apiEndpoint}/${id}`);
+    };
   });
 
   describe("PUT /:id", () => {
     let updatedPost;
 
     beforeEach(async () => {
-      await seedDb();
       updatedPost = createPostModel();
       updatedPost._id = post._id;
     });
@@ -120,28 +107,11 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 404 if invalid id is passed", async () => {
-      updatedPost._id = 1;
-
-      const res = await sendUpdateRequest();
-
-      expect(res.status).toBe(404);
+      await expectRequestToInvalidIdToReturn404(sendUpdateRequest);
     });
 
-    sendUpdateRequest = () => {
-      const id = updatedPost._id;
-
-      return request(server)
-        .put(`${apiEndpoint}/${id}`)
-        .set("x-auth-token", token)
-        .send(updatedPost);
-    };
-
-    it("should return 404 if post was not found", async () => {
-      updatedPost._id = mongoose.Types.ObjectId();
-
-      const res = await sendUpdateRequest();
-
-      expect(res.status).toBe(404);
+    it("should return 404 if post doesn't exist", async () => {
+      await expectRequestToNonExistingPostToReturn404(sendUpdateRequest);
     });
 
     it("should return 400 if less than 5 tags were passed", async () => {
@@ -182,16 +152,16 @@ describe(apiEndpoint, () => {
 
       expectPostsToBeTheSame(postInDb, updatedPost);
     });
+
+    sendUpdateRequest = () => {
+      return request(server)
+        .put(`${apiEndpoint}/${id}`)
+        .set("x-auth-token", token)
+        .send(updatedPost);
+    };
   });
 
   describe("DELETE /:id", () => {
-    let id;
-
-    beforeEach(async () => {
-      await seedDb();
-      id = post._id;
-    });
-
     sendDeleteRequest = () => {
       return request(server)
         .delete(`${apiEndpoint}/${id}`)
@@ -207,19 +177,11 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 404 if invalid id was passed", async () => {
-      id = 1;
-
-      const res = await sendDeleteRequest();
-
-      expect(res.status).toBe(404);
+      await expectRequestToInvalidIdToReturn404(sendDeleteRequest);
     });
 
     it("should return 404 if post doesn't exist", async () => {
-      id = mongoose.Types.ObjectId();
-
-      const res = await sendDeleteRequest();
-
-      expect(res.status).toBe(404);
+      await expectRequestToNonExistingPostToReturn404(sendDeleteRequest);
     });
 
     it("should return 403 if user is not the post's author", async () => {
@@ -239,13 +201,6 @@ describe(apiEndpoint, () => {
   });
 
   describe("vote up", () => {
-    let id;
-
-    beforeEach(async () => {
-      await seedDb();
-      id = post._id;
-    });
-
     sendVoteUpRequest = () => {
       return request(server)
         .get(`${apiEndpoint}/${id}/vote-up`)
@@ -260,12 +215,12 @@ describe(apiEndpoint, () => {
       expect(res.status).toBe(401);
     });
 
+    it("should return 404 if invalid id was passed", async () => {
+      await expectRequestToInvalidIdToReturn404(sendVoteUpRequest);
+    });
+
     it("should return 404 if post doesn't exists", async () => {
-      id = mongoose.Types.ObjectId();
-
-      const res = await sendVoteUpRequest();
-
-      expect(res.status).toBe(404);
+      await expectRequestToNonExistingPostToReturn404(sendVoteUpRequest);
     });
 
     it("should upvote if user hasn't voted up", async () => {
@@ -285,13 +240,6 @@ describe(apiEndpoint, () => {
   });
 
   describe("vote down", () => {
-    let id;
-
-    beforeEach(async () => {
-      await seedDb();
-      id = post._id;
-    });
-
     sendVoteDownRequest = () => {
       return request(server)
         .get(`${apiEndpoint}/${id}/vote-down`)
@@ -306,12 +254,12 @@ describe(apiEndpoint, () => {
       expect(res.status).toBe(401);
     });
 
+    it("should return 404 if invalid id was passed", async () => {
+      await expectRequestToInvalidIdToReturn404(sendVoteDownRequest);
+    });
+
     it("should return 404 if post doesn't exists", async () => {
-      id = mongoose.Types.ObjectId();
-
-      const res = await sendVoteDownRequest();
-
-      expect(res.status).toBe(404);
+      await expectRequestToNonExistingPostToReturn404(sendVoteDownRequest);
     });
 
     it("should upvote if user hasn't voted up", async () => {
@@ -329,4 +277,29 @@ describe(apiEndpoint, () => {
       expect(postInDb.score).toBe(0);
     });
   });
+
+  expectRequestToNonExistingPostToReturn404 = async (sendRequest) => {
+    id = mongoose.Types.ObjectId();
+
+    const res = await sendRequest();
+
+    expect(res.status).toBe(404);
+  };
+
+  expectRequestToInvalidIdToReturn404 = async (sendRequest) => {
+    id = 1;
+
+    const res = await sendRequest();
+
+    expect(res.status).toBe(404);
+  };
+
+  expectPostsToBeTheSame = (expected, actual) => {
+    expect(actual._id.toString()).toBe(expected._id.toString());
+    expect(actual.rating).toBe(expected.rating);
+    expect(actual.score).toBe(expected.score);
+    expect(actual.imageLink).toBe(expected.imageLink);
+    expect(actual.thumbnailLink).toBe(expected.thumbnailLink);
+    expect(actual.tags.length).toBe(expected.tags.length);
+  };
 });
