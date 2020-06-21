@@ -122,10 +122,7 @@ exports.show = async (req, res) => {
       path: "comments",
       populate: { path: "author", model: "User" },
     });
-
-  if (!post) {
-    throw new StatusError(404, `Post ${req.params.id} not found`);
-  }
+  ensurePostWasFound(post);
 
   const sortedTags = Tag.sortByName(post.tags);
   const tagsOccurences = Tag.getOccurences(sortedTags);
@@ -136,9 +133,7 @@ exports.show = async (req, res) => {
 
 exports.update = async (req, res) => {
   const post = await Post.findById(req.params.id).populate("tags");
-  if (!post) {
-    throw new StatusError(404, `Post ${req.params.id} not found`);
-  }
+  ensurePostWasFound(post);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -184,9 +179,7 @@ async function removeAllTagsFromPost(post) {
 
 exports.destroy = async (req, res) => {
   const post = await Post.findById(req.params.id).populate("tags");
-  if (!post) {
-    throw new StatusError(404, `Post ${req.params.id} not found`);
-  }
+  ensurePostWasFound(post);
 
   const isAuthor = await authenticateAuthor(post, req.user);
   const isAdmin = req.user.roles && req.user.roles.admin;
@@ -217,9 +210,7 @@ exports.destroy = async (req, res) => {
 
 exports.toggleVote = async (req, res) => {
   let post = await Post.findById(req.params.id);
-  if (!post) {
-    throw new StatusError(404, `Post ${req.params.id} not found`);
-  }
+  ensurePostWasFound(post);
 
   if (req.body.voteType === "up") {
     miscUtils.toggleInArray(req.user._id, post.voters.up);
@@ -236,9 +227,7 @@ exports.toggleVote = async (req, res) => {
 
 exports.voteUp = async (req, res) => {
   const post = await Post.findById(req.params.id);
-  if (!post) {
-    throw new StatusError(404, `Post ${req.params.id} not found`);
-  }
+  ensurePostWasFound(post);
 
   miscUtils.toggleInArray(req.user._id, post.voters.up);
   miscUtils.removeFromArrayIfExists(req.user._id, post.voters.down);
@@ -250,9 +239,7 @@ exports.voteUp = async (req, res) => {
 
 exports.voteDown = async (req, res) => {
   const post = await Post.findById(req.params.id);
-  if (!post) {
-    throw new StatusError(404, `Post ${req.params.id} not found`);
-  }
+  ensurePostWasFound(post);
 
   miscUtils.toggleInArray(req.user._id, post.voters.down);
   miscUtils.removeFromArrayIfExists(req.user._id, post.voters.up);
@@ -266,4 +253,10 @@ async function authenticateAuthor(post, user) {
   const author = await User.findById(post.author);
 
   return user._id === author._id.toString();
+}
+
+function ensurePostWasFound(post) {
+  if (!post) {
+    throw new StatusError(404, `Post not found`);
+  }
 }
