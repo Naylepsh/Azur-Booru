@@ -1,4 +1,6 @@
 const request = require("supertest");
+const UserCreator = require("./userCreator");
+const PostCreator = require("./postCreator");
 const mongoose = require("mongoose");
 const { Post } = require("../../../models/post");
 const { Tag } = require("../../../models/tag");
@@ -9,45 +11,24 @@ let server;
 const apiEndpoint = "/api/v1/posts";
 
 describe(apiEndpoint, () => {
+  let userCreator;
+  let postCreator;
   let post;
-  let id;
-  let tags;
-  let tagNames = ["tag1", "tag2", "tag3", "tag4", "tag5"].map((name) => {
-    return { name };
-  });
-  const rating = "safe";
-  const score = 0;
-  const imageLink = "link/to/image";
-  const thumbnailLink = "link/to/thumbnail";
-  let author;
-
   let token;
+  let id;
 
   beforeEach(async () => {
     server = require("../../../bin/www");
 
-    const user = new Role({ name: ROLES.user });
-    author = await User.create({
-      name: "user",
-      password: "password",
-      roles: [user],
-    });
-    token = author.generateAuthToken();
+    userCreator = new UserCreator();
+    const user = await userCreator.saveToDatabase();
+    token = user.generateAuthToken();
 
-    await seedDb();
+    postCreator = new PostCreator();
+    postCreator.author = user._id;
+    post = await postCreator.saveToDatabase();
     id = post._id;
   });
-
-  seedDb = async () => {
-    tags = await Tag.insertMany(tagNames);
-    post = createPostModel();
-    postInDb = await Post.create(createPostModel());
-    post._id = postInDb._id;
-  };
-
-  createPostModel = () => {
-    return { tags, rating, score, imageLink, thumbnailLink, author };
-  };
 
   afterEach(async () => {
     await server.close();
@@ -77,9 +58,7 @@ describe(apiEndpoint, () => {
     });
 
     it("should return a post if valid id was passed", async () => {
-      const res = await request(server).get(
-        `${apiEndpoint}/${post._id.toString()}`
-      );
+      const res = await sendShowPostRequest();
 
       expect(res.status).toBe(200);
       expectPostsToBeTheSame(post, res.body.post);
@@ -94,8 +73,8 @@ describe(apiEndpoint, () => {
     let updatedPost;
 
     beforeEach(async () => {
-      updatedPost = createPostModel();
-      updatedPost._id = post._id;
+      updatedPost = postCreator.createPostModel();
+      updatedPost._id = id;
     });
 
     it("should return 401 if user is not logged in", async () => {
@@ -111,7 +90,7 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 400 if less than 5 tags were passed", async () => {
-      updatedPost.tags = new Array(4).map((_, index) => index.toString());
+      postCreator.tags = new Array(4).map((_, index) => index.toString());
 
       const res = await sendUpdateRequest();
 
@@ -119,7 +98,7 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 400 if less than 5 unique tags were passed", async () => {
-      updatedPost.tags = new Array(4).map((_) => "tag");
+      postCreator.tags = new Array(4).map((_) => "tag");
 
       const res = await sendUpdateRequest();
 
@@ -127,7 +106,7 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 400 if invalid rating was passed", async () => {
-      updatedPost.rating = "rating";
+      postCreator.rating = "rating";
 
       const res = await sendUpdateRequest();
 
@@ -138,22 +117,22 @@ describe(apiEndpoint, () => {
       const res = await sendUpdateRequest();
 
       expect(res.status).toBe(200);
-      expectPostsToBeTheSame(res.body.post, updatedPost);
+      expectPostsToBeTheSame(res.body.post, post);
     });
 
     it("should update post in database if post was valid", async () => {
       await sendUpdateRequest();
 
-      const postInDb = await Post.findById(updatedPost._id);
+      const postInDb = await Post.findById(id);
 
-      expectPostsToBeTheSame(postInDb, updatedPost);
+      expectPostsToBeTheSame(postInDb, post);
     });
 
     sendUpdateRequest = () => {
       return request(server)
         .put(`${apiEndpoint}/${id}`)
         .set("x-auth-token", token)
-        .send(updatedPost);
+        .send(postCreator.createPostModel());
     };
   });
 
@@ -189,7 +168,7 @@ describe(apiEndpoint, () => {
       await sendDeleteRequest();
 
       const tags = await Tag.find({
-        name: { $in: tagNames.map((tag) => tag.name) },
+        name: { $in: postCreator.tagNames },
       });
       for (const tag of tags) {
         expect(tag.posts.length).toBe(0);
