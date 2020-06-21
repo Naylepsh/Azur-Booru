@@ -68,6 +68,14 @@ describe(apiEndpoint, () => {
   });
 
   describe("GET /:id", () => {
+    it("should return 404 if invalid id was passed", async () => {
+      await expectRequestToInvalidIdToReturn404(sendShowPostRequest);
+    });
+
+    it("should return 404 if post doesn't exist", async () => {
+      await expectRequestToNonExistingPostToReturn404(sendShowPostRequest);
+    });
+
     it("should return a post if valid id was passed", async () => {
       const res = await request(server).get(
         `${apiEndpoint}/${post._id.toString()}`
@@ -75,14 +83,6 @@ describe(apiEndpoint, () => {
 
       expect(res.status).toBe(200);
       expectPostsToBeTheSame(post, res.body.post);
-    });
-
-    it("should return 404 if invalid id was passed", async () => {
-      await expectRequestToInvalidIdToReturn404(sendShowPostRequest);
-    });
-
-    it("should return 404 if post doesn't exist", async () => {
-      await expectRequestToNonExistingPostToReturn404(sendShowPostRequest);
     });
 
     sendShowPostRequest = () => {
@@ -99,11 +99,7 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 401 if user is not logged in", async () => {
-      token = "";
-
-      const res = await sendUpdateRequest();
-
-      expect(res.status).toBe(401);
+      await expectUnauthorizedRequestToReturn401(sendUpdateRequest);
     });
 
     it("should return 404 if invalid id is passed", async () => {
@@ -162,18 +158,8 @@ describe(apiEndpoint, () => {
   });
 
   describe("DELETE /:id", () => {
-    sendDeleteRequest = () => {
-      return request(server)
-        .delete(`${apiEndpoint}/${id}`)
-        .set("x-auth-token", token);
-    };
-
     it("should return 401 if user is not logged in", async () => {
-      token = "";
-
-      const res = await sendDeleteRequest();
-
-      expect(res.status).toBe(401);
+      await expectUnauthorizedRequestToReturn401(sendDeleteRequest);
     });
 
     it("should return 404 if invalid id was passed", async () => {
@@ -198,21 +184,17 @@ describe(apiEndpoint, () => {
       const postFromDb = await Post.findById(post._id);
       expect(postFromDb).toBe(null);
     });
+
+    sendDeleteRequest = () => {
+      return request(server)
+        .delete(`${apiEndpoint}/${id}`)
+        .set("x-auth-token", token);
+    };
   });
 
   describe("vote up", () => {
-    sendVoteUpRequest = () => {
-      return request(server)
-        .get(`${apiEndpoint}/${id}/vote-up`)
-        .set("x-auth-token", token);
-    };
-
     it("should return 401 if user isn't logged in", async () => {
-      token = "";
-
-      const res = await sendVoteUpRequest();
-
-      expect(res.status).toBe(401);
+      await expectUnauthorizedRequestToReturn401(sendVoteDownRequest);
     });
 
     it("should return 404 if invalid id was passed", async () => {
@@ -237,21 +219,17 @@ describe(apiEndpoint, () => {
 
       expect(postInDb.score).toBe(0);
     });
+
+    sendVoteUpRequest = () => {
+      return request(server)
+        .get(`${apiEndpoint}/${id}/vote-up`)
+        .set("x-auth-token", token);
+    };
   });
 
   describe("vote down", () => {
-    sendVoteDownRequest = () => {
-      return request(server)
-        .get(`${apiEndpoint}/${id}/vote-down`)
-        .set("x-auth-token", token);
-    };
-
     it("should return 401 if user isn't logged in", async () => {
-      token = "";
-
-      const res = await sendVoteDownRequest();
-
-      expect(res.status).toBe(401);
+      await expectUnauthorizedRequestToReturn401(sendVoteDownRequest);
     });
 
     it("should return 404 if invalid id was passed", async () => {
@@ -276,6 +254,12 @@ describe(apiEndpoint, () => {
 
       expect(postInDb.score).toBe(0);
     });
+
+    sendVoteDownRequest = () => {
+      return request(server)
+        .get(`${apiEndpoint}/${id}/vote-down`)
+        .set("x-auth-token", token);
+    };
   });
 
   expectRequestToNonExistingPostToReturn404 = async (sendRequest) => {
@@ -292,6 +276,14 @@ describe(apiEndpoint, () => {
     const res = await sendRequest();
 
     expect(res.status).toBe(404);
+  };
+
+  expectUnauthorizedRequestToReturn401 = async (sendRequest) => {
+    token = "";
+
+    const res = await sendRequest();
+
+    expect(res.status).toBe(401);
   };
 
   expectPostsToBeTheSame = (expected, actual) => {
