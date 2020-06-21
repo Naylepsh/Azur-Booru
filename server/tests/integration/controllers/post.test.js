@@ -283,4 +283,50 @@ describe(apiEndpoint, () => {
       expect(postInDb.score).toBe(0);
     });
   });
+
+  describe("vote down", () => {
+    let id;
+
+    beforeEach(async () => {
+      await seedDb();
+      id = post._id;
+    });
+
+    sendVoteDownRequest = () => {
+      return request(server)
+        .get(`${apiEndpoint}/${id}/vote-down`)
+        .set("x-auth-token", token);
+    };
+
+    it("should return 401 if user isn't logged in", async () => {
+      token = "";
+
+      const res = await sendVoteDownRequest();
+
+      expect(res.status).toBe(401);
+    });
+
+    it("should return 404 if post doesn't exists", async () => {
+      id = mongoose.Types.ObjectId();
+
+      const res = await sendVoteDownRequest();
+
+      expect(res.status).toBe(404);
+    });
+
+    it("should upvote if user hasn't voted up", async () => {
+      await sendVoteDownRequest();
+      const postInDb = await Post.findById(id);
+
+      expect(postInDb.score).toBe(-1);
+    });
+
+    it("should cancel vote if user already voted up", async () => {
+      await sendVoteDownRequest();
+      await sendVoteDownRequest();
+      const postInDb = await Post.findById(id);
+
+      expect(postInDb.score).toBe(0);
+    });
+  });
 });

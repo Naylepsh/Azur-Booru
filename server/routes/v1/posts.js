@@ -32,6 +32,12 @@ router
     asyncWrapper(Post.toggleVote)
   )
   .get(
+    "/:id/vote-down",
+    validateObjectId,
+    authorizeUser,
+    asyncWrapper(Post.voteDown)
+  )
+  .get(
     "/:id/vote-up",
     validateObjectId,
     authorizeUser,

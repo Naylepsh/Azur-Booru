@@ -189,7 +189,6 @@ exports.destroy = async (req, res) => {
   }
 
   const isAuthor = await authenticateAuthor(post, req.user);
-  console.log(isAuthor);
   const isAdmin = req.user.roles && req.user.roles.admin;
   if (!isAuthor && !isAdmin) {
     throw new StatusError(403, "Access denied");
@@ -243,6 +242,20 @@ exports.voteUp = async (req, res) => {
 
   miscUtils.toggleInArray(req.user._id, post.voters.up);
   miscUtils.removeFromArrayIfExists(req.user._id, post.voters.down);
+  post.score = post.voters.up.length - post.voters.down.length;
+  await post.save();
+
+  res.send(post.score.toString());
+};
+
+exports.voteDown = async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    throw new StatusError(404, `Post ${req.params.id} not found`);
+  }
+
+  miscUtils.toggleInArray(req.user._id, post.voters.down);
+  miscUtils.removeFromArrayIfExists(req.user._id, post.voters.up);
   post.score = post.voters.up.length - post.voters.down.length;
   await post.save();
 
