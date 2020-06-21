@@ -30,6 +30,12 @@ router
     validateObjectId,
     authorizeUser,
     asyncWrapper(Post.toggleVote)
+  )
+  .get(
+    "/:id/vote-up",
+    validateObjectId,
+    authorizeUser,
+    asyncWrapper(Post.voteUp)
   );
 
 module.exports = router;

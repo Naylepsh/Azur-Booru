@@ -214,7 +214,7 @@ describe(apiEndpoint, () => {
       expect(res.status).toBe(404);
     });
 
-    it("should return 404 if post was not found", async () => {
+    it("should return 404 if post doesn't exist", async () => {
       id = mongoose.Types.ObjectId();
 
       const res = await sendDeleteRequest();
@@ -235,6 +235,52 @@ describe(apiEndpoint, () => {
 
       const postFromDb = await Post.findById(post._id);
       expect(postFromDb).toBe(null);
+    });
+  });
+
+  describe("vote up", () => {
+    let id;
+
+    beforeEach(async () => {
+      await seedDb();
+      id = post._id;
+    });
+
+    sendVoteUpRequest = () => {
+      return request(server)
+        .get(`${apiEndpoint}/${id}/vote-up`)
+        .set("x-auth-token", token);
+    };
+
+    it("should return 401 if user isn't logged in", async () => {
+      token = "";
+
+      const res = await sendVoteUpRequest();
+
+      expect(res.status).toBe(401);
+    });
+
+    it("should return 404 if post doesn't exists", async () => {
+      id = mongoose.Types.ObjectId();
+
+      const res = await sendVoteUpRequest();
+
+      expect(res.status).toBe(404);
+    });
+
+    it("should upvote if user hasn't voted up", async () => {
+      await sendVoteUpRequest();
+      const postInDb = await Post.findById(id);
+
+      expect(postInDb.score).toBe(1);
+    });
+
+    it("should cancel vote if user already voted up", async () => {
+      await sendVoteUpRequest();
+      await sendVoteUpRequest();
+      const postInDb = await Post.findById(id);
+
+      expect(postInDb.score).toBe(0);
     });
   });
 });

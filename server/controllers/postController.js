@@ -129,6 +129,7 @@ exports.show = async (req, res) => {
 
   const sortedTags = Tag.sortByName(post.tags);
   const tagsOccurences = Tag.getOccurences(sortedTags);
+  delete post.author.password;
 
   res.send({ post: post, tags: tagsOccurences, user: req.user });
 };
@@ -232,6 +233,20 @@ exports.toggleVote = async (req, res) => {
   await post.save();
 
   res.end(post.score.toString());
+};
+
+exports.voteUp = async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    throw new StatusError(404, `Post ${req.params.id} not found`);
+  }
+
+  miscUtils.toggleInArray(req.user._id, post.voters.up);
+  miscUtils.removeFromArrayIfExists(req.user._id, post.voters.down);
+  post.score = post.voters.up.length - post.voters.down.length;
+  await post.save();
+
+  res.send(post.score.toString());
 };
 
 async function authenticateAuthor(post, user) {
