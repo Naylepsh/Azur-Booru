@@ -138,7 +138,7 @@ describe(apiEndpoint, () => {
       const res = await sendUpdateRequest();
 
       expect(res.status).toBe(200);
-      expectPostsToBeTheSame(res.body, updatedPost);
+      expectPostsToBeTheSame(res.body.post, updatedPost);
     });
 
     it("should update post in database if post was valid", async () => {
@@ -183,6 +183,17 @@ describe(apiEndpoint, () => {
 
       const postFromDb = await Post.findById(post._id);
       expect(postFromDb).toBe(null);
+    });
+
+    it("should remove references from the post's tags to the post", async () => {
+      await sendDeleteRequest();
+
+      const tags = await Tag.find({
+        name: { $in: tagNames.map((tag) => tag.name) },
+      });
+      for (const tag of tags) {
+        expect(tag.posts.length).toBe(0);
+      }
     });
 
     sendDeleteRequest = () => {

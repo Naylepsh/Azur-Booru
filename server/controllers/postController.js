@@ -78,19 +78,6 @@ exports.create = async (req, res) => {
   }
 };
 
-function mapPostToViewModel(post, imageLink, thumbnailLink, authorId) {
-  const postModel = miscUtils.pickAttributes(post, POST_BODY_ATTRIBUTES);
-  postModel.tags = miscUtils.distinctWordsInArray(postModel.tags);
-  postModel.score = 0;
-  postModel.imageLink = imageLink;
-  postModel.thumbnailLink = thumbnailLink;
-  postModel.author = authorId;
-
-  validatePost(postModel);
-
-  return postModel;
-}
-
 function validatePost(post) {
   const { error } = validate(post);
   if (error) {
@@ -128,7 +115,7 @@ exports.show = async (req, res) => {
   const tagsOccurences = Tag.getOccurences(sortedTags);
   delete post.author.password;
 
-  res.send({ post: post, tags: tagsOccurences, user: req.user });
+  res.send({ post: post, tags: tagsOccurences });
 };
 
 exports.update = async (req, res) => {
@@ -153,7 +140,7 @@ exports.update = async (req, res) => {
     await updatePost(post, postModel);
     await session.commitTransaction();
 
-    res.send(post);
+    res.send({ post });
   } catch (error) {
     await session.abortTransaction();
     if (error instanceof StatusError) {
@@ -166,6 +153,19 @@ exports.update = async (req, res) => {
   }
 };
 
+function mapPostToViewModel(post, imageLink, thumbnailLink, authorId) {
+  const postModel = miscUtils.pickAttributes(post, POST_BODY_ATTRIBUTES);
+  postModel.tags = miscUtils.distinctWordsInArray(postModel.tags);
+  postModel.score = 0;
+  postModel.imageLink = imageLink;
+  postModel.thumbnailLink = thumbnailLink;
+  postModel.author = authorId;
+
+  validatePost(postModel);
+
+  return postModel;
+}
+
 async function updatePost(post, propertiesToUpdate) {
   for (const key in propertiesToUpdate) {
     post[key] = propertiesToUpdate[key];
@@ -174,7 +174,7 @@ async function updatePost(post, propertiesToUpdate) {
 }
 
 async function removeAllTagsFromPost(post) {
-  await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
+  return Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
 }
 
 exports.destroy = async (req, res) => {
@@ -190,12 +190,8 @@ exports.destroy = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    await Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
-    await Promise.all(
-      post.comments.map((commentId) =>
-        Comment.findByIdAndRemove(commentId).session(session)
-      )
-    );
+    await detachTagsFromPost(post);
+    await removePostComments(post, session);
     await Post.findByIdAndRemove(post._id);
 
     await session.commitTransaction();
@@ -207,6 +203,16 @@ exports.destroy = async (req, res) => {
     res.send(post);
   }
 };
+
+function detachTagsFromPost(post) {
+  // mongoose keeps a reference to session on object that was created by find()
+  // thus, no reason to pass session here
+  return Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
+}
+
+function removePostComments(post, session) {
+  return Comment.deleteMany({ _id: { $in: post.comments } }).session(session);
+}
 
 exports.toggleVote = async (req, res) => {
   let post = await Post.findById(req.params.id);
