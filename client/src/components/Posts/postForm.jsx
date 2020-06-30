@@ -89,7 +89,9 @@ class PostForm extends Form {
 
   doSubmit = async () => {
     try {
-      await uploadPost(this.state.data);
+      const post = { ...this.state.data };
+      post.tags = post.tags.split(" ");
+      await uploadPost(post);
       this.props.history.push("/posts");
     } catch (err) {
       if (err.response && err.response.status === 400) {
