@@ -4,12 +4,8 @@ const { storage } = require("../../utils/storage");
 const Post = require("../../controllers/postController");
 const { authorizeUser } = require("../../middleware/auth");
 const asyncWrapper = require("../../middleware/asyncWrapper");
-const {
-  uploadImageToGCS,
-  prepareThumbnail,
-  uploadThumbnailToGCS,
-} = require("../../middleware/google-cloud-storage");
 const validateObjectId = require("../../middleware/validateObjectId");
+const { saveThumbnail } = require("../../middleware/save-thumbnail");
 
 router
   .get("/", asyncWrapper(Post.list))
@@ -17,9 +13,7 @@ router
     "/",
     authorizeUser,
     storage.single("file"),
-    uploadImageToGCS,
-    prepareThumbnail,
-    uploadThumbnailToGCS,
+    saveThumbnail,
     asyncWrapper(Post.create)
   )
   .get("/:id", validateObjectId, asyncWrapper(Post.show))

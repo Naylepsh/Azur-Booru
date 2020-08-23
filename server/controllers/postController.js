@@ -4,6 +4,7 @@ const { Comment } = require("../models/comment");
 const { User } = require("../models/user");
 const { StatusError } = require("../utils/errors");
 const { paginationInfo } = require("../utils/pagination");
+const { upload_path } = require("../utils/storage");
 const miscUtils = require("../utils/misc");
 const mongoose = require("mongoose");
 
@@ -57,10 +58,13 @@ async function getPostPage(query, pageInfo) {
 }
 
 exports.create = async (req, res) => {
+  const imageUrl = `${upload_path}/${req.file.filename}`;
+  const thumbnailUrl = `./uploads/${req.thumbnail.filename}`;
+  console.log(imageUrl, thumbnailUrl);
   const postModel = mapPostToViewModel(
     req.body,
-    req.postImageURL,
-    req.postThumbnailURL,
+    imageUrl,
+    thumbnailUrl,
     req.user._id
   );
 
