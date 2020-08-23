@@ -1,7 +1,7 @@
-const { upload_path } = require("../utils/storage");
+const LocalStorageService = require("../services/storage/local-storage.service");
 
 exports.get = function (req, res) {
   const name = req.params.name;
-  const pathToFile = `${upload_path}/${name}`;
-  res.sendFile(pathToFile, { root: "./" });
+  const image = LocalStorageService.getImage(name);
+  res.sendFile(image, { root: "./" });
 };
