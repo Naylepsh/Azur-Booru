@@ -58,13 +58,10 @@ async function getPostPage(query, pageInfo) {
 }
 
 exports.create = async (req, res) => {
-  const prefix = "http://localhost:3001/api/v1/images/";
-  const imageUrl = prefix + req.file.filename;
-  const thumbnailUrl = prefix + req.thumbnail.filename;
   const postModel = mapPostToViewModel(
     req.body,
-    imageUrl,
-    thumbnailUrl,
+    req.imageUrl,
+    req.thumbnailUrl,
     req.user._id
   );
 

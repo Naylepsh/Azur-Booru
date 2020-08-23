@@ -6,6 +6,7 @@ const { authorizeUser } = require("../../middleware/auth");
 const asyncWrapper = require("../../middleware/asyncWrapper");
 const validateObjectId = require("../../middleware/validateObjectId");
 const { saveThumbnail } = require("../../middleware/save-thumbnail");
+const { storeImage } = require("../../middleware/store-image.middleware");
 
 router
   .get("/", asyncWrapper(Post.list))
@@ -14,6 +15,7 @@ router
     authorizeUser,
     storage.single("file"),
     saveThumbnail,
+    storeImage,
     asyncWrapper(Post.create)
   )
   .get("/:id", validateObjectId, asyncWrapper(Post.show))
