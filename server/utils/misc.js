@@ -1,16 +1,4 @@
-const jimp = require("jimp");
-const fs = require("fs");
-
 module.exports = {
-  makeThumbnail: async (pathToFile, pathToThumbnail) => {
-    const image = await jimp.read(pathToFile);
-    let thumbnail = image.clone();
-    const xSize = 200;
-    const ySize = 200;
-    thumbnail.cover(xSize, ySize);
-    await thumbnail.writeAsync(pathToThumbnail);
-  },
-
   distinctWordsInString: (str) => {
     if (!str) return [];
     const words = str
