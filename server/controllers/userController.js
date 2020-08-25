@@ -5,15 +5,8 @@ const { hashPassword, validatePassword } = require("../utils/auth");
 const config = require("../config");
 
 exports.register = async (req, res) => {
-  const { error } = validate(req.body);
-  if (error) {
-    return sendError(res, { status: 400, message: error.details[0].message });
-  }
-
-  let user = await User.findOne({ name: req.body.name });
-  if (user) {
-    return sendError(res, { status: 400, message: "User already registered." });
-  }
+  ensurePayloadIsValid(req.body, validate);
+  await ensureUserDoesNotExist(req.body.name, res);
 
   const { password } = await hashPassword(req.body.password);
   const role = await Role.user();
@@ -26,6 +19,29 @@ exports.register = async (req, res) => {
 
   res.send(savedUser);
 };
+
+class BadRequestException extends Error {
+  constructor(message = "Bad Request") {
+    super(message);
+    this.status = 400;
+  }
+}
+
+function ensurePayloadIsValid(payload, validate) {
+  const { error } = validate(payload);
+  if (error) {
+    const message = error.details[0].message;
+    throw new BadRequestException(message);
+  }
+}
+
+async function ensureUserDoesNotExist(name, res) {
+  let user = await User.findOne({ name });
+  if (user) {
+    const message = "User already registered";
+    throw new BadRequestException(message);
+  }
+}
 
 exports.login = async (req, res) => {
   const { error } = validate(req.body);
