@@ -1,6 +1,16 @@
 const { PostCreator } = require("./postCreator");
 const { UserCreator } = require("./userCreator");
 const { TagCreator } = require("./tagCreator");
+const { hashPassword } = require("../../../utils/auth");
+const { ROLES } = require("../../../models/role");
+const { RoleCreator } = require("./roleCreator");
+
+exports.seedUserRole = async function () {
+  const name = ROLES.user;
+  const roleCreator = new RoleCreator(name);
+  const role = await roleCreator.saveToDatabase();
+  return role;
+};
 
 exports.seedTag = async function () {
   const tagCreator = new TagCreator();
@@ -9,8 +19,12 @@ exports.seedTag = async function () {
 };
 
 exports.seedUser = async function () {
-  const userCreator = new UserCreator();
+  const originalPassword = "password";
+  const { password } = await hashPassword(originalPassword);
+  const roles = [await exports.seedUserRole()];
+  const userCreator = new UserCreator(password, roles);
   const user = await userCreator.saveToDatabase();
+  user.password = originalPassword;
   return user;
 };
 

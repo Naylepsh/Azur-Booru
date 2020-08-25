@@ -3,11 +3,11 @@ const { User } = require("../../../models/user");
 const { EntityCreator } = require("./entityCreator");
 
 exports.UserCreator = class UserCreator extends EntityCreator {
-  constructor() {
+  constructor(password, roles) {
     const props = {
       name: "user",
-      password: "password",
-      roles: new Role({ name: ROLES.user }),
+      password,
+      roles,
     };
     const model = User;
     super(model, props);

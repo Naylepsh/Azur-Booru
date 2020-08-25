@@ -1,13 +1,12 @@
 const { User, validate } = require("../models/user");
 const Role = require("../models/role");
-const { sendError } = require("../utils/misc");
 const { hashPassword, validatePassword } = require("../utils/auth");
 const config = require("../config");
 const { BadRequestException } = require("../utils/exceptions");
 
 exports.register = async (req, res) => {
   ensurePayloadIsValid(req.body, validate);
-  await ensureUserDoesNotExist(req.body.name, res);
+  await ensureUserDoesNotExist(req.body.name);
 
   const { password } = await hashPassword(req.body.password);
   const role = await Role.user();
@@ -21,15 +20,7 @@ exports.register = async (req, res) => {
   res.send(savedUser);
 };
 
-function ensurePayloadIsValid(payload, validate) {
-  const { error } = validate(payload);
-  if (error) {
-    const message = error.details[0].message;
-    throw new BadRequestException(message);
-  }
-}
-
-async function ensureUserDoesNotExist(name, res) {
+async function ensureUserDoesNotExist(name) {
   let user = await User.findOne({ name });
   if (user) {
     const message = "User already registered";
@@ -38,29 +29,9 @@ async function ensureUserDoesNotExist(name, res) {
 }
 
 exports.login = async (req, res) => {
-  const { error } = validate(req.body);
-  if (error) {
-    return sendError(res, { status: 400, message: error.details[0].message });
-  }
-
-  const user = await User.findOne({ name: req.body.name });
-  if (!user) {
-    return sendError(res, {
-      status: 400,
-      message: "Invalid username or password.",
-    });
-  }
-
-  const validPassword = await validatePassword(
-    req.body.password,
-    user.password
-  );
-  if (!validPassword) {
-    return sendError(res, {
-      status: 400,
-      message: "Invalid username or password.",
-    });
-  }
+  ensurePayloadIsValid(req.body, validate);
+  const user = await ensureUserDoesExist(req.body.name);
+  await ensurePasswordMatches(req.body.password, user.password);
 
   const jwt = user.generateAuthToken();
   const roleNames = await Role.getRoleNames(user.roles);
@@ -68,6 +39,34 @@ exports.login = async (req, res) => {
 
   res.send({ jwt });
 };
+
+function ensurePayloadIsValid(payload, validate) {
+  const { error } = validate(payload);
+  if (error) {
+    const message = error.details[0].message;
+    throw new BadRequestException(message);
+  }
+}
+
+async function ensureUserDoesExist(name) {
+  const user = await User.findOne({ name });
+  if (!user) {
+    const message = "Invalid username or password.";
+    throw new BadRequestException(message);
+  }
+  return user;
+}
+
+async function ensurePasswordMatches(providedPassword, hashedPassword) {
+  const validPassword = await validatePassword(
+    providedPassword,
+    hashedPassword
+  );
+  if (!validPassword) {
+    const message = "Invalid username or password.";
+    throw new BadRequestException(message);
+  }
+}
 
 exports.logout = (req, res) => {
   res.clearCookie("jwt-token");
@@ -87,7 +86,7 @@ exports.profile = async (req, res) => {
   res.send(user);
 };
 
-async function storeRoles(res, roles) {
+function storeRoles(res, roles) {
   for (const role of roles) {
     res.cookie(config.cookies.prefix + role, true, {
       expire: 400000 + Date.now(),
