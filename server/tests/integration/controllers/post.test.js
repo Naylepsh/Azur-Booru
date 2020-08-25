@@ -1,17 +1,17 @@
 const request = require("supertest");
-const UserCreator = require("./userCreator");
-const PostCreator = require("./postCreator");
 const mongoose = require("mongoose");
+const { PostCreator } = require("../../helpers/database/postCreator");
 const { Post } = require("../../../models/post");
 const { Tag } = require("../../../models/tag");
 const { User } = require("../../../models/user");
-const { Role, ROLES } = require("../../../models/role");
+const { Role } = require("../../../models/role");
+const { seedPost } = require("../../helpers/database/seed");
+const { generateAuthToken } = require("../../helpers/auth/token");
 
 let server;
 const apiEndpoint = "/api/v1/posts";
 
 describe(apiEndpoint, () => {
-  let userCreator;
   let postCreator;
   let post;
   let token;
@@ -20,13 +20,8 @@ describe(apiEndpoint, () => {
   beforeEach(async () => {
     server = require("../../../bin/www");
 
-    userCreator = new UserCreator();
-    const user = await userCreator.saveToDatabase();
-    token = user.generateAuthToken();
-
-    postCreator = new PostCreator();
-    postCreator.author = user._id;
-    post = await postCreator.saveToDatabase();
+    post = await seedPost();
+    token = generateAuthToken(post.author);
     id = post._id;
   });
 
@@ -73,7 +68,8 @@ describe(apiEndpoint, () => {
     let updatedPost;
 
     beforeEach(async () => {
-      updatedPost = postCreator.createPostModel();
+      const postCreator = new PostCreator();
+      updatedPost = postCreator.props;
       updatedPost._id = id;
     });
 
@@ -90,7 +86,7 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 400 if less than 5 tags were passed", async () => {
-      postCreator.tags = new Array(4).map((_, index) => index.toString());
+      post.tags = new Array(4).map((_, index) => index.toString());
 
       const res = await sendUpdateRequest();
 
@@ -98,7 +94,7 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 400 if less than 5 unique tags were passed", async () => {
-      postCreator.tags = new Array(4).map((_) => "tag");
+      post.tags = new Array(4).map((_) => "tag");
 
       const res = await sendUpdateRequest();
 
@@ -106,7 +102,7 @@ describe(apiEndpoint, () => {
     });
 
     it("should return 400 if invalid rating was passed", async () => {
-      postCreator.rating = "rating";
+      post.rating = "rating";
 
       const res = await sendUpdateRequest();
 
@@ -132,11 +128,11 @@ describe(apiEndpoint, () => {
       return request(server)
         .put(`${apiEndpoint}/${id}`)
         .set("x-auth-token", token)
-        .send(postCreator.createPostModel());
+        .send(post);
     };
   });
 
-  describe("DELETE /:id", () => {
+  describe("delete /:id", () => {
     it("should return 401 if user is not logged in", async () => {
       await expectUnauthorizedRequestToReturn401(sendDeleteRequest);
     });
@@ -160,16 +156,14 @@ describe(apiEndpoint, () => {
     it("should remove post from database if id was valid and user was it's author", async () => {
       await sendDeleteRequest();
 
-      const postFromDb = await Post.findById(post._id);
-      expect(postFromDb).toBe(null);
+      const postfromdb = await Post.findById(post._id);
+      expect(postfromdb).toBe(null);
     });
 
     it("should remove references from the post's tags to the post", async () => {
       await sendDeleteRequest();
 
-      const tags = await Tag.find({
-        name: { $in: postCreator.tagNames },
-      });
+      const tags = await Tag.find({ _id: { $in: post.tags } });
       for (const tag of tags) {
         expect(tag.posts.length).toBe(0);
       }
@@ -197,9 +191,9 @@ describe(apiEndpoint, () => {
 
     it("should upvote if user hasn't voted up", async () => {
       await sendVoteUpRequest();
-      const postInDb = await Post.findById(id);
+      const postindb = await Post.findById(id);
 
-      expect(postInDb.score).toBe(1);
+      expect(postindb.score).toBe(1);
     });
 
     it("should cancel vote if user already voted up", async () => {
