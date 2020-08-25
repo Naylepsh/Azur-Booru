@@ -4,9 +4,9 @@ const { PostCreator } = require("../../helpers/database/postCreator");
 const { Post } = require("../../../models/post");
 const { Tag } = require("../../../models/tag");
 const { User } = require("../../../models/user");
-const { Role } = require("../../../models/role");
 const { seedPost } = require("../../helpers/database/seed");
 const { generateAuthToken } = require("../../helpers/auth/token");
+const { cleanDatabase } = require("../../helpers/database/clean");
 
 let server;
 const apiEndpoint = "/api/v1/posts";
@@ -26,10 +26,7 @@ describe(apiEndpoint, () => {
 
   afterEach(async () => {
     await server.close();
-    await Post.deleteMany({});
-    await Tag.deleteMany({});
-    await User.deleteMany({});
-    await Role.deleteMany({});
+    await cleanDatabase();
   });
 
   describe("GET /", () => {

@@ -17,12 +17,14 @@ exports.register = async (req, res) => {
 
   const { password } = await hashPassword(req.body.password);
   const role = await Role.user();
-  user = new User({
+
+  const savedUser = await User.create({
     name: req.body.name,
     password,
     roles: [role._id],
   });
-  await user.save();
+
+  res.send(savedUser);
 };
 
 exports.login = async (req, res) => {
