@@ -12,7 +12,6 @@ let server;
 const apiEndpoint = "/api/v1/posts";
 
 describe(apiEndpoint, () => {
-  let postCreator;
   let post;
   let token;
   let id;
@@ -27,10 +26,10 @@ describe(apiEndpoint, () => {
 
   afterEach(async () => {
     await server.close();
-    await Post.remove({});
-    await Tag.remove({});
-    await User.remove({});
-    await Role.remove({});
+    await Post.deleteMany({});
+    await Tag.deleteMany({});
+    await User.deleteMany({});
+    await Role.deleteMany({});
   });
 
   describe("GET /", () => {

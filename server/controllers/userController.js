@@ -4,13 +4,6 @@ const { sendError } = require("../utils/misc");
 const { hashPassword, validatePassword } = require("../utils/auth");
 const config = require("../config");
 
-exports.registerForm = (req, res) => {
-  if (req.user) {
-    res.redirect("/");
-  }
-  res.render("user/register", { user: req.user });
-};
-
 exports.register = async (req, res) => {
   const { error } = validate(req.body);
   if (error) {
@@ -22,7 +15,7 @@ exports.register = async (req, res) => {
     return sendError(res, { status: 400, message: "User already registered." });
   }
 
-  const { salt, password } = await hashPassword(req.body.password);
+  const { password } = await hashPassword(req.body.password);
   const role = await Role.user();
   user = new User({
     name: req.body.name,
@@ -30,13 +23,6 @@ exports.register = async (req, res) => {
     roles: [role._id],
   });
   await user.save();
-};
-
-exports.loginForm = (req, res) => {
-  if (req.user) {
-    res.redirect("/");
-  }
-  res.render("user/login", { user: req.user });
 };
 
 exports.login = async (req, res) => {
@@ -84,8 +70,8 @@ exports.logout = (req, res) => {
 };
 
 exports.profile = async (req, res) => {
-  // TODO: DO NOT SEND PASSWORD!
   const user = await User.findById(req.user._id);
+  delete user.password;
   res.send(user);
 };
 
