@@ -3,6 +3,7 @@ const Role = require("../models/role");
 const { sendError } = require("../utils/misc");
 const { hashPassword, validatePassword } = require("../utils/auth");
 const config = require("../config");
+const { BadRequestException } = require("../utils/exceptions");
 
 exports.register = async (req, res) => {
   ensurePayloadIsValid(req.body, validate);
@@ -19,13 +20,6 @@ exports.register = async (req, res) => {
 
   res.send(savedUser);
 };
-
-class BadRequestException extends Error {
-  constructor(message = "Bad Request") {
-    super(message);
-    this.status = 400;
-  }
-}
 
 function ensurePayloadIsValid(payload, validate) {
   const { error } = validate(payload);
