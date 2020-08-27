@@ -1,57 +1,53 @@
+const mongoose = require("mongoose");
 const { Comment } = require("../models/comment");
 const { Post } = require("../models/post");
 const { User } = require("../models/user");
 const { StatusError } = require("../utils/errors");
 const miscUtils = require("../utils/misc");
-const mongoose = require("mongoose");
-const { paginationInfo } = require("../utils/pagination");
+const { getPagination } = require("../utils/pagination");
 
 const COMMENTS_PER_PAGE = 10;
 
 exports.list = async (req, res) => {
-  let mainQuery = {};
-  if (req.query.body) {
-    mainQuery.body = { $regex: req.query.body };
-  }
-  let authorQuery = {};
-  if (req.query.author) {
-    const author = await User.findOne({ name: req.query.author });
-    mainQuery.author = author ? author._id : null; // workaround for when such user doesnt exist
-  }
+  const query = await parseQuery(req.query);
   const numberOfRecords = await Comment.countDocuments();
-  const pageInfo = paginationInfo({
+  const pageInfo = getPagination(
     numberOfRecords,
-    query: req.query,
-    page: req.query.page,
-    recordsPerPage: COMMENTS_PER_PAGE,
-  });
+    req.query.page,
+    COMMENTS_PER_PAGE
+  );
 
   const comments = await Comment.paginate(
-    mainQuery,
+    query,
     (pageInfo.currentPage - 1) * COMMENTS_PER_PAGE,
-    COMMENTS_PER_PAGE,
-    authorQuery
+    COMMENTS_PER_PAGE
   );
 
   res.send({
     comments,
     pageInfo,
-    tagsQuery: req.query.tags,
-    user: req.user,
   });
-
-  // res.render("comments/index", {
-  //   comments,
-  //   pageInfo,
-  //   tagsQuery: req.query.tags,
-  //   user: req.user,
-  // });
 };
 
-// TODO: Port to front-end
-// exports.search = (req, res) => {
-//   res.render("comments/search", { user: req.user });
-// };
+async function parseQuery({ body, author }) {
+  const query = {};
+  setCommentBodyQuery(body, query);
+  await setCommentAuthorQuery(author, query);
+  return query;
+}
+
+async function setCommentAuthorQuery(author, mainQuery) {
+  if (author) {
+    const user = await User.findOne({ name: author });
+    mainQuery.author = user ? user._id : undefined;
+  }
+}
+
+function setCommentBodyQuery(body, mainQuery) {
+  if (body) {
+    mainQuery.body = { $regex: body };
+  }
+}
 
 exports.create = async (req, res) => {
   const authorId = req.user._id;

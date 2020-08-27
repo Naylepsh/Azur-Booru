@@ -3,7 +3,7 @@ const { Tag } = require("../models/tag");
 const { Comment } = require("../models/comment");
 const { User } = require("../models/user");
 const { StatusError } = require("../utils/errors");
-const { paginationInfo } = require("../utils/pagination");
+const { getPagination } = require("../utils/pagination");
 const miscUtils = require("../utils/misc");
 const mongoose = require("mongoose");
 
@@ -44,7 +44,7 @@ async function createRelatedTagsDbQueryFromTagNames(tagNames) {
 
 async function createPostPaginationDetails(query, currentPage) {
   const numberOfRecords = await Post.countDocuments(query);
-  const pageInfo = paginationInfo(numberOfRecords, currentPage, POSTS_PER_PAGE);
+  const pageInfo = getPagination(numberOfRecords, currentPage, POSTS_PER_PAGE);
 
   return pageInfo;
 }
