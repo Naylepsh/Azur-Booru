@@ -1,9 +1,14 @@
 const request = require("supertest");
 const mongoose = require("mongoose");
-const { seedComment } = require("../../helpers/database/seed");
+const {
+  seedComment,
+  seedUser,
+  seedPost,
+} = require("../../helpers/database/seed");
 const { User } = require("../../../models/user");
 const { cleanDatabase } = require("../../helpers/database/clean");
-const { generateAuthToken } = require("../../helpers/auth/token");
+const { Comment } = require("../../../models/comment");
+const { Post } = require("../../../models/post");
 
 let server;
 const apiEndpoint = "/api/v1/comments";
@@ -96,6 +101,73 @@ describe(apiEndpoint, () => {
     getComments = () => {
       const url = query ? `${apiEndpoint}?${query}` : apiEndpoint;
       return request(server).get(url);
+    };
+  });
+
+  describe("/ (POST)", () => {
+    let comment;
+    let token;
+
+    beforeEach(async () => {
+      const post = await seedPost();
+      const user = await seedUser();
+      token = user.generateAuthToken();
+
+      comment = {
+        postId: post._id,
+        body: "sample body",
+      };
+    });
+
+    it("should return 401 if user was not logged in", async () => {
+      token = undefined;
+
+      const { status } = await postComment();
+
+      expect(status).toBe(401);
+    });
+
+    it("should return 404 if post with passed id does not exist", async () => {
+      comment.postId = mongoose.Types.ObjectId();
+
+      const { status } = await postComment();
+
+      expect(status).toBe(404);
+    });
+
+    describe("if valid data was passed", () => {
+      it("should return 200", async () => {
+        const { status } = await postComment();
+
+        expect(status).toBe(200);
+      });
+
+      it("should create comment in database", async () => {
+        const { body } = await postComment();
+
+        const comment = await Comment.findById(body._id);
+        expect(comment).toHaveProperty("body", comment.body);
+      });
+
+      it("should add comment to existing post", async () => {
+        const { body } = await postComment();
+
+        const post = await Post.findById(comment.postId).populate("comments");
+        const comments = post.comments;
+        expect(comments.map((comment) => comment._id.toString())).toContain(
+          body._id
+        );
+      });
+    });
+
+    postComment = () => {
+      if (token) {
+        return request(server)
+          .post(apiEndpoint)
+          .set("x-auth-token", token)
+          .send(comment);
+      }
+      return request(server).post(apiEndpoint).send(comment);
     };
   });
 });

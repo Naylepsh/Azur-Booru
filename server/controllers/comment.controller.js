@@ -5,6 +5,7 @@ const { User } = require("../models/user");
 const { StatusError } = require("../utils/errors");
 const miscUtils = require("../utils/misc");
 const { getPagination } = require("../utils/pagination");
+const { NotFoundException } = require("../utils/exceptions");
 
 const COMMENTS_PER_PAGE = 10;
 
@@ -49,36 +50,49 @@ function setCommentBodyQuery(body, mainQuery) {
   }
 }
 
-exports.create = async (req, res) => {
-  const authorId = req.user._id;
-  const { postId, body } = req.body;
-  const post = await Post.findById(req.body.postId);
-  if (!post) {
-    throw new StatusError(404, `Post ${req.params.id} not found`);
-  }
-
-  const commentData = {
-    author: authorId,
-    post: postId,
-    score: 0,
-    body,
-  };
-
+exports.create = async ({ user, body }, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const comment = await Comment.create(commentData);
-    post.comments.push(comment);
-    await post.save();
+    const comment = await createComment(user._id, body.postId, body.body);
     await session.commitTransaction();
     res.send(comment);
-  } catch (e) {
+  } catch (error) {
     await session.abortTransaction();
-    throw new StatusError(500, e.message);
+    throw error;
   } finally {
     session.endSession();
   }
 };
+
+async function createComment(authorId, postId, commentBody) {
+  const commentData = {
+    author: authorId,
+    post: postId,
+    score: 0,
+    body: commentBody,
+  };
+  const comment = await Comment.create(commentData);
+
+  await addCommentToPost(postId, comment);
+
+  return comment;
+}
+
+async function addCommentToPost(postId, comment) {
+  const post = await getPost(postId);
+  post.comments.push(comment);
+  await post.save();
+}
+
+async function getPost(id) {
+  const post = await Post.findById(id);
+  if (!post) {
+    const message = `Post ${id} does not exist`;
+    throw new NotFoundException(message);
+  }
+  return post;
+}
 
 exports.show = async (req, res) => {
   const comment = await Comment.findById(req.params.id).populate("author");
