@@ -1,9 +1,6 @@
 const { Tag } = require("../../../models/tag");
 const { EntityCreator } = require("./entityCreator");
-
-function randomString() {
-  return Math.random().toString(36).substring(7);
-}
+const { randomString } = require("../random-string");
 
 exports.TagCreator = class TagCreator extends EntityCreator {
   static count = 0;

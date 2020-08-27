@@ -12,5 +12,12 @@ exports.RoleCreator = class RoleCreator extends EntityCreator {
       name,
     };
     super(model, props);
+    this.name = name;
+  }
+
+  async saveToDatabase() {
+    const role = await Role.findOne({ name: this.name });
+    if (role) return role;
+    return super.saveToDatabase();
   }
 };

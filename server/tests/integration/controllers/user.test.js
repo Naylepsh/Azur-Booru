@@ -13,7 +13,7 @@ const apiEndpoint = "/api/v1/users";
 describe(apiEndpoint, () => {
   let user;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     server = require("../../../bin/www");
   });
 
