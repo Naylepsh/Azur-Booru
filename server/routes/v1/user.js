@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express();
 const User = require("../../controllers/user.controller");
-const { authorizeUser } = require("../../middleware/auth");
-const asyncWrapper = require("../../middleware/asyncWrapper");
+const { authorizeUser } = require("../../middleware/auth.middleware");
+const asyncWrapper = require("../../middleware/async-wrapper.middleware");
 
 router
   .post("/register", asyncWrapper(User.register))

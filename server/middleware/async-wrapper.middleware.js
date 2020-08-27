@@ -1,4 +1,4 @@
-const handleError = require("./error");
+const handleError = require("./error.middleware");
 
 module.exports = function (handler) {
   return async (req, res, next) => {

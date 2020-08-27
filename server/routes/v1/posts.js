@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const { storage } = require("../../utils/storage");
 const Post = require("../../controllers/post.controller");
-const { authorizeUser } = require("../../middleware/auth");
-const asyncWrapper = require("../../middleware/asyncWrapper");
-const validateObjectId = require("../../middleware/validateObjectId");
-const { saveThumbnail } = require("../../middleware/save-thumbnail");
+const { authorizeUser } = require("../../middleware/auth.middleware");
+const asyncWrapper = require("../../middleware/async-wrapper.middleware");
+const validateObjectId = require("../../middleware/validate-object-id.middleware");
+const { saveThumbnail } = require("../../middleware/save-thumbnail.middleware");
 const { storeImage } = require("../../middleware/store-image.middleware");
 
 router
