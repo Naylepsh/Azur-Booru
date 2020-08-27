@@ -95,19 +95,13 @@ async function getPost(id) {
 }
 
 exports.show = async (req, res) => {
-  const comment = await Comment.findById(req.params.id).populate("author");
-  if (!comment) {
-    throw new StatusError(404, `Comment ${req.params.id} not found`);
-  }
+  const comment = await getComment(req.params.id);
 
   res.send(comment);
 };
 
 exports.delete = async (req, res) => {
-  const comment = await Comment.findById(req.params.id);
-  if (!comment) {
-    throw new StatusError(404, `Comment ${req.params.id} not found`);
-  }
+  const comment = await getComment(req.params.id);
 
   const post = await Post.findById(comment.post);
   if (!post) {
@@ -151,3 +145,11 @@ exports.toggleVote = async (req, res) => {
 
   res.send(comment.score.toString());
 };
+
+async function getComment(id) {
+  const comment = await Comment.findById(id).populate("author");
+  if (!comment) {
+    throw new StatusError(404, `Comment ${id} not found`);
+  }
+  return comment;
+}

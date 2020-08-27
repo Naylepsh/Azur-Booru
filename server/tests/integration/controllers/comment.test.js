@@ -170,4 +170,46 @@ describe(apiEndpoint, () => {
       return request(server).post(apiEndpoint).send(comment);
     };
   });
+
+  describe("/:id (GET)", () => {
+    let comment;
+    let id;
+
+    beforeEach(async () => {
+      comment = await seedComment();
+      id = comment._id;
+    });
+
+    it("should return 404 if invalid id was passed", async () => {
+      id = 1;
+
+      const { status } = await getComment();
+
+      expect(status).toBe(404);
+    });
+
+    it("should return 404 if comment does not exist", async () => {
+      id = mongoose.Types.ObjectId();
+
+      const { status } = await getComment();
+
+      expect(status).toBe(404);
+    });
+
+    it("should return 200 if valid id was passed", async () => {
+      const { status } = await getComment();
+
+      expect(status).toBe(200);
+    });
+
+    it("should return comment if valid id was passed", async () => {
+      const { body } = await getComment();
+
+      expect(body).toHaveProperty("body", comment.body);
+    });
+
+    getComment = () => {
+      return request(server).get(`${apiEndpoint}/${id}`);
+    };
+  });
 });
