@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { storage } = require("../../utils/storage");
-const Comment = require("../../controllers/commentController");
+const Comment = require("../../controllers/comment.controller");
 const asyncWrapper = require("../../middleware/asyncWrapper");
 const { authorizeUser } = require("../../middleware/auth");
 

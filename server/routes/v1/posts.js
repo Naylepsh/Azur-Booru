@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { storage } = require("../../utils/storage");
-const Post = require("../../controllers/postController");
+const Post = require("../../controllers/post.controller");
 const { authorizeUser } = require("../../middleware/auth");
 const asyncWrapper = require("../../middleware/asyncWrapper");
 const validateObjectId = require("../../middleware/validateObjectId");
