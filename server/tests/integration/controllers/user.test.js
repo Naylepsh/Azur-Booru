@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { seedUser } = require("../../helpers/database/seed");
 const { User } = require("../../../models/user");
 const { cleanDatabase } = require("../../helpers/database/clean");
+const { generateAuthToken } = require("../../helpers/auth/token");
 
 jest.setTimeout(10000);
 
@@ -195,6 +196,67 @@ describe(apiEndpoint, () => {
 
     login = () => {
       return request(server).post(`${apiEndpoint}/login`).send(user);
+    };
+  });
+
+  describe("/profile", () => {
+    let token;
+
+    it("should return 401 if no jwt was passed", async () => {
+      token = undefined;
+
+      const { status } = await getProfile();
+
+      expect(status).toBe(401);
+    });
+
+    it("should return 400 if invalid jwt was passed", async () => {
+      token = "token";
+
+      const { status } = await getProfile();
+
+      expect(status).toBe(400);
+    });
+
+    it("should return 404 if profile does not exist", async () => {
+      const id = mongoose.Types.ObjectId();
+      token = generateAuthToken(id);
+
+      const { status } = await getProfile();
+
+      expect(status).toBe(400);
+    });
+
+    it("should return 200 if valid jwt was passed and profile exists", async () => {
+      token = await getProperToken();
+
+      const { status } = await getProfile();
+
+      expect(status).toBe(200);
+    });
+
+    it("should return profile if valid data was passed and profile exists", async () => {
+      token = await getProperToken();
+
+      const { body } = await getProfile();
+
+      expect(body).toHaveProperty("name");
+      expect(body).not.toHaveProperty("password");
+    });
+
+    getProfile = () => {
+      if (token) {
+        return request(server)
+          .get(`${apiEndpoint}/profile`)
+          .set("x-auth-token", token);
+      }
+      return request(server).get(`${apiEndpoint}/profile`);
+    };
+
+    getProperToken = async () => {
+      const user = await seedUser();
+      const token = generateAuthToken(user);
+      return token;
     };
   });
 });

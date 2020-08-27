@@ -4,7 +4,6 @@ const { Comment } = require("../models/comment");
 const { User } = require("../models/user");
 const { StatusError } = require("../utils/errors");
 const { paginationInfo } = require("../utils/pagination");
-const { upload_path } = require("../utils/storage");
 const miscUtils = require("../utils/misc");
 const mongoose = require("mongoose");
 

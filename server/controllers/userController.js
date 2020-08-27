@@ -30,7 +30,7 @@ async function ensureUserDoesNotExist(name) {
 
 exports.login = async (req, res) => {
   ensurePayloadIsValid(req.body, validate);
-  const user = await ensureUserDoesExist(req.body.name);
+  const user = await ensureUserDoesExist({ name: req.body.name });
   await ensurePasswordMatches(req.body.password, user.password);
 
   const jwt = user.generateAuthToken();
@@ -48,15 +48,6 @@ function ensurePayloadIsValid(payload, validate) {
   }
 }
 
-async function ensureUserDoesExist(name) {
-  const user = await User.findOne({ name });
-  if (!user) {
-    const message = "Invalid username or password.";
-    throw new BadRequestException(message);
-  }
-  return user;
-}
-
 async function ensurePasswordMatches(providedPassword, hashedPassword) {
   const validPassword = await validatePassword(
     providedPassword,
@@ -65,6 +56,14 @@ async function ensurePasswordMatches(providedPassword, hashedPassword) {
   if (!validPassword) {
     const message = "Invalid username or password.";
     throw new BadRequestException(message);
+  }
+}
+
+function storeRoles(res, roles) {
+  for (const role of roles) {
+    res.cookie(config.cookies.prefix + role, true, {
+      expire: 400000 + Date.now(),
+    });
   }
 }
 
@@ -81,15 +80,19 @@ exports.logout = (req, res) => {
 };
 
 exports.profile = async (req, res) => {
-  const user = await User.findById(req.user._id);
-  delete user.password;
-  res.send(user);
+  const user = await ensureUserDoesExist({ id: req.user._id });
+  const userProps = { ...user._doc };
+  delete userProps.password;
+  res.send(userProps);
 };
 
-function storeRoles(res, roles) {
-  for (const role of roles) {
-    res.cookie(config.cookies.prefix + role, true, {
-      expire: 400000 + Date.now(),
-    });
+async function ensureUserDoesExist({ name, id }) {
+  if (!name && !id)
+    throw new Error("Cannot find a user when both name and id are missing");
+  const user = name ? await User.findOne({ name }) : await User.findById(id);
+  if (!user) {
+    const message = "Invalid username or password.";
+    throw new BadRequestException(message);
   }
+  return user;
 }
