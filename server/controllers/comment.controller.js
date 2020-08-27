@@ -115,6 +115,23 @@ exports.delete = async ({ params, user }, res) => {
   }
 };
 
+async function deleteComment(params, user) {
+  const comment = await getComment(params.id);
+  ensureUserIsTheAuthor(comment, user);
+
+  const post = await getPost(comment.post);
+  post.comments.remove(comment._id);
+  await post.save();
+
+  await Comment.findByIdAndRemove(comment._id);
+}
+
+function ensureUserIsTheAuthor(comment, user) {
+  if (comment.author.id !== user._id) {
+    throw new StatusError(403, "something");
+  }
+}
+
 exports.toggleVote = async (req, res) => {
   const voteType = req.body.voteType;
   const userId = req.user._id;
@@ -135,23 +152,6 @@ exports.toggleVote = async (req, res) => {
 
   res.send(comment.score.toString());
 };
-
-async function deleteComment(params, user) {
-  const comment = await getComment(params.id);
-  ensureUserIsTheAuthor(comment, user);
-
-  const post = await getPost(comment.post);
-  post.comments.remove(comment._id);
-  await post.save();
-
-  await Comment.findByIdAndRemove(comment._id);
-}
-
-function ensureUserIsTheAuthor(comment, user) {
-  if (comment.author.id !== user._id) {
-    throw new StatusError(403, "something");
-  }
-}
 
 async function getComment(id) {
   const comment = await Comment.findById(id).populate("author");
