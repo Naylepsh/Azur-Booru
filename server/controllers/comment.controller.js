@@ -100,28 +100,18 @@ exports.show = async (req, res) => {
   res.send(comment);
 };
 
-exports.delete = async (req, res) => {
-  const comment = await getComment(req.params.id);
-
-  const post = await Post.findById(comment.post);
-  if (!post) {
-    throw new StatusError(404, `Post ${comment.post} not found`);
-  }
-
+exports.delete = async ({ params, user }, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    post.comments.remove(comment._id);
-    await post.save();
-    await Comment.findByIdAndRemove(comment._id);
+    await deleteComment(params, user);
     await session.commitTransaction();
-  } catch (e) {
+    res.send("Comment deleted");
+  } catch (error) {
     await session.abortTransaction();
-    throw new StatusError(500, e.message);
+    throw error;
   } finally {
     session.endSession();
-    res.send(post);
-    // res.redirect(`/posts/${req.body.postId}`);
   }
 };
 
@@ -145,6 +135,23 @@ exports.toggleVote = async (req, res) => {
 
   res.send(comment.score.toString());
 };
+
+async function deleteComment(params, user) {
+  const comment = await getComment(params.id);
+  ensureUserIsTheAuthor(comment, user);
+
+  const post = await getPost(comment.post);
+  post.comments.remove(comment._id);
+  await post.save();
+
+  await Comment.findByIdAndRemove(comment._id);
+}
+
+function ensureUserIsTheAuthor(comment, user) {
+  if (comment.author.id !== user._id) {
+    throw new StatusError(403, "something");
+  }
+}
 
 async function getComment(id) {
   const comment = await Comment.findById(id).populate("author");

@@ -9,6 +9,7 @@ const { User } = require("../../../models/user");
 const { cleanDatabase } = require("../../helpers/database/clean");
 const { Comment } = require("../../../models/comment");
 const { Post } = require("../../../models/post");
+const { generateAuthToken } = require("../../helpers/auth/token");
 
 let server;
 const apiEndpoint = "/api/v1/comments";
@@ -210,6 +211,71 @@ describe(apiEndpoint, () => {
 
     getComment = () => {
       return request(server).get(`${apiEndpoint}/${id}`);
+    };
+  });
+
+  describe("/:id (DELETE)", () => {
+    let comment;
+    let id;
+    let token;
+
+    beforeEach(async () => {
+      comment = await seedComment();
+      id = comment._id;
+      token = generateAuthToken(comment.author);
+    });
+
+    it("should return 401 if user was not logged in", async () => {
+      token = undefined;
+
+      const { status } = await deleteComment();
+
+      expect(status).toBe(401);
+    });
+
+    it("should return 404 if invalid id was passed", async () => {
+      id = 1;
+
+      const { status } = await deleteComment();
+
+      expect(status).toBe(404);
+    });
+
+    it("should return 403 if user was not the author of the comment", async () => {
+      const user = { id: mongoose.Types.ObjectId() };
+      token = generateAuthToken(user);
+
+      const { status } = await deleteComment();
+
+      expect(status).toBe(403);
+    });
+
+    it("should return 200 if valid data was passed", async () => {
+      const { status } = await deleteComment();
+
+      expect(status).toBe(200);
+    });
+
+    it("should delete comment from database if valid data was passed", async () => {
+      await deleteComment();
+
+      const comment = await Comment.findById(id);
+      expect(comment).toBeNull();
+    });
+
+    it("should delete comment from post comment list", async () => {
+      await deleteComment();
+
+      const post = await Post.findById(comment.post._id);
+      expect(post.comments).not.toContain(id);
+    });
+
+    deleteComment = () => {
+      const url = `${apiEndpoint}/${id}`;
+      if (token) {
+        return request(server).delete(url).set("x-auth-token", token);
+      }
+      return request(server).delete(url);
     };
   });
 });

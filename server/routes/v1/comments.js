@@ -10,7 +10,7 @@ router
   .get("/", asyncWrapper(Comment.list))
   .post("/", authorizeUser, asyncWrapper(Comment.create))
   .get("/:id", validateObjectId, asyncWrapper(Comment.show))
-  .delete("/:id", authorizeUser, asyncWrapper(Comment.delete))
+  .delete("/:id", validateObjectId, authorizeUser, asyncWrapper(Comment.delete))
   // storage.single() has to be there due to some XMLHttpRequest form shenanigans
   .post(
     "/:id/toggle-vote",
