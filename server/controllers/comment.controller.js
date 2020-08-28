@@ -44,7 +44,7 @@ exports.CommentController = class CommentController {
   };
 
   voteUp = async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const commentId = req.params.id;
 
     const { score } = await this.commentService.voteUp(commentId, userId);
@@ -53,7 +53,7 @@ exports.CommentController = class CommentController {
   };
 
   voteDown = async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const commentId = req.params.id;
 
     const { score } = await this.commentService.voteDown(commentId, userId);

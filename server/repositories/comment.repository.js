@@ -3,7 +3,7 @@ const { Comment } = require("../models/comment");
 const { Post } = require("../models/post");
 
 exports.CommentRepository = class CommentRepository {
-  async findMany(queryParams, options) {
+  async findMany(queryParams, options = {}) {
     let query = Comment.find(queryParams);
 
     if (options.sort) {
@@ -58,7 +58,7 @@ exports.CommentRepository = class CommentRepository {
     await post.save();
   }
 
-  async findById(id, options) {
+  async findById(id, options = {}) {
     let query = Comment.findById(id);
 
     if (options.populate) {

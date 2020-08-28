@@ -86,6 +86,13 @@ module.exports = class CommentService {
     return comment;
   }
 
+  ensureCommentWasFound(comment, id) {
+    if (!comment) {
+      const message = `Comment ${id} not found`;
+      throw new NotFoundException(message);
+    }
+  }
+
   async deleteById(id, user) {
     const comment = await this.findById(id);
     this.ensureUserIsTheAuthor(comment, user);
@@ -100,7 +107,8 @@ module.exports = class CommentService {
   }
 
   async voteUp(commentId, userId) {
-    const comment = await this.getComment(commentId);
+    const comment = await this.repository.findById(commentId);
+    this.ensureCommentWasFound(comment, commentId);
 
     toggleInArray(userId, comment.voters.up);
     removeFromArrayIfExists(userId, comment.voters.down);
@@ -112,7 +120,8 @@ module.exports = class CommentService {
   }
 
   async voteDown(commentId, userId) {
-    const comment = await this.getComment(commentId);
+    const comment = await this.repository.findById(commentId);
+    this.ensureCommentWasFound(comment, commentId);
 
     toggleInArray(userId, comment.voters.down);
     removeFromArrayIfExists(userId, comment.voters.up);
@@ -121,34 +130,5 @@ module.exports = class CommentService {
     await comment.save();
 
     return comment._doc;
-  }
-
-  async getComment(id, populateQuery) {
-    const comment = await Comment.findById(id);
-    this.ensureCommentWasFound(comment, id);
-    await this.populateComment(comment, populateQuery);
-    return comment;
-  }
-
-  ensureCommentWasFound(comment, id) {
-    if (!comment) {
-      const message = `Comment ${id} not found`;
-      throw new NotFoundException(message);
-    }
-  }
-
-  async populateComment(comment, populateQuery) {
-    if (populateQuery) {
-      await comment.populate(populateQuery).execPopulate();
-    }
-  }
-
-  async getPost(id) {
-    const post = await Post.findById(id);
-    if (!post) {
-      const message = `Post ${id} does not exist`;
-      throw new NotFoundException(message);
-    }
-    return post;
   }
 };

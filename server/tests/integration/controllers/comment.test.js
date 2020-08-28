@@ -330,6 +330,13 @@ describe(API_ENDPOINT, () => {
         expect(commentAfterVote.score).toBe(commentBeforeVote.score + 1);
       });
 
+      it("should register the user in upvoters", async () => {
+        await voteUp();
+
+        const comment = await Comment.findById(id);
+        expect(comment.voters.up).toContainEqual(comment.author._id);
+      });
+
       it("it should cancel user vote if user voted twice", async () => {
         const commentBeforeVote = await Comment.findById(id);
 
@@ -399,6 +406,13 @@ describe(API_ENDPOINT, () => {
 
         const commentAfterVote = await Comment.findById(id);
         expect(commentAfterVote.score).toBe(commentBeforeVote.score - 1);
+      });
+
+      it("should register the user in downvoters", async () => {
+        await voteDown();
+
+        const comment = await Comment.findById(id);
+        expect(comment.voters.down).toContainEqual(comment.author._id);
       });
 
       it("it should cancel user vote if user voted twice", async () => {
