@@ -2,10 +2,12 @@ const mongoose = require("mongoose");
 const { Comment } = require("../models/comment");
 const { Post } = require("../models/post");
 const { User } = require("../models/user");
-const { StatusError } = require("../utils/errors");
 const miscUtils = require("../utils/misc");
 const { getPagination } = require("../utils/pagination");
-const { NotFoundException } = require("../utils/exceptions");
+const {
+  NotFoundException,
+  ForbiddenException,
+} = require("../utils/exceptions");
 
 const COMMENTS_PER_PAGE = 10;
 
@@ -128,7 +130,7 @@ async function deleteComment(params, user) {
 
 function ensureUserIsTheAuthor(comment, user) {
   if (comment.author.id !== user._id) {
-    throw new StatusError(403, "something");
+    throw new ForbiddenException();
   }
 }
 
@@ -161,7 +163,8 @@ exports.voteDown = async (req, res) => {
 async function getComment(id) {
   const comment = await Comment.findById(id).populate("author");
   if (!comment) {
-    throw new StatusError(404, `Comment ${id} not found`);
+    const message = `Comment ${id} not found`;
+    throw new NotFoundException(message);
   }
   return comment;
 }
