@@ -1,11 +1,3 @@
-const mongoose = require("mongoose");
-const { Comment } = require("../models/comment");
-const { Post } = require("../models/post");
-const { toggleInArray, removeFromArrayIfExists } = require("../utils/misc");
-const {
-  NotFoundException,
-  ForbiddenException,
-} = require("../utils/exceptions");
 const CommentService = require("../services/comment/comment.service");
 
 const commentService = new CommentService();
