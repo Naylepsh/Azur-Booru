@@ -1,56 +1,25 @@
 const mongoose = require("mongoose");
 const { Comment } = require("../models/comment");
 const { Post } = require("../models/post");
-const { User } = require("../models/user");
 const { toggleInArray, removeFromArrayIfExists } = require("../utils/misc");
-const { getPagination } = require("../utils/pagination");
 const {
   NotFoundException,
   ForbiddenException,
 } = require("../utils/exceptions");
+const CommentService = require("../services/comment/comment.service");
 
-const COMMENTS_PER_PAGE = 10;
+const commentService = new CommentService();
 
 exports.list = async (req, res) => {
-  const query = await parseQuery(req.query);
-  const numberOfRecords = await Comment.countDocuments();
-  const pageInfo = getPagination(
-    numberOfRecords,
-    req.query.page,
-    COMMENTS_PER_PAGE
-  );
+  const query = req.query;
 
-  const comments = await Comment.paginate(
-    query,
-    (pageInfo.currentPage - 1) * COMMENTS_PER_PAGE,
-    COMMENTS_PER_PAGE
-  );
+  const { comments, pageInfo } = await commentService.list(query);
 
   res.send({
     comments,
     pageInfo,
   });
 };
-
-async function parseQuery({ body, author }) {
-  const query = {};
-  setCommentBodyQuery(body, query);
-  await setCommentAuthorQuery(author, query);
-  return query;
-}
-
-async function setCommentAuthorQuery(author, query) {
-  if (author) {
-    const user = await User.findOne({ name: author });
-    query.author = user ? user._id : undefined;
-  }
-}
-
-function setCommentBodyQuery(body, query) {
-  if (body) {
-    query.body = { $regex: body };
-  }
-}
 
 exports.create = async ({ user, body }, res) => {
   const session = await mongoose.startSession();
