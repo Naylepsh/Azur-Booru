@@ -1,59 +1,63 @@
 const CommentService = require("../services/comment/comment.service");
 
-const commentService = new CommentService();
+exports.CommentController = class CommentController {
+  constructor() {
+    this.commentService = new CommentService();
+  }
 
-exports.list = async (req, res) => {
-  const query = req.query;
+  list = async (req, res) => {
+    const query = req.query;
 
-  const { comments, pageInfo } = await commentService.findMany(query);
+    const { comments, pageInfo } = await this.commentService.findMany(query);
 
-  res.send({
-    comments,
-    pageInfo,
-  });
-};
-
-exports.create = async (req, res) => {
-  const commentDTO = {
-    authorId: req.user._id,
-    postId: req.body.postId,
-    commentBody: req.body.body,
+    res.send({
+      comments,
+      pageInfo,
+    });
   };
 
-  const comment = await commentService.create(commentDTO);
+  create = async (req, res) => {
+    const commentDTO = {
+      authorId: req.user._id,
+      postId: req.body.postId,
+      commentBody: req.body.body,
+    };
 
-  res.send(comment);
-};
+    const comment = await this.commentService.create(commentDTO);
 
-exports.show = async (req, res) => {
-  const comment = await commentService.findById(req.params.id);
+    res.send(comment);
+  };
 
-  res.send(comment);
-};
+  show = async (req, res) => {
+    const comment = await this.commentService.findById(req.params.id);
 
-exports.delete = async (req, res) => {
-  const id = req.params.id;
-  const user = req.user;
+    res.send(comment);
+  };
 
-  await commentService.deleteById(id, user);
+  delete = async (req, res) => {
+    const id = req.params.id;
+    const user = req.user;
 
-  res.send("Comment deleted successfully");
-};
+    await this.commentService.deleteById(id, user);
 
-exports.voteUp = async (req, res) => {
-  const userId = req.user.id;
-  const commentId = req.params.id;
+    res.send("Comment deleted successfully");
+  };
 
-  const { score } = await commentService.voteUp(commentId, userId);
+  voteUp = async (req, res) => {
+    const userId = req.user.id;
+    const commentId = req.params.id;
 
-  res.send({ score });
-};
+    const { score } = await this.commentService.voteUp(commentId, userId);
 
-exports.voteDown = async (req, res) => {
-  const userId = req.user.id;
-  const commentId = req.params.id;
+    res.send({ score });
+  };
 
-  const { score } = await commentService.voteDown(commentId, userId);
+  voteDown = async (req, res) => {
+    const userId = req.user.id;
+    const commentId = req.params.id;
 
-  res.send({ score });
+    const { score } = await this.commentService.voteDown(commentId, userId);
+
+    res.send({ score });
+  };
 };
