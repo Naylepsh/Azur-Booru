@@ -61,16 +61,16 @@ async function getPostPage(query, pageInfo) {
 }
 
 exports.create = async (req, res) => {
-  const postModel = mapPostToViewModel(
-    req.body,
-    req.imageUrl,
-    req.thumbnailUrl,
-    req.user._id
-  );
-
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
+    const postModel = mapPostToViewModel(
+      req.body,
+      req.imageUrl,
+      req.thumbnailUrl,
+      req.user._id
+    );
+
     await createPostInDatabase(postModel, session);
     await session.commitTransaction();
   } catch (error) {
