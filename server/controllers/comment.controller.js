@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Comment } = require("../models/comment");
 const { Post } = require("../models/post");
 const { User } = require("../models/user");
-const miscUtils = require("../utils/misc");
+const { toggleInArray, removeFromArrayIfExists } = require("../utils/misc");
 const { getPagination } = require("../utils/pagination");
 const {
   NotFoundException,
@@ -39,16 +39,16 @@ async function parseQuery({ body, author }) {
   return query;
 }
 
-async function setCommentAuthorQuery(author, mainQuery) {
+async function setCommentAuthorQuery(author, query) {
   if (author) {
     const user = await User.findOne({ name: author });
-    mainQuery.author = user ? user._id : undefined;
+    query.author = user ? user._id : undefined;
   }
 }
 
-function setCommentBodyQuery(body, mainQuery) {
+function setCommentBodyQuery(body, query) {
   if (body) {
-    mainQuery.body = { $regex: body };
+    query.body = { $regex: body };
   }
 }
 
@@ -138,8 +138,8 @@ exports.voteUp = async (req, res) => {
   const userId = req.user._id;
   const comment = await getComment(req.params.id);
 
-  miscUtils.toggleInArray(userId, comment.voters.up);
-  miscUtils.removeFromArrayIfExists(userId, comment.voters.down);
+  toggleInArray(userId, comment.voters.up);
+  removeFromArrayIfExists(userId, comment.voters.down);
   comment.score = comment.voters.up.length - comment.voters.down.length;
 
   await comment.save();
@@ -151,8 +151,8 @@ exports.voteDown = async (req, res) => {
   const userId = req.user._id;
   const comment = await getComment(req.params.id);
 
-  miscUtils.toggleInArray(userId, comment.voters.down);
-  miscUtils.removeFromArrayIfExists(userId, comment.voters.up);
+  toggleInArray(userId, comment.voters.down);
+  removeFromArrayIfExists(userId, comment.voters.up);
   comment.score = comment.voters.up.length - comment.voters.down.length;
 
   await comment.save();
