@@ -33,15 +33,6 @@ exports.create = async (req, res) => {
   res.send(comment);
 };
 
-async function getPost(id) {
-  const post = await Post.findById(id);
-  if (!post) {
-    const message = `Post ${id} does not exist`;
-    throw new NotFoundException(message);
-  }
-  return post;
-}
-
 exports.show = async (req, res) => {
   const comment = await commentService.findById(req.params.id);
 
@@ -58,36 +49,19 @@ exports.delete = async (req, res) => {
 };
 
 exports.voteUp = async (req, res) => {
-  const userId = req.user._id;
-  const comment = await getComment(req.params.id);
+  const userId = req.user.id;
+  const commentId = req.params.id;
 
-  toggleInArray(userId, comment.voters.up);
-  removeFromArrayIfExists(userId, comment.voters.down);
-  comment.score = comment.voters.up.length - comment.voters.down.length;
+  const { score } = await commentService.voteUp(commentId, userId);
 
-  await comment.save();
-
-  res.send({ score: comment.score });
+  res.send({ score });
 };
 
 exports.voteDown = async (req, res) => {
-  const userId = req.user._id;
-  const comment = await getComment(req.params.id);
+  const userId = req.user.id;
+  const commentId = req.params.id;
 
-  toggleInArray(userId, comment.voters.down);
-  removeFromArrayIfExists(userId, comment.voters.up);
-  comment.score = comment.voters.up.length - comment.voters.down.length;
+  const { score } = await commentService.voteDown(commentId, userId);
 
-  await comment.save();
-
-  res.send({ score: comment.score });
+  res.send({ score });
 };
-
-async function getComment(id) {
-  const comment = await Comment.findById(id).populate("author");
-  if (!comment) {
-    const message = `Comment ${id} not found`;
-    throw new NotFoundException(message);
-  }
-  return comment;
-}

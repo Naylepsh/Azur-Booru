@@ -7,6 +7,7 @@ const {
   NotFoundException,
   ForbiddenException,
 } = require("../../utils/exceptions");
+const { toggleInArray, removeFromArrayIfExists } = require("../../utils/misc");
 
 module.exports = class CommentService {
   COMMENTS_PER_PAGE = 10;
@@ -65,6 +66,30 @@ module.exports = class CommentService {
       session.endSession();
       throw error;
     }
+  }
+
+  async voteUp(commentId, userId) {
+    const comment = await getComment(commentId);
+
+    toggleInArray(userId, comment.voters.up);
+    removeFromArrayIfExists(userId, comment.voters.down);
+    comment.score = comment.voters.up.length - comment.voters.down.length;
+
+    await comment.save();
+
+    return comment._doc;
+  }
+
+  async voteDown(commentId, userId) {
+    const comment = await getComment(commentId);
+
+    toggleInArray(userId, comment.voters.down);
+    removeFromArrayIfExists(userId, comment.voters.up);
+    comment.score = comment.voters.up.length - comment.voters.down.length;
+
+    await comment.save();
+
+    return comment._doc;
   }
 };
 
