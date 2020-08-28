@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
-const errorMiddleware = require("./middleware/error");
+const errorMiddleware = require("./middleware/error.middleware");
 const cors = require("cors");
 
 if (!process.env.JWT_SECRET) {

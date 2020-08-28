@@ -1,15 +1,12 @@
 const express = require("express");
 const router = express();
-const User = require("../../controllers/userController");
-const { authorizeUser } = require("../../middleware/auth");
-const asyncWrapper = require("../../middleware/asyncWrapper");
+const User = require("../../controllers/user.controller");
+const { authorizeUser } = require("../../middleware/auth.middleware");
+const asyncWrapper = require("../../middleware/async-wrapper.middleware");
 
 router
-  .get("/register", User.registerForm)
   .post("/register", asyncWrapper(User.register))
-  .get("/login", User.loginForm)
   .post("/login", asyncWrapper(User.login))
-  .get("/logout", User.logout)
   .get("/profile", authorizeUser, asyncWrapper(User.profile));
 
 module.exports = router;

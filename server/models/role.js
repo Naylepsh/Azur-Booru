@@ -38,7 +38,7 @@ exports.isAdmin = async (roleId) => {
 };
 
 exports.getRoleNames = async (rolesIds) => {
-  const roles = await Promise.all(rolesIds.map((id) => Role.findById(id)));
+  const roles = await Role.find({ _id: { $in: rolesIds } });
   const getNames = swapKeysAndValues(ROLES);
   const names = roles.map((role) => getNames[role.name]);
   return names;
