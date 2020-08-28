@@ -29,7 +29,6 @@ exports.create = async (req, res) => {
   };
 
   const comment = await commentService.create(commentDTO);
-  console.log("big comment", comment);
 
   res.send(comment);
 };
@@ -44,7 +43,7 @@ async function getPost(id) {
 }
 
 exports.show = async (req, res) => {
-  const comment = await getComment(req.params.id);
+  const comment = await commentService.findById(req.params.id);
 
   res.send(comment);
 };

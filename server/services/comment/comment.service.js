@@ -41,6 +41,14 @@ module.exports = class CommentService {
       throw error;
     }
   }
+
+  async findById(id) {
+    const populateQuery = [{ path: "author" }];
+
+    const comment = await getComment(id, populateQuery);
+
+    return comment;
+  }
 };
 
 async function parseQuery({ body, author }) {
@@ -90,4 +98,24 @@ async function getPost(id) {
     throw new NotFoundException(message);
   }
   return post;
+}
+
+async function getComment(id, populateQuery) {
+  const comment = await Comment.findById(id);
+  ensureCommentWasFound(comment, id);
+  await populateComment(comment, populateQuery);
+  return comment;
+}
+
+function ensureCommentWasFound(comment, id) {
+  if (!comment) {
+    const message = `Comment ${id} not found`;
+    throw new NotFoundException(message);
+  }
+}
+
+async function populateComment(comment, populateQuery) {
+  if (populateQuery) {
+    await comment.populate(populateQuery).execPopulate();
+  }
 }
