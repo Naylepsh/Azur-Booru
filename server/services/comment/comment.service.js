@@ -26,11 +26,6 @@ module.exports = class CommentService {
       this.COMMENTS_PER_PAGE
     );
 
-    // const comments = await Comment.paginate(
-    //   query,
-    //   (pageInfo.currentPage - 1) * this.COMMENTS_PER_PAGE,
-    //   this.COMMENTS_PER_PAGE
-    // );
     const queryOptions = {
       sort: { _id: -1 },
       skip: (pageInfo.currentPage - 1) * this.COMMENTS_PER_PAGE,
@@ -63,45 +58,30 @@ module.exports = class CommentService {
   }
 
   async create({ authorId, postId, commentBody }) {
-    let comment;
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      comment = await this.createComment(authorId, postId, commentBody);
-      await session.commitTransaction();
-      session.endSession();
-      return comment;
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      throw error;
+    // move existence check to middleware?
+    const post = await Post.findById(postId);
+    if (!post) {
+      const message = "Post doesnt exist";
+      throw new NotFoundException(message);
     }
-  }
 
-  async createComment(authorId, postId, commentBody) {
     const commentData = {
       author: authorId,
       post: postId,
       score: 0,
       body: commentBody,
     };
-    const comment = await Comment.create(commentData);
 
-    await this.addCommentToPost(postId, comment);
+    const comment = await this.repository.create(commentData);
 
     return comment;
   }
 
-  async addCommentToPost(postId, comment) {
-    const post = await this.getPost(postId);
-    post.comments.push(comment);
-    await post.save();
-  }
-
   async findById(id) {
-    const populateQuery = [{ path: "author" }];
+    const populate = [{ path: "author" }];
 
-    const comment = await this.getComment(id, populateQuery);
+    const comment = await this.repository.findById(id, { populate });
+    this.ensureCommentWasFound(comment, id);
 
     return comment;
   }
