@@ -2,10 +2,14 @@ const { Post, validate } = require("../models/post");
 const { Tag } = require("../models/tag");
 const { Comment } = require("../models/comment");
 const { User } = require("../models/user");
-const { StatusError } = require("../utils/errors");
 const { getPagination } = require("../utils/pagination");
 const miscUtils = require("../utils/misc");
 const mongoose = require("mongoose");
+const {
+  ForbiddenException,
+  NotFoundException,
+  BadRequestException,
+} = require("../utils/exceptions");
 
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
@@ -71,7 +75,7 @@ exports.create = async (req, res) => {
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
-    throw new StatusError(500, error.message);
+    throw error;
   } finally {
     session.endSession();
     res.send(postModel);
@@ -81,7 +85,8 @@ exports.create = async (req, res) => {
 function validatePost(post) {
   const { error } = validate(post);
   if (error) {
-    throw new StatusError(400, error.details[0].message);
+    const message = error.details[0].message;
+    throw new BadRequestException(message);
   }
 }
 
@@ -102,14 +107,15 @@ function attachPostToTags(tags, post) {
 }
 
 exports.show = async (req, res) => {
-  const post = await Post.findById(req.params.id)
-    .populate("author", "name")
-    .populate("tags")
-    .populate({
+  const populateQuery = [
+    { path: "author", select: "name" },
+    { path: "tags" },
+    {
       path: "comments",
       populate: { path: "author", model: "User" },
-    });
-  ensurePostWasFound(post);
+    },
+  ];
+  const post = await getPost(req.params.id, populateQuery);
 
   const sortedTags = Tag.sortByName(post.tags);
   const tagsOccurences = Tag.getOccurences(sortedTags);
@@ -119,8 +125,8 @@ exports.show = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  const post = await Post.findById(req.params.id).populate("tags");
-  ensurePostWasFound(post);
+  const populateQuery = [{ path: "tags" }];
+  const post = await getPost(req.params.id, populateQuery);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -143,11 +149,7 @@ exports.update = async (req, res) => {
     res.send({ post });
   } catch (error) {
     await session.abortTransaction();
-    if (error instanceof StatusError) {
-      throw error;
-    } else {
-      throw new StatusError(500, error.message);
-    }
+    throw error;
   } finally {
     session.endSession();
   }
@@ -178,13 +180,13 @@ async function removeAllTagsFromPost(post) {
 }
 
 exports.destroy = async (req, res) => {
-  const post = await Post.findById(req.params.id).populate("tags");
-  ensurePostWasFound(post);
+  const populateQuery = [{ path: "tags" }];
+  const post = await getPost(req.params.id, populateQuery);
 
   const isAuthor = await authenticateAuthor(post, req.user);
   const isAdmin = req.user.roles && req.user.roles.admin;
   if (!isAuthor && !isAdmin) {
-    throw new StatusError(403, "Access denied");
+    throw new ForbiddenException();
   }
 
   const session = await mongoose.startSession();
@@ -197,7 +199,7 @@ exports.destroy = async (req, res) => {
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
-    throw new StatusError(500, error.message);
+    throw error;
   } finally {
     session.endSession();
     res.send(post);
@@ -215,8 +217,7 @@ function removePostComments(post, session) {
 }
 
 exports.toggleVote = async (req, res) => {
-  let post = await Post.findById(req.params.id);
-  ensurePostWasFound(post);
+  const post = await getPost(req.params.id);
 
   if (req.body.voteType === "up") {
     miscUtils.toggleInArray(req.user._id, post.voters.up);
@@ -232,8 +233,7 @@ exports.toggleVote = async (req, res) => {
 };
 
 exports.voteUp = async (req, res) => {
-  const post = await Post.findById(req.params.id);
-  ensurePostWasFound(post);
+  const post = await getPost(req.params.id);
 
   miscUtils.toggleInArray(req.user._id, post.voters.up);
   miscUtils.removeFromArrayIfExists(req.user._id, post.voters.down);
@@ -244,8 +244,7 @@ exports.voteUp = async (req, res) => {
 };
 
 exports.voteDown = async (req, res) => {
-  const post = await Post.findById(req.params.id);
-  ensurePostWasFound(post);
+  const post = await getPost(req.params.id);
 
   miscUtils.toggleInArray(req.user._id, post.voters.down);
   miscUtils.removeFromArrayIfExists(req.user._id, post.voters.up);
@@ -261,8 +260,22 @@ async function authenticateAuthor(post, user) {
   return user._id === author._id.toString();
 }
 
-function ensurePostWasFound(post) {
+async function getPost(id, populateQuery) {
+  const post = await Post.findById(id);
+  ensurePostWasFound(post, id);
+  await populatePost(populateQuery, post);
+  return post;
+}
+
+async function populatePost(populateQuery, post) {
+  if (populateQuery) {
+    await post.populate(populateQuery).execPopulate();
+  }
+}
+
+function ensurePostWasFound(post, id) {
   if (!post) {
-    throw new StatusError(404, `Post not found`);
+    const message = `Post ${id} not found`;
+    throw new NotFoundException(message);
   }
 }
