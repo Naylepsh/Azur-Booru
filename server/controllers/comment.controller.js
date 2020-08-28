@@ -13,7 +13,7 @@ const commentService = new CommentService();
 exports.list = async (req, res) => {
   const query = req.query;
 
-  const { comments, pageInfo } = await commentService.list(query);
+  const { comments, pageInfo } = await commentService.findMany(query);
 
   res.send({
     comments,
@@ -48,37 +48,14 @@ exports.show = async (req, res) => {
   res.send(comment);
 };
 
-exports.delete = async ({ params, user }, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    await deleteComment(params, user);
-    await session.commitTransaction();
-    res.send("Comment deleted");
-  } catch (error) {
-    await session.abortTransaction();
-    throw error;
-  } finally {
-    session.endSession();
-  }
+exports.delete = async (req, res) => {
+  const id = req.params.id;
+  const user = req.user;
+
+  await commentService.deleteById(id, user);
+
+  res.send("Comment deleted successfully");
 };
-
-async function deleteComment(params, user) {
-  const comment = await getComment(params.id);
-  ensureUserIsTheAuthor(comment, user);
-
-  const post = await getPost(comment.post);
-  post.comments.remove(comment._id);
-  await post.save();
-
-  await Comment.findByIdAndRemove(comment._id);
-}
-
-function ensureUserIsTheAuthor(comment, user) {
-  if (comment.author.id !== user._id) {
-    throw new ForbiddenException();
-  }
-}
 
 exports.voteUp = async (req, res) => {
   const userId = req.user._id;

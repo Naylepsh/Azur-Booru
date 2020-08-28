@@ -3,12 +3,15 @@ const { User } = require("../../models/user");
 const { Comment } = require("../../models/comment");
 const { Post } = require("../../models/post");
 const { getPagination } = require("../../utils/pagination");
-const { NotFoundException } = require("../../utils/exceptions");
+const {
+  NotFoundException,
+  ForbiddenException,
+} = require("../../utils/exceptions");
 
 module.exports = class CommentService {
   COMMENTS_PER_PAGE = 10;
 
-  async list({ body, author, page }) {
+  async findMany({ body, author, page }) {
     const query = await parseQuery({ body, author });
     const numberOfRecords = await Comment.countDocuments();
     const pageInfo = getPagination(
@@ -48,6 +51,20 @@ module.exports = class CommentService {
     const comment = await getComment(id, populateQuery);
 
     return comment;
+  }
+
+  async deleteById(id, user) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      await deleteComment(id, user);
+      await session.commitTransaction();
+      session.endSession();
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw error;
+    }
   }
 };
 
@@ -91,15 +108,6 @@ async function addCommentToPost(postId, comment) {
   await post.save();
 }
 
-async function getPost(id) {
-  const post = await Post.findById(id);
-  if (!post) {
-    const message = `Post ${id} does not exist`;
-    throw new NotFoundException(message);
-  }
-  return post;
-}
-
 async function getComment(id, populateQuery) {
   const comment = await Comment.findById(id);
   ensureCommentWasFound(comment, id);
@@ -117,5 +125,32 @@ function ensureCommentWasFound(comment, id) {
 async function populateComment(comment, populateQuery) {
   if (populateQuery) {
     await comment.populate(populateQuery).execPopulate();
+  }
+}
+
+async function deleteComment(id, user) {
+  const comment = await getComment(id);
+  ensureUserIsTheAuthor(comment, user);
+
+  const post = await getPost(comment.post);
+  post.comments.remove(comment._id);
+  await post.save();
+
+  await Comment.findByIdAndRemove(comment._id);
+}
+
+async function getPost(id) {
+  const post = await Post.findById(id);
+  if (!post) {
+    const message = `Post ${id} does not exist`;
+    throw new NotFoundException(message);
+  }
+  return post;
+}
+
+function ensureUserIsTheAuthor(comment, user) {
+  console.log(comment.author._id, user._id);
+  if (comment.author._id.toString() !== user._id.toString()) {
+    throw new ForbiddenException();
   }
 }
