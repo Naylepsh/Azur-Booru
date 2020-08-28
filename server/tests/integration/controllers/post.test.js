@@ -1,17 +1,18 @@
 const request = require("supertest");
 const mongoose = require("mongoose");
 const { PostCreator } = require("../../helpers/database/postCreator");
-const { Post } = require("../../../models/post");
-const { Tag } = require("../../../models/tag");
-const { User } = require("../../../models/user");
 const { seedPost } = require("../../helpers/database/seed");
 const { generateAuthToken } = require("../../helpers/auth/token");
 const { cleanDatabase } = require("../../helpers/database/clean");
+const { Post } = require("../../../models/post");
+const { Tag } = require("../../../models/tag");
+const { User } = require("../../../models/user");
 
 let server;
-const apiEndpoint = "/api/v1/posts";
+const API_ENDPOINT = "/api/v1/posts";
+const AUTH_TOKEN_HEADER = "x-auth-token";
 
-describe(apiEndpoint, () => {
+describe(API_ENDPOINT, () => {
   let post;
   let token;
   let id;
@@ -31,7 +32,7 @@ describe(apiEndpoint, () => {
 
   describe("GET /", () => {
     it("should list all posts", async () => {
-      const res = await request(server).get(apiEndpoint);
+      const res = await request(server).get(API_ENDPOINT);
 
       expect(res.status).toBe(200);
       expect(res.body.posts.length).toBe(1);
@@ -56,7 +57,7 @@ describe(apiEndpoint, () => {
     });
 
     sendShowPostRequest = () => {
-      return request(server).get(`${apiEndpoint}/${id}`);
+      return request(server).get(`${API_ENDPOINT}/${id}`);
     };
   });
 
@@ -122,8 +123,8 @@ describe(apiEndpoint, () => {
 
     sendUpdateRequest = () => {
       return request(server)
-        .put(`${apiEndpoint}/${id}`)
-        .set("x-auth-token", token)
+        .put(`${API_ENDPOINT}/${id}`)
+        .set(AUTH_TOKEN_HEADER, token)
         .send(post);
     };
   });
@@ -167,8 +168,8 @@ describe(apiEndpoint, () => {
 
     sendDeleteRequest = () => {
       return request(server)
-        .delete(`${apiEndpoint}/${id}`)
-        .set("x-auth-token", token);
+        .delete(`${API_ENDPOINT}/${id}`)
+        .set(AUTH_TOKEN_HEADER, token);
     };
   });
 
@@ -202,8 +203,8 @@ describe(apiEndpoint, () => {
 
     sendVoteUpRequest = () => {
       return request(server)
-        .get(`${apiEndpoint}/${id}/vote-up`)
-        .set("x-auth-token", token);
+        .get(`${API_ENDPOINT}/${id}/vote-up`)
+        .set(AUTH_TOKEN_HEADER, token);
     };
   });
 
@@ -237,8 +238,8 @@ describe(apiEndpoint, () => {
 
     sendVoteDownRequest = () => {
       return request(server)
-        .get(`${apiEndpoint}/${id}/vote-down`)
-        .set("x-auth-token", token);
+        .get(`${API_ENDPOINT}/${id}/vote-down`)
+        .set(AUTH_TOKEN_HEADER, token);
     };
   });
 

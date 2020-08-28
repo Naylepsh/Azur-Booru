@@ -6,9 +6,9 @@ const {
   seedPost,
 } = require("../../helpers/database/seed");
 const { cleanDatabase } = require("../../helpers/database/clean");
+const { generateAuthToken } = require("../../helpers/auth/token");
 const { Comment } = require("../../../models/comment");
 const { Post } = require("../../../models/post");
-const { generateAuthToken } = require("../../helpers/auth/token");
 
 let server;
 const API_ENDPOINT = "/api/v1/comments";

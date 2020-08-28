@@ -1,16 +1,17 @@
 const request = require("supertest");
 const mongoose = require("mongoose");
 const { seedUser } = require("../../helpers/database/seed");
-const { User } = require("../../../models/user");
 const { cleanDatabase } = require("../../helpers/database/clean");
 const { generateAuthToken } = require("../../helpers/auth/token");
+const { User } = require("../../../models/user");
 
 jest.setTimeout(10000);
 
 let server;
-const apiEndpoint = "/api/v1/users";
+const API_ENDPOINT = "/api/v1/users";
+const AUTH_TOKEN_HEADER = "x-auth-token";
 
-describe(apiEndpoint, () => {
+describe(API_ENDPOINT, () => {
   let user;
 
   beforeEach(() => {
@@ -104,7 +105,7 @@ describe(apiEndpoint, () => {
     });
 
     registerUser = () => {
-      return request(server).post(`${apiEndpoint}/register`).send(user);
+      return request(server).post(`${API_ENDPOINT}/register`).send(user);
     };
 
     createStringOfNCharacters = (n) => {
@@ -195,7 +196,7 @@ describe(apiEndpoint, () => {
     });
 
     login = () => {
-      return request(server).post(`${apiEndpoint}/login`).send(user);
+      return request(server).post(`${API_ENDPOINT}/login`).send(user);
     };
   });
 
@@ -247,10 +248,10 @@ describe(apiEndpoint, () => {
     getProfile = () => {
       if (token) {
         return request(server)
-          .get(`${apiEndpoint}/profile`)
-          .set("x-auth-token", token);
+          .get(`${API_ENDPOINT}/profile`)
+          .set(AUTH_TOKEN_HEADER, token);
       }
-      return request(server).get(`${apiEndpoint}/profile`);
+      return request(server).get(`${API_ENDPOINT}/profile`);
     };
 
     getProperToken = async () => {
