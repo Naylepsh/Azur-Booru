@@ -71,4 +71,28 @@ exports.CommentRepository = class CommentRepository {
 
     return comment;
   }
+
+  async deleteById(id) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      await this.deleteComment(id);
+      await session.commitTransaction();
+      session.endSession();
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw error;
+    }
+  }
+
+  async deleteComment(id) {
+    const comment = await Comment.findById(id);
+
+    const post = await Post.findById(comment.post);
+    post.comments.remove(comment._id);
+    await post.save();
+
+    await Comment.findByIdAndRemove(comment._id);
+  }
 };

@@ -87,28 +87,10 @@ module.exports = class CommentService {
   }
 
   async deleteById(id, user) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      await this.deleteComment(id, user);
-      await session.commitTransaction();
-      session.endSession();
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      throw error;
-    }
-  }
-
-  async deleteComment(id, user) {
-    const comment = await this.getComment(id);
+    const comment = await this.findById(id);
     this.ensureUserIsTheAuthor(comment, user);
 
-    const post = await this.getPost(comment.post);
-    post.comments.remove(comment._id);
-    await post.save();
-
-    await Comment.findByIdAndRemove(comment._id);
+    await this.repository.deleteById(id);
   }
 
   ensureUserIsTheAuthor(comment, user) {
