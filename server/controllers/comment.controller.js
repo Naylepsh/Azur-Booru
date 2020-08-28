@@ -21,40 +21,18 @@ exports.list = async (req, res) => {
   });
 };
 
-exports.create = async ({ user, body }, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    const comment = await createComment(user._id, body.postId, body.body);
-    await session.commitTransaction();
-    res.send(comment);
-  } catch (error) {
-    await session.abortTransaction();
-    throw error;
-  } finally {
-    session.endSession();
-  }
-};
-
-async function createComment(authorId, postId, commentBody) {
-  const commentData = {
-    author: authorId,
-    post: postId,
-    score: 0,
-    body: commentBody,
+exports.create = async (req, res) => {
+  const commentDTO = {
+    authorId: req.user._id,
+    postId: req.body.postId,
+    commentBody: req.body.body,
   };
-  const comment = await Comment.create(commentData);
 
-  await addCommentToPost(postId, comment);
+  const comment = await commentService.create(commentDTO);
+  console.log("big comment", comment);
 
-  return comment;
-}
-
-async function addCommentToPost(postId, comment) {
-  const post = await getPost(postId);
-  post.comments.push(comment);
-  await post.save();
-}
+  res.send(comment);
+};
 
 async function getPost(id) {
   const post = await Post.findById(id);
