@@ -132,25 +132,30 @@ function ensureUserIsTheAuthor(comment, user) {
   }
 }
 
-exports.toggleVote = async (req, res) => {
-  const voteType = req.body.voteType;
+exports.voteUp = async (req, res) => {
   const userId = req.user._id;
-  const comment = await Comment.findById(req.params.id);
-  if (!comment) {
-    throw new StatusError(404, `Comment ${req.params.id} not found`);
-  }
+  const comment = await getComment(req.params.id);
 
-  if (voteType === "up") {
-    miscUtils.toggleInArray(userId, comment.voters.up);
-    miscUtils.removeFromArrayIfExists(userId, comment.voters.down);
-  } else if (voteType === "down") {
-    miscUtils.toggleInArray(userId, comment.voters.down);
-    miscUtils.removeFromArrayIfExists(userId, comment.voters.up);
-  }
+  miscUtils.toggleInArray(userId, comment.voters.up);
+  miscUtils.removeFromArrayIfExists(userId, comment.voters.down);
   comment.score = comment.voters.up.length - comment.voters.down.length;
+
   await comment.save();
 
-  res.send(comment.score.toString());
+  res.send({ score: comment.score });
+};
+
+exports.voteDown = async (req, res) => {
+  const userId = req.user._id;
+  const comment = await getComment(req.params.id);
+
+  miscUtils.toggleInArray(userId, comment.voters.down);
+  miscUtils.removeFromArrayIfExists(userId, comment.voters.up);
+  comment.score = comment.voters.up.length - comment.voters.down.length;
+
+  await comment.save();
+
+  res.send({ score: comment.score });
 };
 
 async function getComment(id) {

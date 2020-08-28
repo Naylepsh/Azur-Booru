@@ -5,16 +5,16 @@ const {
   seedUser,
   seedPost,
 } = require("../../helpers/database/seed");
-const { User } = require("../../../models/user");
 const { cleanDatabase } = require("../../helpers/database/clean");
 const { Comment } = require("../../../models/comment");
 const { Post } = require("../../../models/post");
 const { generateAuthToken } = require("../../helpers/auth/token");
 
 let server;
-const apiEndpoint = "/api/v1/comments";
+const API_ENDPOINT = "/api/v1/comments";
+const AUTH_TOKEN_HEADER = "x-auth-token";
 
-describe(apiEndpoint, () => {
+describe(API_ENDPOINT, () => {
   beforeEach(() => {
     server = require("../../../bin/www");
   });
@@ -100,7 +100,7 @@ describe(apiEndpoint, () => {
     });
 
     getComments = () => {
-      const url = query ? `${apiEndpoint}?${query}` : apiEndpoint;
+      const url = query ? `${API_ENDPOINT}?${query}` : API_ENDPOINT;
       return request(server).get(url);
     };
   });
@@ -164,11 +164,11 @@ describe(apiEndpoint, () => {
     postComment = () => {
       if (token) {
         return request(server)
-          .post(apiEndpoint)
-          .set("x-auth-token", token)
+          .post(API_ENDPOINT)
+          .set(AUTH_TOKEN_HEADER, token)
           .send(comment);
       }
-      return request(server).post(apiEndpoint).send(comment);
+      return request(server).post(API_ENDPOINT).send(comment);
     };
   });
 
@@ -210,7 +210,7 @@ describe(apiEndpoint, () => {
     });
 
     getComment = () => {
-      return request(server).get(`${apiEndpoint}/${id}`);
+      return request(server).get(`${API_ENDPOINT}/${id}`);
     };
   });
 
@@ -271,11 +271,153 @@ describe(apiEndpoint, () => {
     });
 
     deleteComment = () => {
-      const url = `${apiEndpoint}/${id}`;
+      const url = `${API_ENDPOINT}/${id}`;
       if (token) {
-        return request(server).delete(url).set("x-auth-token", token);
+        return request(server).delete(url).set(AUTH_TOKEN_HEADER, token);
       }
       return request(server).delete(url);
+    };
+  });
+
+  describe("/:id/vote-up (GET)", () => {
+    let comment;
+    let id;
+    let token;
+
+    beforeEach(async () => {
+      comment = await seedComment();
+      id = comment._id;
+      token = generateAuthToken(comment.author);
+    });
+
+    it("should return 401 if user was not logged in", async () => {
+      token = undefined;
+
+      const { status } = await voteUp();
+
+      expect(status).toBe(401);
+    });
+
+    it("should return 404 if invalid id was passed", async () => {
+      id = 1;
+
+      const { status } = await voteUp();
+
+      expect(status).toBe(404);
+    });
+
+    it("should return 404 if comment does not exist", async () => {
+      id = mongoose.Types.ObjectId();
+
+      const { status } = await voteUp();
+
+      expect(status).toBe(404);
+    });
+
+    describe("if valid data was passed", () => {
+      it("should return 200", async () => {
+        const { status } = await voteUp();
+
+        expect(status).toBe(200);
+      });
+
+      it("should increase the score of comment", async () => {
+        const commentBeforeVote = await Comment.findById(id);
+
+        await voteUp();
+
+        const commentAfterVote = await Comment.findById(id);
+        expect(commentAfterVote.score).toBe(commentBeforeVote.score + 1);
+      });
+
+      it("it should cancel user vote if user voted twice", async () => {
+        const commentBeforeVote = await Comment.findById(id);
+
+        await voteUp();
+        await voteUp();
+
+        const commentAfterVote = await Comment.findById(id);
+        expect(commentAfterVote.score).toBe(commentBeforeVote.score);
+      });
+    });
+
+    voteUp = () => {
+      const url = `${API_ENDPOINT}/${id}/vote-up`;
+      if (token) {
+        return request(server).get(url).set(AUTH_TOKEN_HEADER, token);
+      }
+      return request(server).get(url);
+    };
+  });
+
+  describe("/:id/vote-down (GET)", () => {
+    let comment;
+    let id;
+    let token;
+
+    beforeEach(async () => {
+      comment = await seedComment();
+      id = comment._id;
+      token = generateAuthToken(comment.author);
+    });
+
+    it("should return 401 if user was not logged in", async () => {
+      token = undefined;
+
+      const { status } = await voteDown();
+
+      expect(status).toBe(401);
+    });
+
+    it("should return 404 if invalid id was passed", async () => {
+      id = 1;
+
+      const { status } = await voteDown();
+
+      expect(status).toBe(404);
+    });
+
+    it("should return 404 if comment does not exist", async () => {
+      id = mongoose.Types.ObjectId();
+
+      const { status } = await voteDown();
+
+      expect(status).toBe(404);
+    });
+
+    describe("if valid data was passed", () => {
+      it("should return 200", async () => {
+        const { status } = await voteDown();
+
+        expect(status).toBe(200);
+      });
+
+      it("should decrease the score of comment", async () => {
+        const commentBeforeVote = await Comment.findById(id);
+
+        await voteDown();
+
+        const commentAfterVote = await Comment.findById(id);
+        expect(commentAfterVote.score).toBe(commentBeforeVote.score - 1);
+      });
+
+      it("it should cancel user vote if user voted twice", async () => {
+        const commentBeforeVote = await Comment.findById(id);
+
+        await voteDown();
+        await voteDown();
+
+        const commentAfterVote = await Comment.findById(id);
+        expect(commentAfterVote.score).toBe(commentBeforeVote.score);
+      });
+    });
+
+    voteDown = () => {
+      const url = `${API_ENDPOINT}/${id}/vote-down`;
+      if (token) {
+        return request(server).get(url).set(AUTH_TOKEN_HEADER, token);
+      }
+      return request(server).get(url);
     };
   });
 });

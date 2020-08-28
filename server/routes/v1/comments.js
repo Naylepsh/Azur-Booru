@@ -11,12 +11,17 @@ router
   .post("/", authorizeUser, asyncWrapper(Comment.create))
   .get("/:id", validateObjectId, asyncWrapper(Comment.show))
   .delete("/:id", validateObjectId, authorizeUser, asyncWrapper(Comment.delete))
-  // storage.single() has to be there due to some XMLHttpRequest form shenanigans
-  .post(
-    "/:id/toggle-vote",
+  .get(
+    "/:id/vote-up",
+    validateObjectId,
     authorizeUser,
-    storage.single(),
-    asyncWrapper(Comment.toggleVote)
+    asyncWrapper(Comment.voteUp)
+  )
+  .get(
+    "/:id/vote-down",
+    validateObjectId,
+    authorizeUser,
+    asyncWrapper(Comment.voteDown)
   );
 
 module.exports = router;
