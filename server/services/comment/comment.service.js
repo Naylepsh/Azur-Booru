@@ -8,9 +8,14 @@ const {
   ForbiddenException,
 } = require("../../utils/exceptions");
 const { toggleInArray, removeFromArrayIfExists } = require("../../utils/misc");
+const { CommentRepository } = require("../../repositories/comment.repository");
 
 module.exports = class CommentService {
   COMMENTS_PER_PAGE = 10;
+
+  constructor() {
+    this.repository = new CommentRepository();
+  }
 
   async findMany({ body, author, page }) {
     const query = await this.parseQuery({ body, author });
@@ -21,11 +26,18 @@ module.exports = class CommentService {
       this.COMMENTS_PER_PAGE
     );
 
-    const comments = await Comment.paginate(
-      query,
-      (pageInfo.currentPage - 1) * this.COMMENTS_PER_PAGE,
-      this.COMMENTS_PER_PAGE
-    );
+    // const comments = await Comment.paginate(
+    //   query,
+    //   (pageInfo.currentPage - 1) * this.COMMENTS_PER_PAGE,
+    //   this.COMMENTS_PER_PAGE
+    // );
+    const queryOptions = {
+      sort: { _id: -1 },
+      skip: (pageInfo.currentPage - 1) * this.COMMENTS_PER_PAGE,
+      limit: this.COMMENTS_PER_PAGE,
+      populate: [{ path: "author" }, { path: "post" }],
+    };
+    const comments = await this.repository.findMany(query, queryOptions);
 
     return { comments, pageInfo };
   }
