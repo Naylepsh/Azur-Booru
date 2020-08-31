@@ -32,35 +32,12 @@ exports.CommentRepository = class CommentRepository extends Repository {
     await post.save();
   }
 
-  async findById(id, options = {}) {
-    let query = Comment.findById(id);
-
-    if (options.populate) {
-      for (const populateOptions of options.populate) {
-        query = query.populate(populateOptions);
-      }
-    }
-
-    const comment = await query.exec();
-
-    return comment;
-  }
-
   async deleteById(id) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      await this.deleteComment(id);
-      await session.commitTransaction();
-      session.endSession();
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      throw error;
-    }
+    const runInTransaction = true;
+    return await super.deleteById(id, runInTransaction);
   }
 
-  async deleteComment(id) {
+  async deleteByIdImpl(id) {
     const comment = await Comment.findById(id);
 
     const post = await Post.findById(comment.post);

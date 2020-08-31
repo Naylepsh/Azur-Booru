@@ -26,15 +26,31 @@ exports.Repository = class Repository {
       }
     }
 
-    const entities = await query.exec();
-
-    return entities;
+    return query.exec();
   }
 
   async create(object, runInTransaction = false) {
     return runInTransaction
-      ? await this.runInTransaction(() => this.createImpl(object))
-      : await this.createImpl(object);
+      ? this.runInTransaction(() => this.createImpl(object))
+      : this.createImpl(object);
+  }
+
+  async findById(id, options = {}) {
+    let query = this.model.findById(id);
+
+    if (options.populate) {
+      for (const populateOptions of options.populate) {
+        query = query.populate(populateOptions);
+      }
+    }
+
+    return query.exec();
+  }
+
+  deleteById(id, runInTransaction) {
+    return runInTransaction
+      ? this.runInTransaction(() => this.deleteByIdImpl(id))
+      : this.deleteByIdImpl(id);
   }
 
   async runInTransaction(command) {
