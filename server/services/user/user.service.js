@@ -2,21 +2,25 @@ const { hashPassword, validatePassword } = require("../../utils/auth");
 const { BadRequestException } = require("../../utils/exceptions");
 const { User } = require("../../models/user");
 const Role = require("../../models/role");
+const { UserRepository } = require("../../repositories/user.repository");
 
 module.exports = class UserService {
+  constructor() {
+    this.repository = new UserRepository();
+  }
+
   async register(userDTO) {
     await ensureUserDoesNotExist(userDTO.name);
 
     const { password } = await hashPassword(userDTO.password);
     const role = await Role.user();
-
-    const savedUser = await User.create({
+    const user = {
       name: userDTO.name,
       password,
       roles: [role._id],
-    });
+    };
 
-    return savedUser;
+    return this.repository.create(user);
   }
 
   async login({ name, password }) {

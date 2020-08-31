@@ -8,6 +8,12 @@ exports.Repository = class Repository {
   async findMany(queryParams, options = {}) {
     let query = this.model.find(queryParams);
 
+    query = Repository.applyQueryOptions(options, query);
+
+    return query.exec();
+  }
+
+  static applyQueryOptions(options, query) {
     if (options.sort) {
       query = query.sort(options.sort);
     }
@@ -20,13 +26,18 @@ exports.Repository = class Repository {
       query = query.limit(options.limit);
     }
 
+    query = Repository.applyPopulateQueryOptions(options, query);
+
+    return query;
+  }
+
+  static applyPopulateQueryOptions(options, query) {
     if (options.populate) {
       for (const populateOptions of options.populate) {
         query = query.populate(populateOptions);
       }
     }
-
-    return query.exec();
+    return query;
   }
 
   async create(object, runInTransaction = false) {
