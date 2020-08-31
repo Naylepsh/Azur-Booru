@@ -31,6 +31,14 @@ exports.Repository = class Repository {
     return query;
   }
 
+  async findById(id, options = {}) {
+    let query = this.model.findById(id);
+
+    query = Repository.applyPopulateQueryOptions(options, query);
+
+    return query.exec();
+  }
+
   static applyPopulateQueryOptions(options, query) {
     if (options.populate) {
       for (const populateOptions of options.populate) {
@@ -44,18 +52,6 @@ exports.Repository = class Repository {
     return runInTransaction
       ? this.runInTransaction(() => this.createImpl(object))
       : this.createImpl(object);
-  }
-
-  async findById(id, options = {}) {
-    let query = this.model.findById(id);
-
-    if (options.populate) {
-      for (const populateOptions of options.populate) {
-        query = query.populate(populateOptions);
-      }
-    }
-
-    return query.exec();
   }
 
   deleteById(id, runInTransaction) {
