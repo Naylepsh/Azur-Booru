@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 exports.Repository = class Repository {
   constructor(model) {
     this.model = model;
@@ -27,5 +29,26 @@ exports.Repository = class Repository {
     const entities = await query.exec();
 
     return entities;
+  }
+
+  async create(object, runInTransaction = false) {
+    return runInTransaction
+      ? await this.runInTransaction(() => this.createImpl(object))
+      : await this.createImpl(object);
+  }
+
+  async runInTransaction(command) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const res = await command();
+      await session.commitTransaction();
+      session.endSession();
+      return res;
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw error;
+    }
   }
 };

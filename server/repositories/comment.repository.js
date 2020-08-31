@@ -14,21 +14,11 @@ exports.CommentRepository = class CommentRepository extends Repository {
   }
 
   async create(commentData) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      const comment = await this.createComment(commentData);
-      await session.commitTransaction();
-      session.endSession();
-      return comment;
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      throw error;
-    }
+    const runInTransaction = true;
+    return await super.create(commentData, runInTransaction);
   }
 
-  async createComment(commentData) {
+  async createImpl(commentData) {
     const comment = await Comment.create(commentData);
 
     await this.addCommentToPost(comment.post, comment);
