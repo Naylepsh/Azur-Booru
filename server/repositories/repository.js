@@ -31,6 +31,14 @@ exports.Repository = class Repository {
     return query;
   }
 
+  async findOne(queryParams, options = {}) {
+    let query = this.model.findOne(queryParams);
+
+    query = Repository.applyPopulateQueryOptions(options, query);
+
+    return query.exec();
+  }
+
   async findById(id, options = {}) {
     let query = this.model.findById(id);
 

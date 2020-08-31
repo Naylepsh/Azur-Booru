@@ -1,6 +1,5 @@
 const { hashPassword, validatePassword } = require("../../utils/auth");
 const { BadRequestException } = require("../../utils/exceptions");
-const { User } = require("../../models/user");
 const Role = require("../../models/role");
 const { UserRepository } = require("../../repositories/user.repository");
 
@@ -10,21 +9,23 @@ module.exports = class UserService {
   }
 
   async register(userDTO) {
-    await ensureUserDoesNotExist(userDTO.name);
+    const user = await this.repository.findOne({ name: userDTO.name });
+    ensureUserNotRegistered(user);
 
     const { password } = await hashPassword(userDTO.password);
     const role = await Role.user();
-    const user = {
+    const userData = {
       name: userDTO.name,
       password,
       roles: [role._id],
     };
 
-    return this.repository.create(user);
+    return this.repository.create(userData);
   }
 
   async login({ name, password }) {
-    const user = await ensureUserDoesExist({ name });
+    const user = await this.repository.findOne({ name });
+    ensureUserDoesExist(user);
     await ensurePasswordMatches(password, user.password);
 
     const jwt = user.generateAuthToken();
@@ -33,7 +34,8 @@ module.exports = class UserService {
   }
 
   async getProfile(id) {
-    const user = await ensureUserDoesExist({ id });
+    const user = await this.repository.findById(id);
+    ensureUserDoesExist(user);
     const userProps = { ...user._doc };
     delete userProps.password;
 
@@ -41,19 +43,14 @@ module.exports = class UserService {
   }
 };
 
-async function ensureUserDoesNotExist(name) {
-  let user = await User.findOne({ name });
+function ensureUserNotRegistered(user) {
   if (user) {
     const message = "User already registered";
     throw new BadRequestException(message);
   }
 }
 
-async function ensureUserDoesExist({ name, id }) {
-  if (!name && !id)
-    throw new Error("Cannot find a user when both name and id are missing");
-
-  const user = name ? await User.findOne({ name }) : await User.findById(id);
+function ensureUserDoesExist(user) {
   if (!user) {
     const message = "Invalid username or password.";
     throw new BadRequestException(message);
