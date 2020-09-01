@@ -57,22 +57,6 @@ exports.destroy = async (req, res) => {
   res.send("Post successfully deleted");
 };
 
-exports.toggleVote = async (req, res) => {
-  const post = await getPost(req.params.id);
-
-  if (req.body.voteType === "up") {
-    miscUtils.toggleInArray(req.user._id, post.voters.up);
-    miscUtils.removeFromArrayIfExists(req.user._id, post.voters.down);
-  } else if (req.body.voteType === "down") {
-    miscUtils.toggleInArray(req.user._id, post.voters.down);
-    miscUtils.removeFromArrayIfExists(req.user._id, post.voters.up);
-  }
-  post.score = post.voters.up.length - post.voters.down.length;
-  await post.save();
-
-  res.end(post.score.toString());
-};
-
 exports.voteUp = async (req, res) => {
   const post = await getPost(req.params.id);
 

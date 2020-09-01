@@ -21,12 +21,6 @@ router
   .get("/:id", validateObjectId, asyncWrapper(Post.show))
   .put("/:id", validateObjectId, authorizeUser, asyncWrapper(Post.update))
   .delete("/:id", validateObjectId, authorizeUser, asyncWrapper(Post.destroy))
-  .post(
-    "/:id/toggle-vote",
-    validateObjectId,
-    authorizeUser,
-    asyncWrapper(Post.toggleVote)
-  )
   .get(
     "/:id/vote-down",
     validateObjectId,
