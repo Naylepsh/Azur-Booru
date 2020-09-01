@@ -1,10 +1,7 @@
-const { Post, validate } = require("../models/post");
+const { Post } = require("../models/post");
 const { Tag } = require("../models/tag");
 const miscUtils = require("../utils/misc");
-const {
-  NotFoundException,
-  BadRequestException,
-} = require("../utils/exceptions");
+const { NotFoundException } = require("../utils/exceptions");
 const { PostService } = require("../services/post/post.service");
 
 const postService = new PostService();
