@@ -10,55 +10,20 @@ const {
   NotFoundException,
   BadRequestException,
 } = require("../utils/exceptions");
+const { PostService } = require("../services/post/post.service");
 
 const POSTS_PER_PAGE = 20;
-const TAGS_PER_PAGE = 15;
 const POST_BODY_ATTRIBUTES = ["source", "tags", "rating"];
 
-exports.list = async (req, res) => {
-  const containsTagsQuery = await createContainsTagsDbQueryFromUrlQuery(
-    req.query.tags
-  );
-  const currentPage = req.query.page;
-  const pageInfo = await createPostPaginationDetails(
-    containsTagsQuery,
-    currentPage
-  );
+const postService = new PostService();
 
-  const posts = await getPostPage(containsTagsQuery, pageInfo);
-  const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);
+exports.list = async (req, res) => {
+  const query = req.query;
+
+  const { posts, tags, pageInfo } = await postService.findMany(query);
 
   res.send({ posts, tags, pageInfo });
 };
-
-async function createContainsTagsDbQueryFromUrlQuery(tagsQuery) {
-  const tagNames = miscUtils.distinctWordsInString(tagsQuery);
-  const dbQuery = await createRelatedTagsDbQueryFromTagNames(tagNames);
-
-  return dbQuery;
-}
-
-async function createRelatedTagsDbQueryFromTagNames(tagNames) {
-  const tagsInQuery = await Tag.findManyByName(tagNames);
-  const tagsIds = tagsInQuery.map((tag) => tag._id);
-  const query = tagsInQuery.length > 0 ? { tags: { $all: tagsIds } } : {};
-
-  return query;
-}
-
-async function createPostPaginationDetails(query, currentPage) {
-  const numberOfRecords = await Post.countDocuments(query);
-  const pageInfo = getPagination(numberOfRecords, currentPage, POSTS_PER_PAGE);
-
-  return pageInfo;
-}
-
-async function getPostPage(query, pageInfo) {
-  const postsToSkip = (pageInfo.currentPage - 1) * POSTS_PER_PAGE;
-  const posts = await Post.paginate(query, postsToSkip, POSTS_PER_PAGE);
-
-  return posts;
-}
 
 exports.create = async (req, res) => {
   const session = await mongoose.startSession();
