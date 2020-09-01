@@ -2,80 +2,84 @@ const { Tag } = require("../models/tag");
 const { NotFoundException } = require("../utils/exceptions");
 const { PostService } = require("../services/post/post.service");
 
-const postService = new PostService();
+exports.PostController = class PostController {
+  constructor() {
+    this.postService = new PostService();
+  }
 
-exports.list = async (req, res) => {
-  const query = req.query;
+  list = async (req, res) => {
+    const query = req.query;
 
-  const { posts, tags, pageInfo } = await postService.findMany(query);
+    const { posts, tags, pageInfo } = await this.postService.findMany(query);
 
-  res.send({ posts, tags, pageInfo });
-};
-
-exports.create = async (req, res) => {
-  const postDTO = {
-    ...req.body,
-    imageLink: req.imageUrl,
-    thumbnailLink: req.thumbnailUrl,
-    authorId: req.user._id,
+    res.send({ posts, tags, pageInfo });
   };
 
-  const post = await postService.create(postDTO);
+  create = async (req, res) => {
+    const postDTO = {
+      ...req.body,
+      imageLink: req.imageUrl,
+      thumbnailLink: req.thumbnailUrl,
+      authorId: req.user._id,
+    };
 
-  res.send(post);
-};
+    const post = await this.postService.create(postDTO);
 
-exports.show = async (req, res) => {
-  const id = req.params.id;
+    res.send(post);
+  };
 
-  const post = await postService.findById(id);
-  ensurePostWasFound(post, id);
+  show = async (req, res) => {
+    const id = req.params.id;
 
-  const sortedTags = Tag.sortByName(post.tags);
-  const tags = Tag.getOccurences(sortedTags);
+    const post = await this.postService.findById(id);
+    this.ensurePostWasFound(post, id);
 
-  res.send({ post, tags });
-};
+    const sortedTags = Tag.sortByName(post.tags);
+    const tags = Tag.getOccurences(sortedTags);
 
-exports.update = async (req, res) => {
-  const id = req.params.id;
-  const postDTO = req.body;
+    res.send({ post, tags });
+  };
 
-  const post = await postService.update(id, postDTO);
+  update = async (req, res) => {
+    const id = req.params.id;
+    const postDTO = req.body;
 
-  res.send({ post });
-};
+    const post = await this.postService.update(id, postDTO);
 
-exports.destroy = async (req, res) => {
-  const id = req.params.id;
-  const user = req.user;
+    res.send({ post });
+  };
 
-  await postService.deleteById(id, user);
+  delete = async (req, res) => {
+    const id = req.params.id;
+    const user = req.user;
 
-  res.send("Post successfully deleted");
-};
+    await this.postService.deleteById(id, user);
 
-exports.voteUp = async (req, res) => {
-  const id = req.params.id;
-  const userId = req.user._id;
+    res.send("Post successfully deleted");
+  };
 
-  const score = await postService.voteUp(id, userId);
+  voteUp = async (req, res) => {
+    const id = req.params.id;
+    const userId = req.user._id;
 
-  res.send(score.toString());
-};
+    const score = await this.postService.voteUp(id, userId);
 
-exports.voteDown = async (req, res) => {
-  const id = req.params.id;
-  const userId = req.user._id;
+    res.send(score.toString());
+  };
 
-  const score = await postService.voteDown(id, userId);
+  voteDown = async (req, res) => {
+    const id = req.params.id;
+    const userId = req.user._id;
 
-  res.send(score.toString());
-};
+    const score = await this.postService.voteDown(id, userId);
 
-function ensurePostWasFound(post, id) {
-  if (!post) {
-    const message = `Post ${id} not found`;
-    throw new NotFoundException(message);
+    res.send(score.toString());
+  };
+
+  ensurePostWasFound(post, id) {
+    if (!post) {
+      const message = `Post ${id} not found`;
+      throw new NotFoundException(message);
+    }
   }
-}
+};
