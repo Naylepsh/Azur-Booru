@@ -129,7 +129,7 @@ describe(API_ENDPOINT, () => {
     };
   });
 
-  describe("delete /:id", () => {
+  describe("DELETE /:id", () => {
     it("should return 401 if user is not logged in", async () => {
       await expectUnauthorizedRequestToReturn401(sendDeleteRequest);
     });
@@ -138,16 +138,26 @@ describe(API_ENDPOINT, () => {
       await expectRequestToInvalidIdToReturn404(sendDeleteRequest);
     });
 
-    it("should return 404 if post doesn't exist", async () => {
-      await expectRequestToNonExistingPostToReturn404(sendDeleteRequest);
-    });
-
     it("should return 403 if user is not the post's author", async () => {
       token = new User().generateAuthToken();
 
       const res = await sendDeleteRequest();
 
       expect(res.status).toBe(403);
+    });
+
+    it("should return 200 if post doesn't exist", async () => {
+      id = mongoose.Types.ObjectId();
+
+      const { status } = await sendDeleteRequest();
+
+      expect(status).toBe(200);
+    });
+
+    it("should return 200 if valid data was passed", async () => {
+      const { status } = await sendDeleteRequest();
+
+      expect(status).toBe(200);
     });
 
     it("should remove post from database if id was valid and user was it's author", async () => {

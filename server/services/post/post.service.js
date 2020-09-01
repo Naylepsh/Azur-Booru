@@ -3,6 +3,8 @@ const { Tag } = require("../../models/tag");
 const { Post } = require("../../models/post");
 const miscUtils = require("../../utils/misc");
 const { getPagination } = require("../../utils/pagination");
+const { User } = require("../../models/user");
+const { ForbiddenException } = require("../../utils/exceptions");
 
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
@@ -97,5 +99,24 @@ exports.PostService = class PostService {
     validatePost(postModel);
 
     return postModel;
+  }
+
+  async deleteById(id, user) {
+    const post = await this.repository.findById(id);
+    if (!post) return;
+
+    const isAuthor = await this.authenticateAuthor(post, user);
+    const isAdmin = user.roles && user.roles.admin;
+    if (!isAuthor && !isAdmin) {
+      throw new ForbiddenException();
+    }
+
+    return this.repository.deleteById(id);
+  }
+
+  async authenticateAuthor(post, user) {
+    const author = await User.findById(post.author);
+
+    return user._id === author._id.toString();
   }
 };

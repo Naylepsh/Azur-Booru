@@ -117,41 +117,13 @@ async function removeAllTagsFromPost(post) {
 }
 
 exports.destroy = async (req, res) => {
-  const populateQuery = [{ path: "tags" }];
-  const post = await getPost(req.params.id, populateQuery);
+  const id = req.params.id;
+  const user = req.user;
 
-  const isAuthor = await authenticateAuthor(post, req.user);
-  const isAdmin = req.user.roles && req.user.roles.admin;
-  if (!isAuthor && !isAdmin) {
-    throw new ForbiddenException();
-  }
+  await postService.deleteById(id, user);
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    await detachTagsFromPost(post);
-    await removePostComments(post, session);
-    await Post.findByIdAndRemove(post._id);
-
-    await session.commitTransaction();
-  } catch (error) {
-    await session.abortTransaction();
-    throw error;
-  } finally {
-    session.endSession();
-    res.send(post);
-  }
+  res.send("Post successfully deleted");
 };
-
-function detachTagsFromPost(post) {
-  // mongoose keeps a reference to session on object that was created by find()
-  // thus, no reason to pass session here
-  return Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
-}
-
-function removePostComments(post, session) {
-  return Comment.deleteMany({ _id: { $in: post.comments } }).session(session);
-}
 
 exports.toggleVote = async (req, res) => {
   const post = await getPost(req.params.id);
