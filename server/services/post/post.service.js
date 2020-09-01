@@ -65,6 +65,19 @@ exports.PostService = class PostService {
     return this.repository.findMany(query, queryOptions);
   }
 
+  async findById(id) {
+    const populate = [
+      { path: "author", select: "-password" },
+      { path: "tags" },
+      {
+        path: "comments",
+        populate: { path: "author", select: "-password", model: "User" },
+      },
+    ];
+
+    return this.repository.findById(id, { populate });
+  }
+
   async create(postDTO) {
     const postData = this.mapPostDTOToDbModel(postDTO);
 

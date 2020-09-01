@@ -10,6 +10,7 @@ const {
   BadRequestException,
 } = require("../utils/exceptions");
 const { PostService } = require("../services/post/post.service");
+const { PostRepository } = require("../repositories/post.repository");
 
 const POST_BODY_ATTRIBUTES = ["source", "tags", "rating"];
 
@@ -49,21 +50,15 @@ function attachPostToTags(tags, post) {
 }
 
 exports.show = async (req, res) => {
-  const populateQuery = [
-    { path: "author", select: "name" },
-    { path: "tags" },
-    {
-      path: "comments",
-      populate: { path: "author", model: "User" },
-    },
-  ];
-  const post = await getPost(req.params.id, populateQuery);
+  const id = req.params.id;
+
+  const post = await postService.findById(id);
+  ensurePostWasFound(post, id);
 
   const sortedTags = Tag.sortByName(post.tags);
-  const tagsOccurences = Tag.getOccurences(sortedTags);
-  delete post.author.password;
+  const tags = Tag.getOccurences(sortedTags);
 
-  res.send({ post: post, tags: tagsOccurences });
+  res.send({ post, tags });
 };
 
 exports.update = async (req, res) => {
