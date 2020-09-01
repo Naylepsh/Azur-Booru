@@ -1,20 +1,19 @@
 const { PostRepository } = require("../../repositories/post.repository");
-const { Tag } = require("../../models/tag");
 const { Post, validate } = require("../../models/post");
+const { User } = require("../../models/user");
+const { Tag } = require("../../models/tag");
 const miscUtils = require("../../utils/misc");
 const { getPagination } = require("../../utils/pagination");
-const { User } = require("../../models/user");
 const {
   ForbiddenException,
   BadRequestException,
   NotFoundException,
 } = require("../../utils/exceptions");
 
-const POSTS_PER_PAGE = 20;
-const TAGS_PER_PAGE = 15;
-const POST_BODY_ATTRIBUTES = ["source", "tags", "rating"];
-
 exports.PostService = class PostService {
+  POSTS_PER_PAGE = 20;
+  TAGS_PER_PAGE = 15;
+  POST_BODY_ATTRIBUTES = ["source", "tags", "rating"];
   constructor() {
     this.repository = new PostRepository();
   }
@@ -30,7 +29,7 @@ exports.PostService = class PostService {
     );
 
     const posts = await this.getPostPage(containsTagsQuery, pageInfo);
-    const tags = await Tag.popularTagsOfPosts(posts, TAGS_PER_PAGE);
+    const tags = await Tag.popularTagsOfPosts(posts, this.TAGS_PER_PAGE);
 
     return { posts, tags, pageInfo };
   }
@@ -55,7 +54,7 @@ exports.PostService = class PostService {
     const pageInfo = getPagination(
       numberOfRecords,
       currentPage,
-      POSTS_PER_PAGE
+      this.POSTS_PER_PAGE
     );
 
     return pageInfo;
@@ -64,8 +63,8 @@ exports.PostService = class PostService {
   async getPostPage(query, pageInfo) {
     const queryOptions = {
       sort: { _id: -1 },
-      skip: (pageInfo.currentPage - 1) * POSTS_PER_PAGE,
-      limit: POSTS_PER_PAGE,
+      skip: (pageInfo.currentPage - 1) * this.POSTS_PER_PAGE,
+      limit: this.POSTS_PER_PAGE,
     };
 
     return this.repository.findMany(query, queryOptions);
@@ -106,7 +105,10 @@ exports.PostService = class PostService {
   }
 
   mapPostDTOToDbModel(postDTO) {
-    const postModel = miscUtils.pickAttributes(postDTO, POST_BODY_ATTRIBUTES);
+    const postModel = miscUtils.pickAttributes(
+      postDTO,
+      this.POST_BODY_ATTRIBUTES
+    );
     postModel.tags = miscUtils.distinctWordsInArray(postModel.tags);
     postModel.score = 0;
     postModel.imageLink = postDTO.imageLink;
