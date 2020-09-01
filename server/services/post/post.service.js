@@ -126,13 +126,6 @@ exports.PostService = class PostService {
     }
   }
 
-  ensurePostWasFound(post, id) {
-    if (!post) {
-      const message = `Post ${id} not found`;
-      throw new NotFoundException(message);
-    }
-  }
-
   async deleteById(id, user) {
     const post = await this.repository.findById(id);
     if (!post) return;
@@ -150,5 +143,36 @@ exports.PostService = class PostService {
     const author = await User.findById(post.author);
 
     return user._id === author._id.toString();
+  }
+
+  async voteUp(id, userId) {
+    const post = await this.repository.findById(id);
+    this.ensurePostWasFound(post, id);
+
+    miscUtils.toggleInArray(userId, post.voters.up);
+    miscUtils.removeFromArrayIfExists(userId, post.voters.down);
+    post.score = post.voters.up.length - post.voters.down.length;
+    await post.save();
+
+    return post.score;
+  }
+
+  async voteDown(id, userId) {
+    const post = await this.repository.findById(id);
+    this.ensurePostWasFound(post, id);
+
+    miscUtils.toggleInArray(userId, post.voters.down);
+    miscUtils.removeFromArrayIfExists(userId, post.voters.up);
+    post.score = post.voters.up.length - post.voters.down.length;
+    await post.save();
+
+    return post.score;
+  }
+
+  ensurePostWasFound(post, id) {
+    if (!post) {
+      const message = `Post ${id} not found`;
+      throw new NotFoundException(message);
+    }
   }
 };

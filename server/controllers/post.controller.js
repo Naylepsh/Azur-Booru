@@ -1,6 +1,4 @@
-const { Post } = require("../models/post");
 const { Tag } = require("../models/tag");
-const miscUtils = require("../utils/misc");
 const { NotFoundException } = require("../utils/exceptions");
 const { PostService } = require("../services/post/post.service");
 
@@ -58,39 +56,22 @@ exports.destroy = async (req, res) => {
 };
 
 exports.voteUp = async (req, res) => {
-  const post = await getPost(req.params.id);
+  const id = req.params.id;
+  const userId = req.user._id;
 
-  miscUtils.toggleInArray(req.user._id, post.voters.up);
-  miscUtils.removeFromArrayIfExists(req.user._id, post.voters.down);
-  post.score = post.voters.up.length - post.voters.down.length;
-  await post.save();
+  const score = await postService.voteUp(id, userId);
 
-  res.send(post.score.toString());
+  res.send(score.toString());
 };
 
 exports.voteDown = async (req, res) => {
-  const post = await getPost(req.params.id);
+  const id = req.params.id;
+  const userId = req.user._id;
 
-  miscUtils.toggleInArray(req.user._id, post.voters.down);
-  miscUtils.removeFromArrayIfExists(req.user._id, post.voters.up);
-  post.score = post.voters.up.length - post.voters.down.length;
-  await post.save();
+  const score = await postService.voteDown(id, userId);
 
-  res.send(post.score.toString());
+  res.send(score.toString());
 };
-
-async function getPost(id, populateQuery) {
-  const post = await Post.findById(id);
-  ensurePostWasFound(post, id);
-  await populatePost(populateQuery, post);
-  return post;
-}
-
-async function populatePost(populateQuery, post) {
-  if (populateQuery) {
-    await post.populate(populateQuery).execPopulate();
-  }
-}
 
 function ensurePostWasFound(post, id) {
   if (!post) {
