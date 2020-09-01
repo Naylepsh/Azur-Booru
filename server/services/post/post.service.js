@@ -64,4 +64,25 @@ exports.PostService = class PostService {
 
     return this.repository.findMany(query, queryOptions);
   }
+
+  async create(postDTO) {
+    const postData = this.mapPostDTOToDbModel(postDTO);
+
+    const post = await this.repository.create(postData);
+
+    return post;
+  }
+
+  mapPostDTOToDbModel(postDTO) {
+    const postModel = miscUtils.pickAttributes(postDTO, POST_BODY_ATTRIBUTES);
+    postModel.tags = miscUtils.distinctWordsInArray(postModel.tags);
+    postModel.score = 0;
+    postModel.imageLink = postDTO.imageLink;
+    postModel.thumbnailLink = postDTO.thumbnailLink;
+    postModel.author = postDTO.authorId;
+
+    validatePost(postModel);
+
+    return postModel;
+  }
 };

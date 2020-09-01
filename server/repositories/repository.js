@@ -58,13 +58,13 @@ exports.Repository = class Repository {
 
   async create(object, runInTransaction = false) {
     return runInTransaction
-      ? this.runInTransaction(() => this.createImpl(object))
+      ? this.runInTransaction((session) => this.createImpl(object, session))
       : this.createImpl(object);
   }
 
   deleteById(id, runInTransaction) {
     return runInTransaction
-      ? this.runInTransaction(() => this.deleteByIdImpl(id))
+      ? this.runInTransaction((session) => this.deleteByIdImpl(id, session))
       : this.deleteByIdImpl(id);
   }
 
@@ -72,7 +72,7 @@ exports.Repository = class Repository {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-      const res = await command();
+      const res = await command(session);
       await session.commitTransaction();
       session.endSession();
       return res;

@@ -2,7 +2,6 @@ const { Post, validate } = require("../models/post");
 const { Tag } = require("../models/tag");
 const { Comment } = require("../models/comment");
 const { User } = require("../models/user");
-const { getPagination } = require("../utils/pagination");
 const miscUtils = require("../utils/misc");
 const mongoose = require("mongoose");
 const {
@@ -12,7 +11,6 @@ const {
 } = require("../utils/exceptions");
 const { PostService } = require("../services/post/post.service");
 
-const POSTS_PER_PAGE = 20;
 const POST_BODY_ATTRIBUTES = ["source", "tags", "rating"];
 
 const postService = new PostService();
@@ -26,25 +24,16 @@ exports.list = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    const postModel = mapPostToViewModel(
-      req.body,
-      req.imageUrl,
-      req.thumbnailUrl,
-      req.user._id
-    );
+  const postDTO = {
+    ...req.body,
+    imageLink: req.imageUrl,
+    thumbnailLink: req.thumbnailUrl,
+    authorId: req.user._id,
+  };
 
-    await createPostInDatabase(postModel, session);
-    await session.commitTransaction();
-  } catch (error) {
-    await session.abortTransaction();
-    throw error;
-  } finally {
-    session.endSession();
-    res.send(postModel);
-  }
+  const post = await postService.create(postDTO);
+
+  res.send(post);
 };
 
 function validatePost(post) {
@@ -53,18 +42,6 @@ function validatePost(post) {
     const message = error.details[0].message;
     throw new BadRequestException(message);
   }
-}
-
-async function createPostInDatabase(postModel, session) {
-  const tags = await Tag.findOrCreateManyByName(postModel.tags, session);
-  postModel.tags = tags.map((tag) => tag._id);
-
-  const posts = await Post.create([postModel], { session });
-  post = posts[0];
-
-  await attachPostToTags(tags, post);
-
-  return post;
 }
 
 function attachPostToTags(tags, post) {
