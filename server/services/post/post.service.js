@@ -1,10 +1,14 @@
 const { PostRepository } = require("../../repositories/post.repository");
 const { Tag } = require("../../models/tag");
-const { Post } = require("../../models/post");
+const { Post, validate } = require("../../models/post");
 const miscUtils = require("../../utils/misc");
 const { getPagination } = require("../../utils/pagination");
 const { User } = require("../../models/user");
-const { ForbiddenException } = require("../../utils/exceptions");
+const {
+  ForbiddenException,
+  BadRequestException,
+  NotFoundException,
+} = require("../../utils/exceptions");
 
 const POSTS_PER_PAGE = 20;
 const TAGS_PER_PAGE = 15;
@@ -83,9 +87,22 @@ exports.PostService = class PostService {
   async create(postDTO) {
     const postData = this.mapPostDTOToDbModel(postDTO);
 
-    const post = await this.repository.create(postData);
+    return this.repository.create(postData);
+  }
 
-    return post;
+  async update(id, postDTO) {
+    // TODO: links should be provided by dto
+    const post = await this.repository.findById(id);
+    this.ensurePostWasFound(post, id);
+    const postData = this.mapPostDTOToDbModel({
+      ...postDTO,
+      imageLink: post.imageLink,
+      thumbnailLink: post.thumbnailLink,
+      authorId: post.author,
+    });
+    postData._id = post._id;
+
+    return this.repository.update(id, postData);
   }
 
   mapPostDTOToDbModel(postDTO) {
@@ -96,9 +113,24 @@ exports.PostService = class PostService {
     postModel.thumbnailLink = postDTO.thumbnailLink;
     postModel.author = postDTO.authorId;
 
-    validatePost(postModel);
+    this.validatePost(postModel);
 
     return postModel;
+  }
+
+  validatePost(post) {
+    const { error } = validate(post);
+    if (error) {
+      const message = error.details[0].message;
+      throw new BadRequestException(message);
+    }
+  }
+
+  ensurePostWasFound(post, id) {
+    if (!post) {
+      const message = `Post ${id} not found`;
+      throw new NotFoundException(message);
+    }
   }
 
   async deleteById(id, user) {

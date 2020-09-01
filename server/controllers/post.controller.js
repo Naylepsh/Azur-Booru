@@ -1,18 +1,11 @@
 const { Post, validate } = require("../models/post");
 const { Tag } = require("../models/tag");
-const { Comment } = require("../models/comment");
-const { User } = require("../models/user");
 const miscUtils = require("../utils/misc");
-const mongoose = require("mongoose");
 const {
-  ForbiddenException,
   NotFoundException,
   BadRequestException,
 } = require("../utils/exceptions");
 const { PostService } = require("../services/post/post.service");
-const { PostRepository } = require("../repositories/post.repository");
-
-const POST_BODY_ATTRIBUTES = ["source", "tags", "rating"];
 
 const postService = new PostService();
 
@@ -37,18 +30,6 @@ exports.create = async (req, res) => {
   res.send(post);
 };
 
-function validatePost(post) {
-  const { error } = validate(post);
-  if (error) {
-    const message = error.details[0].message;
-    throw new BadRequestException(message);
-  }
-}
-
-function attachPostToTags(tags, post) {
-  return Promise.all(tags.map((tag) => tag.addPost(post._id)));
-}
-
 exports.show = async (req, res) => {
   const id = req.params.id;
 
@@ -62,59 +43,13 @@ exports.show = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  const populateQuery = [{ path: "tags" }];
-  const post = await getPost(req.params.id, populateQuery);
+  const id = req.params.id;
+  const postDTO = req.body;
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    const postModel = mapPostToViewModel(
-      req.body,
-      post.imageLink,
-      post.thumbnailLink,
-      req.user._id
-    );
+  const post = await postService.update(id, postDTO);
 
-    await removeAllTagsFromPost(post);
-    const tags = await Tag.findOrCreateManyByName(postModel.tags, session);
-    postModel.tags = tags.map((tag) => tag._id);
-    await attachPostToTags(tags, post);
-
-    await updatePost(post, postModel);
-    await session.commitTransaction();
-
-    res.send({ post });
-  } catch (error) {
-    await session.abortTransaction();
-    throw error;
-  } finally {
-    session.endSession();
-  }
+  res.send({ post });
 };
-
-function mapPostToViewModel(post, imageLink, thumbnailLink, authorId) {
-  const postModel = miscUtils.pickAttributes(post, POST_BODY_ATTRIBUTES);
-  postModel.tags = miscUtils.distinctWordsInArray(postModel.tags);
-  postModel.score = 0;
-  postModel.imageLink = imageLink;
-  postModel.thumbnailLink = thumbnailLink;
-  postModel.author = authorId;
-
-  validatePost(postModel);
-
-  return postModel;
-}
-
-async function updatePost(post, propertiesToUpdate) {
-  for (const key in propertiesToUpdate) {
-    post[key] = propertiesToUpdate[key];
-  }
-  await post.save();
-}
-
-async function removeAllTagsFromPost(post) {
-  return Promise.all(post.tags.map((tag) => tag.removePost(post._id)));
-}
 
 exports.destroy = async (req, res) => {
   const id = req.params.id;
@@ -162,12 +97,6 @@ exports.voteDown = async (req, res) => {
 
   res.send(post.score.toString());
 };
-
-async function authenticateAuthor(post, user) {
-  const author = await User.findById(post.author);
-
-  return user._id === author._id.toString();
-}
 
 async function getPost(id, populateQuery) {
   const post = await Post.findById(id);

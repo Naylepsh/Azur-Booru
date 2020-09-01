@@ -27,6 +27,31 @@ exports.PostRepository = class PostRepository extends Repository {
     return post;
   }
 
+  async update(id, postData) {
+    const runInTransaction = true;
+    return super.update(id, postData, runInTransaction);
+  }
+
+  async updateImpl(id, postData, session) {
+    const populate = [{ path: "tags" }];
+    const post = await super.findById(id, { populate });
+
+    await this.detachTagsFromPost(post);
+
+    const tags = await Tag.findOrCreateManyByName(postData.tags, session);
+    postData.tags = tags.map((tag) => tag._id);
+
+    await this.attachPostToTags(tags, post);
+    return await this.updatePost(post, postData);
+  }
+
+  updatePost(post, propertiesToUpdate) {
+    for (const key in propertiesToUpdate) {
+      post[key] = propertiesToUpdate[key];
+    }
+    return post.save();
+  }
+
   attachPostToTags(tags, post) {
     return Promise.all(tags.map((tag) => tag.addPost(post._id)));
   }

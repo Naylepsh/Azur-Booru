@@ -62,6 +62,12 @@ exports.Repository = class Repository {
       : this.createImpl(object);
   }
 
+  async update(id, object, runInTransaction = false) {
+    return runInTransaction
+      ? this.runInTransaction((session) => this.updateImpl(id, object, session))
+      : this.updateImpl(id, object);
+  }
+
   deleteById(id, runInTransaction) {
     return runInTransaction
       ? this.runInTransaction((session) => this.deleteByIdImpl(id, session))
