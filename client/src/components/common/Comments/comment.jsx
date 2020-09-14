@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import VotingButtonUp from "../VotingButtons/votingButtonUp";
 import VotingButtonDown from "../VotingButtons/votingButtonDown";
-import { toggleVote } from "./../../../services/commentService";
+import { voteUp, voteDown } from "./../../../services/commentService";
 import { handleHttpError } from "./../../../utils/responseErrorHandler";
 import { VOTE_NONE, VOTE_DOWN, VOTE_UP, castVote } from "../../../utils/voting";
 import "./comment.css";
@@ -24,14 +24,32 @@ class Comment extends Component {
     this.setState({ score, vote });
   }
 
-  sendVote = async (newVote) => {
+  voteDown = async () => {
+    const handleVote = (oldVote, commentScore, commentId) => {
+      voteDown(commentId);
+      return castVote(oldVote, VOTE_DOWN, commentScore);
+    };
+
+    return this.vote(handleVote);
+  };
+
+  voteUp = async () => {
+    const handleVote = (oldVote, commentScore, commentId) => {
+      voteUp(commentId);
+      return castVote(oldVote, VOTE_UP, commentScore);
+    };
+
+    return this.vote(handleVote);
+  };
+
+  vote = async (handleVote) => {
     try {
-      const id = this.props.id;
       const { score: oldScore, vote: oldVote } = this.state;
-      const { score, vote } = castVote(oldVote, newVote, oldScore);
+      const id = this.props.id;
+
+      const { score, vote } = handleVote(oldVote, oldScore, id);
 
       this.setState({ score, vote });
-      await toggleVote(id, newVote);
     } catch (err) {
       handleHttpError(err);
     }
@@ -59,11 +77,11 @@ class Comment extends Component {
             </li>
             <VotingButtonUp
               isActive={this.state.vote === VOTE_UP}
-              onClick={() => this.sendVote(VOTE_UP)}
+              onClick={this.voteUp}
             />
             <VotingButtonDown
               isActive={this.state.vote === VOTE_DOWN}
-              onClick={() => this.sendVote(VOTE_DOWN)}
+              onClick={this.voteDown}
             />
             <li>
               <button onClick={() => onDelete(id)}>Delete</button>

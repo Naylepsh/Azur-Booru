@@ -18,13 +18,12 @@ class Comments extends Component {
 
   handleCommentSubmit = async (commentBody) => {
     try {
-      const postId = this.props.postId;
-      const userId = this.props.user._id;
+      const { postId, userId } = this.props;
 
       const { data: comment } = await postComment(postId, userId, commentBody);
 
       comment.author = { name: "You", _id: userId }; // temporary solution -- load name from /profile maybe?
-      const comments = { ...this.state.comments };
+      const comments = [...this.state.comments];
       comments.push(comment);
       this.setState({ comments });
     } catch (err) {

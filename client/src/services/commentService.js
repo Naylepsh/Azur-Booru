@@ -24,3 +24,11 @@ export function toggleVote(commentId, voteType) {
     voteType,
   });
 }
+
+export function voteUp(id) {
+  return http.get(`${apiEndpoint}/${id}/vote-up`);
+}
+
+export function voteDown(id) {
+  return http.get(`${apiEndpoint}/${id}/vote-down`);
+}
