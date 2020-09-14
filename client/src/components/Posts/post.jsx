@@ -5,7 +5,7 @@ import PostSidebar from "./postSidebar";
 import Comments from "../common/Comments/comments";
 import VotingButtonUp from "../common/VotingButtons/votingButtonUp";
 import VotingButtonDown from "../common/VotingButtons/votingButtonDown";
-import { getPost, toggleVote } from "../../services/postService";
+import { getPost, voteUp, voteDown } from "../../services/postService";
 import { VOTE_NONE, VOTE_DOWN, VOTE_UP, castVote } from "../../utils/voting";
 import {
   handleTagToggle,
@@ -106,14 +106,32 @@ class Post extends Component {
     this.setState({ selectedTags, query });
   };
 
-  vote = async (newVote) => {
+  voteDown = async () => {
+    const handleVote = (oldVote, postScore, postId) => {
+      voteDown(postId);
+      return castVote(oldVote, VOTE_DOWN, postScore);
+    };
+
+    return this.vote(handleVote);
+  };
+
+  voteUp = async () => {
+    const handleVote = (oldVote, postScore, postId) => {
+      voteUp(postId);
+      return castVote(oldVote, VOTE_UP, postScore);
+    };
+
+    return this.vote(handleVote);
+  };
+
+  vote = async (handleVote) => {
     try {
       const oldVote = this.state.vote;
       const post = { ...this.state.post };
-      const { score, vote } = castVote(oldVote, newVote, post.score);
+
+      const { score, vote } = handleVote(oldVote, post.score, post.id);
       post.score = score;
 
-      toggleVote(post.id, newVote);
       this.setState({ post, vote });
     } catch (err) {
       handleHttpError(err);
@@ -127,11 +145,11 @@ class Post extends Component {
         <menu className="post-menu">
           <VotingButtonUp
             isActive={this.state.vote === VOTE_UP}
-            onClick={() => this.vote(VOTE_UP)}
+            onClick={() => this.voteUp()}
           />
           <VotingButtonDown
             isActive={this.state.vote === VOTE_DOWN}
-            onClick={() => this.vote(VOTE_DOWN)}
+            onClick={() => this.voteDown()}
           />
         </menu>
       </section>

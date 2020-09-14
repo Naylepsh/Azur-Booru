@@ -30,6 +30,10 @@ export function deletePost(id) {
   return http.delete(`${apiEndpoint}/${id}`);
 }
 
-export function toggleVote(id, voteType) {
-  return http.post(`${apiEndpoint}/${id}/toggle-vote`, { voteType });
+export function voteUp(id) {
+  return http.get(`${apiEndpoint}/${id}/vote-up`);
+}
+
+export function voteDown(id) {
+  return http.get(`${apiEndpoint}/${id}/vote-down`);
 }
