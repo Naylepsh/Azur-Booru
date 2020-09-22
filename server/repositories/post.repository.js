@@ -20,7 +20,7 @@ exports.PostRepository = class PostRepository extends Repository {
     postData.tags = tags.map((tag) => tag._id);
 
     const posts = await Post.create([postData], { session });
-    post = posts[0];
+    const post = posts[0];
 
     await this.attachPostToTags(tags, post);
 
