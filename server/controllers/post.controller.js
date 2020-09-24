@@ -16,8 +16,12 @@ exports.PostController = class PostController {
   };
 
   create = async (req, res) => {
+    // Due to passing data with FormData, tags cannot be passed as an array
+    // thus the conversion from 'tag1,tag2,...' to ['tag1', 'tag2', ....]
+    const tags = req.body.tags.split(",");
     const postDTO = {
       ...req.body,
+      tags,
       imageLink: req.imageUrl,
       thumbnailLink: req.thumbnailUrl,
       authorId: req.user._id,

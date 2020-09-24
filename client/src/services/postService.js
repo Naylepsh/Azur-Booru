@@ -19,8 +19,8 @@ export function uploadPost(post) {
     return http.put(`${apiEndpoint}/${post._id}`, body);
   } else {
     const data = new FormData();
-    for (const key in body) {
-      data.append(key, body[key]);
+    for (const [key, value] of Object.entries(body)) {
+      data.append(key, value);
     }
     return http.post(`${apiEndpoint}`, data);
   }
